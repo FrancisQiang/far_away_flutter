@@ -200,20 +200,14 @@ class EditBottom extends StatelessWidget {
                     await loadPictures(dynamicCommentChosenProvider);
                   },
                   child: Container(
-                    child: SvgPicture.asset(
-                      'assets/svg/album_active.svg',
                       width: ScreenUtil().setWidth(55),
-                      height: ScreenUtil().setHeight(55),
-                    ),
-                  ),
+                      height: ScreenUtil().setWidth(55),
+                      child: Image.asset('assets/png/album.png')),
                 ),
                 Container(
-                  child: SvgPicture.asset(
-                    'assets/svg/experssion.svg',
                     width: ScreenUtil().setWidth(55),
-                    height: ScreenUtil().setHeight(55),
-                  ),
-                ),
+                    height: ScreenUtil().setWidth(55),
+                    child: Image.asset('assets/png/expression.png')),
                 InkWell(
                   onTap: () async {
                     // 保存一份资源列表

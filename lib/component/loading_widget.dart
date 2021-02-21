@@ -70,7 +70,7 @@ class LoadingWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SvgPicture.asset(
-                "svgs/empty_list.svg",
+                "svg/empty_list.svg",
                 color: progressColor ?? primaryColor,
                 width: size,
                 height: size,
@@ -94,7 +94,7 @@ class LoadingWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SvgPicture.asset(
-                "svgs/loading_idle.svg",
+                "svg/loading_idle.svg",
                 color: progressColor ?? primaryColor,
                 width: size,
                 height: size,

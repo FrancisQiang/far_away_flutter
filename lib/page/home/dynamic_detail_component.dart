@@ -172,10 +172,14 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                   ),
                   Container(
                     child: commentList.isEmpty && emptyData
-                        ? CommentEmpty(
-                      width: ScreenUtil().setWidth(500),
-                      height: ScreenUtil().setHeight(400),
-                      margin: EdgeInsets.only(top: 10),
+                        ? Container(
+                      margin: EdgeInsets.only(
+                        bottom: ScreenUtil().setHeight(100)
+                      ),
+                      child: CommentEmpty(
+                        iconHeight: ScreenUtil().setHeight(350),
+                        iconWidth: ScreenUtil().setWidth(750),
+                      ),
                     )
                         : Column(
                       children: List.generate(commentList.length, (commentIndex) {
