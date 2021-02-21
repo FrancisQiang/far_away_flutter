@@ -36,21 +36,20 @@ class PhoneLoginPage extends StatelessWidget {
             Stack(
               children: [
                 Container(
-                  alignment: Alignment.bottomRight,
+                  // alignment: Alignment.bottomRight,
                   margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(200)
+                      left: ScreenUtil().setWidth(150)
                   ),
-                  height: ScreenUtil().setHeight(550),
-                  width: ScreenUtil().setWidth(550),
-                  child: SvgPicture.asset(
-                    'assets/svg/login_back.svg',
-                  ),
+                  height: ScreenUtil().setHeight(400),
+                  width: ScreenUtil().setWidth(600),
+                  child: Image.asset(
+                    "assets/png/login_bg.png"
+                  )
                 ),
                 Container(
-                  height: ScreenUtil().setHeight(320),
-                  color: Colors.transparent,
+                  height: ScreenUtil().setHeight(180),
                   margin: EdgeInsets.only(
-                    top: ScreenUtil().setHeight(230),
+                    top: ScreenUtil().setHeight(150),
                     left: ScreenUtil().setWidth(80),
                   ),
                   child: Column(
@@ -87,6 +86,9 @@ class PhoneLoginPage extends StatelessWidget {
             ),
             Expanded(
               child: Container(
+                margin: EdgeInsets.only(
+                  top: ScreenUtil().setHeight(50)
+                ),
                 child: PhoneLoginForm(),
               ),
             )

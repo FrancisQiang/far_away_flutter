@@ -121,23 +121,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               height: ScreenUtil().setWidth(36),
             ),
             label: '首页',
-            activeIcon: SvgPicture.asset(
-              'assets/svg/home_active.svg',
-              width: ScreenUtil().setWidth(25),
-              height: ScreenUtil().setWidth(35),
+            activeIcon: Image.asset(
+              'assets/png/home_active.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/svg/message_inactive.svg',
-              width: ScreenUtil().setWidth(25),
-              height: ScreenUtil().setWidth(35),
+            icon: Image.asset(
+              'assets/png/message_inactive.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
             label: '',
-            activeIcon: SvgPicture.asset(
-              'assets/svg/message_active.svg',
-              width: ScreenUtil().setWidth(25),
-              height: ScreenUtil().setWidth(35),
+            activeIcon: Image.asset(
+              'assets/png/message_active.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
           ),
           BottomNavigationBarItem(
@@ -156,29 +156,29 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/svg/message_inactive.svg',
-              width: ScreenUtil().setWidth(25),
-              height: ScreenUtil().setWidth(35),
+            icon: Image.asset(
+              'assets/png/message_inactive.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
             label: '',
-            activeIcon: SvgPicture.asset(
-              'assets/svg/message_active.svg',
-              width: ScreenUtil().setWidth(25),
-              height: ScreenUtil().setWidth(35),
+            activeIcon: Image.asset(
+              'assets/png/message_active.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/svg/profile_inactive.svg',
-              width: ScreenUtil().setWidth(25),
-              height: ScreenUtil().setWidth(35),
+            icon: Image.asset(
+              'assets/png/profile_inactive.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
             label: '',
-            activeIcon: SvgPicture.asset(
-              'assets/svg/profile_active.svg',
-              width: ScreenUtil().setWidth(25),
-              height: ScreenUtil().setWidth(35),
+            activeIcon: Image.asset(
+              'assets/png/profile_active.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
           ),
         ],
