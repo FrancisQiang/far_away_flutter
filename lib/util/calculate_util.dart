@@ -16,23 +16,13 @@ class CalculateUtil {
     }
   }
 
-  static int calculateWrapElementWidth(int count) {
-    if (count == 1) {
-      return 690;
-    } else if (count >= 5 || count == 3) {
-      return 225;
+  static int getJiugonggePercentage(int size) {
+    if (size == 1) {
+      return 1;
+    } if (size >= 5 || size == 3) {
+      return 3;
     } else {
-      return 340;
-    }
-  }
-
-  static int calculateCommentWrapElementWidth(int count) {
-    if (count == 1) {
-      return 220;
-    } else if (count >= 5 || count == 3) {
-      return 180;
-    } else {
-      return 250;
+      return 2;
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
+import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
@@ -15,17 +16,18 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:like_button/like_button.dart';
 
-class DynamicDetailWidget extends StatefulWidget {
+import 'dynamics_page.dart';
 
+class DynamicDetailWidget extends StatefulWidget {
   final String avatarHeroTag;
 
   final DynamicDetailBean dynamicDetailBean;
 
-  DynamicDetailWidget({@required this.avatarHeroTag, @required this.dynamicDetailBean});
+  DynamicDetailWidget(
+      {@required this.avatarHeroTag, @required this.dynamicDetailBean});
 
   @override
   _DynamicDetailWidgetState createState() => _DynamicDetailWidgetState();
-
 }
 
 class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
@@ -56,8 +58,8 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                             imageUrl: widget.dynamicDetailBean.userAvatar,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => ImageHolder(
-                              size: ScreenUtil().setWidth(100),
-                            ),
+                                  size: ScreenUtil().setWidth(100),
+                                ),
                             errorWidget: (context, url, error) =>
                                 ImageErrorWidget(
                                   size: ScreenUtil().setWidth(100),
@@ -65,22 +67,21 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                       ),
                     )),
                 Container(
-                  margin:
-                  EdgeInsets.only(left: ScreenUtil().setWidth(15)),
+                  margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                           child: Row(
-                            children: [
-                              Container(
-                                child: Text(
-                                  widget.dynamicDetailBean.username,
-                                  style: TextStyleTheme.h3,
-                                ),
-                              ),
-                            ],
-                          )),
+                        children: [
+                          Container(
+                            child: Text(
+                              widget.dynamicDetailBean.username,
+                              style: TextStyleTheme.h3,
+                            ),
+                          ),
+                        ],
+                      )),
                       Container(
                         child: Text(widget.dynamicDetailBean.signature,
                             style: TextStyleTheme.subH5),
@@ -102,65 +103,18 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
               style: TextStyleTheme.body,
             ),
           ),
-          widget.dynamicDetailBean.mediaList == null ||
-              widget.dynamicDetailBean.mediaList.isEmpty
-              ? SizedBox()
-              : Container(
-              margin: EdgeInsets.only(
-                top: ScreenUtil().setHeight(15),
-              ),
-              width: ScreenUtil().setWidth(750),
-              child: Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: ScreenUtil().setWidth(8),
-                  runSpacing: ScreenUtil().setHeight(10),
-                  children: List.generate(
-                      widget.dynamicDetailBean.mediaList.length, (mediaIndex) {
-                    return Container(
-                      width: ScreenUtil().setWidth(
-                          CalculateUtil.calculateWrapElementWidth(
-                              widget.dynamicDetailBean.mediaList.length)),
-                      height: ScreenUtil().setWidth(
-                          CalculateUtil.calculateWrapElementWidth(
-                              widget.dynamicDetailBean.mediaList.length)),
-                      child: ClipRRect(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(5.0)),
-                        child: CachedNetworkImage(
-                          imageUrl: widget.dynamicDetailBean
-                              .mediaList[mediaIndex].url,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            width: ScreenUtil().setWidth(
-                                CalculateUtil
-                                    .calculateWrapElementWidth(
-                                    widget.dynamicDetailBean
-                                        .mediaList.length)),
-                            height: ScreenUtil().setWidth(
-                                CalculateUtil
-                                    .calculateWrapElementWidth(
-                                    widget.dynamicDetailBean
-                                        .mediaList.length)),
-                            alignment: Alignment.center,
-                            child: SpinKitPumpingHeart(
-                              color: Theme.of(context).primaryColor,
-                              size: ScreenUtil().setSp(40),
-                              duration:
-                              Duration(milliseconds: 2000),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) =>
-                          new Icon(
-                            Icons.error,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      ),
-                    );
-                  }))),
+          Container(
+            margin: EdgeInsets.only(
+              top: ScreenUtil().setHeight(10)
+            ),
+            child: MediaPreview(
+              dynamicDetailBean: widget.dynamicDetailBean,
+            ),
+          ),
           TimeLocationBar(
             width: ScreenUtil().setWidth(750),
-            time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(widget.dynamicDetailBean.publishTime)),
+            time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
+                widget.dynamicDetailBean.publishTime)),
             location: widget.dynamicDetailBean.location,
             margin: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
           ),
@@ -169,8 +123,8 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
               top: ScreenUtil().setHeight(20),
             ),
             padding: EdgeInsets.symmetric(
-              // horizontal: ScreenUtil().setWidth(20)
-            ),
+                // horizontal: ScreenUtil().setWidth(20)
+                ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -182,7 +136,7 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                           token: ProviderUtil.globalInfoProvider.jwt,
                           thumb: !isLiked,
                           dynamicId: widget.dynamicDetailBean.id);
-                      if(!isLiked) {
+                      if (!isLiked) {
                         widget.dynamicDetailBean.thumbCount++;
                         widget.dynamicDetailBean.thumbed = true;
                       } else {
@@ -198,9 +152,10 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                       dotPrimaryColor: Colors.orangeAccent,
                       dotSecondaryColor: Colors.orange,
                     ),
-                    likeCountAnimationType: widget.dynamicDetailBean.thumbCount < 1000
-                        ? LikeCountAnimationType.part
-                        : LikeCountAnimationType.none,
+                    likeCountAnimationType:
+                        widget.dynamicDetailBean.thumbCount < 1000
+                            ? LikeCountAnimationType.part
+                            : LikeCountAnimationType.none,
                     likeBuilder: (bool isLiked) {
                       return Icon(
                         Icons.favorite,
@@ -209,9 +164,7 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                       );
                     },
                     likeCount: widget.dynamicDetailBean.thumbCount,
-                    likeCountPadding: EdgeInsets.only(
-                        left: 8
-                    ),
+                    likeCountPadding: EdgeInsets.only(left: 8),
                     countBuilder: (int count, bool isLiked, String text) {
                       Color color = isLiked ? Colors.redAccent : Colors.black;
                       Widget result;

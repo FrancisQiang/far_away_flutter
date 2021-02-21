@@ -45,7 +45,7 @@ class TimeLocationBar extends StatelessWidget {
           StringUtil.isEmpty(location)
               ? SizedBox()
               : Container(
-                  width: width * 0.4,
+                  width: width * 0.45,
                   child: Text(
                     location,
                     style: TextStyleTheme.subH5,

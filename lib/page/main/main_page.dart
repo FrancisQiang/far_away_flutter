@@ -115,10 +115,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         },
         items: [
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/svg/home_inactive.svg',
-              width: ScreenUtil().setWidth(30),
-              height: ScreenUtil().setWidth(35),
+            icon: Image.asset(
+              'assets/png/home_inactive.png',
+              width: ScreenUtil().setWidth(36),
+              height: ScreenUtil().setWidth(36),
             ),
             label: '首页',
             activeIcon: SvgPicture.asset(

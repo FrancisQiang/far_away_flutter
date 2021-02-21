@@ -3,14 +3,13 @@ import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
+import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/init_refresh_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
-import 'package:far_away_flutter/page/photo/video_preview.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
-import 'package:far_away_flutter/param/media_view_page_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
@@ -26,6 +25,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -121,8 +121,8 @@ class _DynamicsPageState extends State<DynamicsPage>
                     param: DynamicDetailParam(
                         avatarHeroTag: 'dynamic_${dynamicList[index].id}',
                         dynamicDetailBean: dynamicList[index])),
-                child: DynamicPreviewCard(
-                    dynamicDetailBean: dynamicList[index]));
+                child:
+                    DynamicPreviewCard(dynamicDetailBean: dynamicList[index]));
           })));
     });
   }
@@ -135,11 +135,14 @@ class DynamicPreviewCard extends StatelessWidget {
 
   Widget _buildMediaWrap() {
     return dynamicDetailBean.type == 1 ||
-        dynamicDetailBean.mediaList.isEmpty ||
-        dynamicDetailBean.mediaList == null
+            dynamicDetailBean.mediaList.isEmpty ||
+            dynamicDetailBean.mediaList == null
         ? SizedBox()
-        : MediaPreview(
-            dynamicDetailBean: dynamicDetailBean,
+        : Container(
+            margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+            child: MediaPreview(
+              dynamicDetailBean: dynamicDetailBean,
+            ),
           );
   }
 
@@ -265,9 +268,11 @@ class DynamicPreviewCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 TimeLocationBar(
-                  time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(dynamicDetailBean.publishTime)),
+                  time: DateUtil.getTimeString(
+                      DateTime.fromMillisecondsSinceEpoch(
+                          dynamicDetailBean.publishTime)),
                   location: dynamicDetailBean.location,
-                  width: ScreenUtil().setWidth(440),
+                  width: ScreenUtil().setWidth(500),
                   margin: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
                 ),
                 Expanded(
@@ -299,21 +304,29 @@ class DynamicPreviewCard extends StatelessWidget {
                             dotSecondaryColor: Colors.orange,
                           ),
                           likeBuilder: (bool isLiked) {
-                            return Icon(
-                              Icons.favorite,
-                              color: isLiked ? Colors.redAccent : Colors.black,
-                              size: ScreenUtil().setSp(42),
-                            );
+                            if (isLiked) {
+                              return Icon(
+                                FontAwesomeIcons.solidHeart,
+                                color: Colors.redAccent,
+                                size: ScreenUtil().setSp(35),
+                              );
+                            } else {
+                              return Icon(
+                                FontAwesomeIcons.heart,
+                                color: Colors.black,
+                                size: ScreenUtil().setSp(35),
+                              );
+                            }
                           },
                           likeCount: dynamicDetailBean.thumbCount,
-                          likeCountPadding: EdgeInsets.only(
-                            left: 5
-                          ),
-                          likeCountAnimationType: dynamicDetailBean.thumbCount < 1000
-                              ? LikeCountAnimationType.part
-                              : LikeCountAnimationType.none,
+                          likeCountPadding: EdgeInsets.only(left: 5),
+                          likeCountAnimationType:
+                              dynamicDetailBean.thumbCount < 1000
+                                  ? LikeCountAnimationType.part
+                                  : LikeCountAnimationType.none,
                           countBuilder: (int count, bool isLiked, String text) {
-                            Color color = isLiked ? Colors.redAccent : Colors.black;
+                            Color color =
+                                isLiked ? Colors.redAccent : Colors.black;
                             Widget result;
                             if (count == 0) {
                               result = SizedBox();
@@ -333,57 +346,29 @@ class DynamicPreviewCard extends StatelessWidget {
                           NavigatorUtil.toDynamicDetailPage(context,
                               param: DynamicDetailParam(
                                   scrollToComment: true,
-                                  dynamicDetailBean: dynamicDetailBean)
-                          );
+                                  dynamicDetailBean: dynamicDetailBean));
                         },
                         child: Container(
-                            child: Stack(
-                          overflow: Overflow.visible,
+                          margin: EdgeInsets.only(
+                            left: ScreenUtil().setWidth(8)
+                          ),
+                            child: Row(
                           children: [
                             Container(
-                              child: SvgPicture.asset(
-                                'assets/svg/comment.svg',
-                                width: ScreenUtil().setWidth(40),
-                                height: ScreenUtil().setWidth(40),
+                                child: Icon(
+                              FontAwesomeIcons.commentDots,
+                              size: ScreenUtil().setSp(35),
+                            )),
+                            Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                CalculateUtil.simplifyCount(
+                                    dynamicDetailBean.commentsCount),
                               ),
-                            ),
-                            dynamicDetailBean.commentsCount != null &&
-                                dynamicDetailBean.commentsCount > 0
-                                ? Positioned(
-                                    right: -ScreenUtil().setWidth(
-                                        CalculateUtil.simplifyCount(
-                                            dynamicDetailBean
-                                                        .commentsCount)
-                                                .length *
-                                            8),
-                                    top: -ScreenUtil().setHeight(5),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: ScreenUtil().setWidth(6)),
-                                      decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(30)),
-                                      child: Text(
-                                        CalculateUtil.simplifyCount(
-                                            dynamicDetailBean.commentsCount),
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: ScreenUtil().setSp(15),
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )
-                                : SizedBox()
+                            )
                           ],
                         )),
                       ),
-                      Container(
-                          child: SvgPicture.asset(
-                        'assets/svg/share.svg',
-                        width: ScreenUtil().setWidth(40),
-                        height: ScreenUtil().setWidth(40),
-                      ))
                     ],
                   ),
                 )
@@ -393,81 +378,5 @@ class DynamicPreviewCard extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class MediaPreview extends StatelessWidget {
-  final DynamicDetailBean dynamicDetailBean;
-
-  MediaPreview({@required this.dynamicDetailBean});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.only(
-          top: ScreenUtil().setHeight(15),
-        ),
-        width: ScreenUtil().setWidth(750),
-        child: Wrap(
-            alignment: WrapAlignment.start,
-            spacing: ScreenUtil().setWidth(8),
-            runSpacing: ScreenUtil().setHeight(10),
-            children:
-                List.generate(dynamicDetailBean.mediaList.length, (mediaIndex) {
-              double sideLength = ScreenUtil().setWidth(
-                  CalculateUtil.calculateWrapElementWidth(
-                      dynamicDetailBean.mediaList.length));
-              return Container(
-                  width: sideLength,
-                  height: sideLength,
-                  child: GestureDetector(
-                    onTap: () {
-                      NavigatorUtil.toMediaViewPage(context,
-                          param: MediaViewPageParam(
-                              mediaList: dynamicDetailBean.mediaList,
-                              currentIndex: mediaIndex,
-                              businessId: dynamicDetailBean.id,
-                              businessType: 1));
-                    },
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        child: dynamicDetailBean.mediaList[mediaIndex].type == 1
-                            ? Hero(
-                                tag: '1:${dynamicDetailBean.id}:tag:$mediaIndex',
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                  dynamicDetailBean.mediaList[mediaIndex].url,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(
-                                    alignment: Alignment.center,
-                                    width: sideLength,
-                                    height: sideLength,
-                                    child: SpinKitPumpingHeart(
-                                      color: Theme.of(context).primaryColor,
-                                      size: ScreenUtil().setSp(40),
-                                      duration: Duration(milliseconds: 2000),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) => Icon(
-                                    Icons.error,
-                                    color: Colors.redAccent,
-                                  ),
-                                ),
-                              )
-                            : VideoPreview(
-                                url: dynamicDetailBean.mediaList[mediaIndex].url,
-                                placeHolder: Container(
-                                  alignment: Alignment.center,
-                                  width: sideLength,
-                                  height: sideLength,
-                                  child: SpinKitPumpingHeart(
-                                    color: Theme.of(context).primaryColor,
-                                    size: ScreenUtil().setSp(40),
-                                    duration: Duration(milliseconds: 2000),
-                                  ),
-                                ),
-                              )),
-                  ));
-            })));
   }
 }
