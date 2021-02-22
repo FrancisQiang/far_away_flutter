@@ -22,8 +22,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:like_button/like_button.dart';
@@ -166,10 +164,10 @@ class DynamicPreviewCard extends StatelessWidget {
                   children: [
                     Container(
                       child: StringUtil.isEmpty(dynamicDetailBean.linkImage)
-                          ? SvgPicture.asset(
-                              'assets/svg/www.svg',
-                              width: ScreenUtil().setWidth(100),
-                              height: ScreenUtil().setWidth(100),
+                          ? Image.asset(
+                              'assets/png/network.png',
+                              width: ScreenUtil().setWidth(120),
+                              height: ScreenUtil().setWidth(120),
                             )
                           : CachedNetworkImage(
                               imageUrl: dynamicDetailBean.linkImage,
@@ -349,25 +347,24 @@ class DynamicPreviewCard extends StatelessWidget {
                                   dynamicDetailBean: dynamicDetailBean));
                         },
                         child: Container(
-                          margin: EdgeInsets.only(
-                            left: ScreenUtil().setWidth(8)
-                          ),
+                            margin:
+                                EdgeInsets.only(left: ScreenUtil().setWidth(8)),
                             child: Row(
-                          children: [
-                            Container(
-                                child: Icon(
-                              FontAwesomeIcons.commentDots,
-                              size: ScreenUtil().setSp(35),
+                              children: [
+                                Container(
+                                    child: Icon(
+                                  FontAwesomeIcons.commentDots,
+                                  size: ScreenUtil().setSp(35),
+                                )),
+                                Container(
+                                  margin: EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    CalculateUtil.simplifyCount(
+                                        dynamicDetailBean.commentsCount),
+                                  ),
+                                )
+                              ],
                             )),
-                            Container(
-                              margin: EdgeInsets.only(left: 5),
-                              child: Text(
-                                CalculateUtil.simplifyCount(
-                                    dynamicDetailBean.commentsCount),
-                              ),
-                            )
-                          ],
-                        )),
                       ),
                     ],
                   ),

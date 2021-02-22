@@ -5,7 +5,7 @@ import 'package:far_away_flutter/component/circle_moving_bubble.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final double scrollPixels;
@@ -45,50 +45,50 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           // 背景
           Container(
               child: Stack(
-                children: [
-                  // cover背景
-                  Container(
-                      height: ScreenUtil().setHeight(650),
-                      width: double.infinity,
-                      child: CachedNetworkImage(
-                        imageUrl: widget.globalInfoProvider.userInfoBean == null
-                            ? ''
-                            : widget.globalInfoProvider.userInfoBean.cover,
-                        fit: BoxFit.cover,
-                      )),
-                  // cover背景高斯模糊
-                  Positioned.fill(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: (Color.fromRGBO(225, 225, 225, 1))
-                              .withOpacity(0.1),
-                        ),
-                      ),
+            children: [
+              // cover背景
+              Container(
+                  height: ScreenUtil().setHeight(650),
+                  width: double.infinity,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.globalInfoProvider.userInfoBean == null
+                        ? ''
+                        : widget.globalInfoProvider.userInfoBean.cover,
+                    fit: BoxFit.cover,
+                  )),
+              // cover背景高斯模糊
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color:
+                          (Color.fromRGBO(225, 225, 225, 1)).withOpacity(0.1),
                     ),
                   ),
-                  // cover背景运动小球 用户属性
-                  Positioned.fill(
-                      child: Stack(
-                          children: List.generate(
-                              widget.bubbleOffsetList.length, (index) {
-                            return CircleMovingBubble(
-                                top: widget.bubbleOffsetList[index].dy,
-                                left: widget.bubbleOffsetList[index].dx,
-                                radians: widget.bubbleRadians,
-                                diameter: widget.bubbleDiameter,
-                                backgroundColor: Colors.black38,
-                                child: Text(
-                                  widget.textList[index],
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: widget.bubbleTextFontSize,
-                                      decoration: TextDecoration.none),
-                                ));
-                          })))
-                ],
-              )),
+                ),
+              ),
+              // cover背景运动小球 用户属性
+              Positioned.fill(
+                  child: Stack(
+                      children: List.generate(widget.bubbleOffsetList.length,
+                          (index) {
+                return CircleMovingBubble(
+                    top: widget.bubbleOffsetList[index].dy,
+                    left: widget.bubbleOffsetList[index].dx,
+                    radians: widget.bubbleRadians,
+                    diameter: widget.bubbleDiameter,
+                    backgroundColor: Colors.black38,
+                    child: Text(
+                      widget.textList[index],
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: widget.bubbleTextFontSize,
+                          decoration: TextDecoration.none),
+                    ));
+              })))
+            ],
+          )),
           // 用户相关资料
           Positioned(
             top: ScreenUtil().setHeight(200),
@@ -114,16 +114,15 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                               color: Colors.white)),
                       child: ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl: widget.globalInfoProvider.userInfoBean == null
-                                ? ''
-                                : widget.globalInfoProvider.userInfoBean.avatar,
-                            fit: BoxFit.cover,
-                          )),
+                        imageUrl: widget.globalInfoProvider.userInfoBean == null
+                            ? ''
+                            : widget.globalInfoProvider.userInfoBean.avatar,
+                        fit: BoxFit.cover,
+                      )),
                     ),
                     Container(
-                        margin: EdgeInsets.only(
-                          top: ScreenUtil().setHeight(20)
-                        ),
+                        margin:
+                            EdgeInsets.only(top: ScreenUtil().setHeight(20)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -133,7 +132,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                               child: Text(
                                 widget.globalInfoProvider.userInfoBean == null
                                     ? ''
-                                    : widget.globalInfoProvider.userInfoBean.userName,
+                                    : widget.globalInfoProvider.userInfoBean
+                                        .userName,
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: ScreenUtil().setSp(35),
@@ -142,16 +142,33 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                               ),
                             ),
                             // 性别
-                            widget.globalInfoProvider.userInfoBean != null
-                                && widget.globalInfoProvider.userInfoBean.gender != 0
+                            widget.globalInfoProvider.userInfoBean != null &&
+                                    widget.globalInfoProvider.userInfoBean
+                                            .gender !=
+                                        0
                                 ? Container(
-                              margin: EdgeInsets.only(
-                                  left: ScreenUtil().setWidth(8)),
-                              height: ScreenUtil().setWidth(42),
-                              width: ScreenUtil().setWidth(42),
-                              child: SvgPicture.asset(
-                                  'assets/svg/${widget.globalInfoProvider.userInfoBean.gender == 1 ? 'male' : 'female'}.svg'),
-                            )
+                                    margin: EdgeInsets.only(
+                                        left: ScreenUtil().setWidth(8)),
+                                    height: ScreenUtil().setWidth(45),
+                                    width: ScreenUtil().setWidth(45),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: widget.globalInfoProvider
+                                          .userInfoBean.gender ==
+                                          1
+                                          ? Colors.blueAccent
+                                          : Colors.pinkAccent,
+                                    ),
+                                    child: Icon(
+                                      widget.globalInfoProvider.userInfoBean
+                                                  .gender ==
+                                              1
+                                          ? FontAwesomeIcons.mars
+                                          : FontAwesomeIcons.venus,
+                                      size: ScreenUtil().setSp(28),
+                                      color: Colors.white
+                                    ),
+                                  )
                                 : Container(),
                           ],
                         )),
@@ -179,21 +196,30 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                         children: [
                           UserActiveInfoWidget(
                             title: "获赞",
-                            value: widget.globalInfoProvider.userInfoBean == null
-                                ? ''
-                                : widget.globalInfoProvider.userInfoBean.thumbCount.toString(),
+                            value:
+                                widget.globalInfoProvider.userInfoBean == null
+                                    ? ''
+                                    : widget.globalInfoProvider.userInfoBean
+                                        .thumbCount
+                                        .toString(),
                           ),
                           UserActiveInfoWidget(
                             title: "关注",
-                            value: widget.globalInfoProvider.userInfoBean == null
-                                ? ''
-                                : widget.globalInfoProvider.userInfoBean.followCount.toString(),
+                            value:
+                                widget.globalInfoProvider.userInfoBean == null
+                                    ? ''
+                                    : widget.globalInfoProvider.userInfoBean
+                                        .followCount
+                                        .toString(),
                           ),
                           UserActiveInfoWidget(
                             title: "粉丝",
-                            value: widget.globalInfoProvider.userInfoBean == null
-                                ? ''
-                                : widget.globalInfoProvider.userInfoBean.fansCount.toString(),
+                            value:
+                                widget.globalInfoProvider.userInfoBean == null
+                                    ? ''
+                                    : widget.globalInfoProvider.userInfoBean
+                                        .fansCount
+                                        .toString(),
                           ),
                         ],
                       ),
@@ -208,7 +234,6 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
 }
 
 class UserActiveInfoWidget extends StatelessWidget {
-
   final String value;
 
   final String title;
@@ -223,15 +248,14 @@ class UserActiveInfoWidget extends StatelessWidget {
         children: [
           Container(
               child: Text(
-                value,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: ScreenUtil().setSp(28),
-                    fontWeight: FontWeight.w500),
-              )),
+            value,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: ScreenUtil().setSp(28),
+                fontWeight: FontWeight.w500),
+          )),
           Container(
-            margin: EdgeInsets.only(
-                left: ScreenUtil().setWidth(5)),
+            margin: EdgeInsets.only(left: ScreenUtil().setWidth(5)),
             child: Text(
               title,
               style: TextStyle(
@@ -245,4 +269,3 @@ class UserActiveInfoWidget extends StatelessWidget {
     );
   }
 }
-

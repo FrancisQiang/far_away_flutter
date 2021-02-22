@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 
 class UserMoreServiceWidget extends StatelessWidget {
   @override
@@ -30,31 +29,31 @@ class UserMoreServiceWidget extends StatelessWidget {
             child: Column(
               children: ListTile.divideTiles(context: context, tiles: [
                 UserMoreServiceItem(
-                  svgUri: 'assets/svg/verification.svg',
+                  assetsPath: 'assets/png/verification.png',
                   title: '实名认证',
                 ),
                 UserMoreServiceItem(
-                  svgUri: 'assets/svg/hotel.svg',
+                  assetsPath: 'assets/png/hotel.png',
                   title: '我是旅店',
                 ),
                 UserMoreServiceItem(
-                  svgUri: 'assets/svg/feedback.svg',
+                  assetsPath: 'assets/png/feedback.png',
                   title: '意见反馈',
                 ),
                 UserMoreServiceItem(
-                  svgUri: 'assets/svg/moon.svg',
+                  assetsPath: 'assets/png/night_mode.png',
                   title: '夜间模式',
                 ),
                 UserMoreServiceItem(
-                  svgUri: 'assets/svg/settings.svg',
+                  assetsPath: 'assets/png/settings.png',
                   title: '账号设置',
                 ),
                 UserMoreServiceItem(
-                  svgUri: 'assets/svg/about.svg',
+                  assetsPath: 'assets/png/about.png',
                   title: '关于乏味',
                 ),
                 UserMoreServiceItem(
-                  svgUri: 'assets/svg/partner.svg',
+                  assetsPath: 'assets/png/partner.png',
                   title: '乏味合伙人',
                 ),
               ]).toList(),
@@ -68,19 +67,19 @@ class UserMoreServiceWidget extends StatelessWidget {
 
 class UserMoreServiceItem extends StatelessWidget {
 
-  final String svgUri;
+  final String assetsPath;
 
   final String title;
 
-  UserMoreServiceItem({@required this.svgUri, @required this.title});
+  UserMoreServiceItem({@required this.assetsPath, @required this.title});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Container(
-        height: ScreenUtil().setWidth(40),
-        width: ScreenUtil().setWidth(40),
-        child: SvgPicture.asset(svgUri),
+      leading: Image.asset(
+        assetsPath,
+        height: ScreenUtil().setWidth(50),
+        width: ScreenUtil().setWidth(50),
       ),
       title: Text(
         title,

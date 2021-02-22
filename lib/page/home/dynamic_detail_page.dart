@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'comment_bottom.dart';
@@ -54,10 +53,10 @@ class DynamicDetailPage extends StatelessWidget {
               child: Container(
                   padding: EdgeInsets.symmetric(
                       horizontal: ScreenUtil().setWidth(30)),
-                  child: SvgPicture.asset(
-                    'assets/svg/three_dots.svg',
-                    width: ScreenUtil().setWidth(30),
-                  )),
+                  child: Icon(
+                    FontAwesomeIcons.ellipsisH
+                  )
+              ),
             )
           ],
         ),

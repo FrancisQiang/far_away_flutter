@@ -1,32 +1,37 @@
+import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class UserBaseServiceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-          top: ScreenUtil().setHeight(30), bottom: ScreenUtil().setHeight(30)),
+          top: ScreenUtil().setHeight(20), bottom: ScreenUtil().setHeight(15)),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           UserBaseServiceItem(
             title: '我的点赞',
-            svgUri: 'assets/svg/my_thumbed.svg',
+            boxColor: Colors.deepOrangeAccent,
+            iconData: FontAwesomeIcons.heartbeat,
           ),
           UserBaseServiceItem(
             title: '我的收藏',
-            svgUri: 'assets/svg/my_collection.svg',
+            boxColor: Colors.orangeAccent,
+            iconData: FontAwesomeIcons.star,
           ),
           UserBaseServiceItem(
             title: '我的发布',
-            svgUri: 'assets/svg/my_post.svg',
+            boxColor: Colors.greenAccent,
+            iconData: FontAwesomeIcons.fileAlt,
           ),
           UserBaseServiceItem(
             title: '我的评论',
-            svgUri: 'assets/svg/my_comment.svg',
+            boxColor: Colors.blueAccent,
+            iconData: FontAwesomeIcons.solidComments,
           ),
         ],
       ),
@@ -35,11 +40,14 @@ class UserBaseServiceWidget extends StatelessWidget {
 }
 
 class UserBaseServiceItem extends StatelessWidget {
-  final String svgUri;
+
+  final Color boxColor;
+
+  final IconData iconData;
 
   final String title;
 
-  UserBaseServiceItem({@required this.svgUri, @required this.title});
+  UserBaseServiceItem({@required this.boxColor, @required this.iconData, @required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +55,31 @@ class UserBaseServiceItem extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: ScreenUtil().setWidth(60),
-            width: ScreenUtil().setWidth(60),
-            child: SvgPicture.asset(svgUri),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              gradient: LinearGradient(
+                colors: [
+                  boxColor.withOpacity(0.7),
+                  boxColor.withOpacity(0.8),
+                  boxColor.withOpacity(0.9),
+                  boxColor.withOpacity(1.0),
+                ]
+              ),
+              color: boxColor,
+            ),
+            height: ScreenUtil().setWidth(100),
+            width: ScreenUtil().setWidth(100),
+            child: Icon(
+              iconData,
+              color: Colors.white,
+              size: ScreenUtil().setSp(50),
+            ),
           ),
           Container(
-            margin: EdgeInsets.only(top: ScreenUtil().setHeight(8)),
+            margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
             child: Text(
               title,
-              style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: ScreenUtil().setSp(22),
-                  letterSpacing: 0.6),
+              style: TextStyleTheme.h4,
             ),
           )
         ],

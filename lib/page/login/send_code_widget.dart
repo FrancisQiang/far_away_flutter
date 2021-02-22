@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:far_away_flutter/component/animated_login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 

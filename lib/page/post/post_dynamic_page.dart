@@ -17,7 +17,6 @@ import 'package:far_away_flutter/util/string_util.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -261,10 +260,10 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                 Container(
                   child:
                       StringUtil.isEmpty(dynamicPostProvider.linkData['image'])
-                          ? SvgPicture.asset(
-                              'assets/svg/www.svg',
-                              width: ScreenUtil().setWidth(100),
-                              height: ScreenUtil().setWidth(100),
+                          ? Image.asset(
+                              'assets/png/network.png',
+                              width: ScreenUtil().setWidth(120),
+                              height: ScreenUtil().setWidth(120),
                             )
                           : CachedNetworkImage(
                               imageUrl: dynamicPostProvider.linkData['image'],
@@ -499,14 +498,14 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                                   },
                             child: Container(
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SvgPicture.asset(
+                                Image.asset(
                                   dynamicPostProvider.linkChoose
-                                      ? 'assets/svg/album_inactive.svg'
-                                      : 'assets/svg/album_active.svg',
-                                  width: ScreenUtil().setWidth(50),
-                                  height: ScreenUtil().setHeight(50),
+                                      ? 'assets/png/album_inactive.png'
+                                      : 'assets/png/album.png',
+                                  width: ScreenUtil().setWidth(60),
+                                  height: ScreenUtil().setHeight(60),
                                 ),
                                 Container(
                                     margin: EdgeInsets.symmetric(horizontal: 5),
@@ -518,13 +517,13 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                                               ? Colors.black38
                                               : Colors.black),
                                     )),
-                                SvgPicture.asset(
+                                Image.asset(
                                   dynamicPostProvider.linkChoose
-                                      ? 'assets/svg/video_inactive.svg'
-                                      : 'assets/svg/video_active.svg',
-                                  width: ScreenUtil().setWidth(50),
-                                  height: ScreenUtil().setHeight(50),
-                                )
+                                      ? 'assets/png/video_inactive.png'
+                                      : 'assets/png/video_active.png',
+                                  width: ScreenUtil().setWidth(60),
+                                  height: ScreenUtil().setHeight(60),
+                                ),
                               ],
                             )),
                           ),
@@ -537,14 +536,13 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                                   _hyberlinkDialog(
                                       context, dynamicPostProvider);
                                 },
-                          child: Container(
-                              child: SvgPicture.asset(
-                            dynamicPostProvider.assetChoose
-                                ? 'assets/svg/hyberlink_inactive.svg'
-                                : 'assets/svg/hyberlink_active.svg',
+                          child: Image.asset(
+                            dynamicPostProvider.linkChoose
+                                ? 'assets/png/link_inactive.png'
+                                : 'assets/png/link_active.png',
                             width: ScreenUtil().setWidth(50),
                             height: ScreenUtil().setHeight(50),
-                          )),
+                          ),
                         ))
                       ],
                     ),

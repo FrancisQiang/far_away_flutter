@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class DynamicEmptyWidget extends StatelessWidget {
 
@@ -19,7 +18,9 @@ class DynamicEmptyWidget extends StatelessWidget {
             Container(
               height: height,
               width: width,
-              child: SvgPicture.asset('assets/svg/blank_page.svg'),
+              child: Image.asset(
+                'assets/png/blank_page.png'
+              ),
             ),
             Container(
               margin: EdgeInsets.only(top: 10),

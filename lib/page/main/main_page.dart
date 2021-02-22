@@ -14,8 +14,7 @@ import 'package:far_away_flutter/util/string_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'dart:convert' as convert;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -89,15 +88,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         fixedColor: Colors.deepOrangeAccent,
-        elevation: 0,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
         currentIndex: this._currentIndex,
         onTap: (index) {
-          print(index);
           if (index == 2) {
             showMaterialModalBottomSheet(
                 backgroundColor: Colors.transparent,
@@ -117,40 +114,40 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           BottomNavigationBarItem(
             icon: Image.asset(
               'assets/png/home_inactive.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
             label: '首页',
             activeIcon: Image.asset(
               'assets/png/home_active.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
               'assets/png/message_inactive.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
             label: '',
             activeIcon: Image.asset(
               'assets/png/message_active.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
           ),
           BottomNavigationBarItem(
             icon: Container(
-              width: ScreenUtil().setWidth(65),
-              height: ScreenUtil().setWidth(50),
+              width: ScreenUtil().setWidth(70),
+              height: ScreenUtil().setWidth(55),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   color: Colors.orange),
               child: Icon(
-                MyIcons.PLUS,
+                FontAwesomeIcons.plus,
                 color: Colors.black,
-                size: ScreenUtil().setSp(25),
+                size: ScreenUtil().setSp(30),
               ),
             ),
             label: '',
@@ -158,27 +155,27 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           BottomNavigationBarItem(
             icon: Image.asset(
               'assets/png/message_inactive.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
             label: '',
             activeIcon: Image.asset(
               'assets/png/message_active.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
               'assets/png/profile_inactive.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
             label: '',
             activeIcon: Image.asset(
               'assets/png/profile_active.png',
-              width: ScreenUtil().setWidth(36),
-              height: ScreenUtil().setWidth(36),
+              width: ScreenUtil().setWidth(40),
+              height: ScreenUtil().setWidth(40),
             ),
           ),
         ],

@@ -1,11 +1,8 @@
-import 'package:far_away_flutter/page/login/phone_login_bottom.dart';
 import 'package:far_away_flutter/page/login/phone_login_form_widget.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
-import 'package:far_away_flutter/properties/string_properties.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PhoneLoginPage extends StatelessWidget {

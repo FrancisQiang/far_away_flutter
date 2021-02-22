@@ -1,29 +1,22 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
-import 'package:far_away_flutter/component/circle_moving_bubble.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/page/user/user_base_service_widget.dart';
 import 'package:far_away_flutter/page/user/user_info_widget.dart';
 import 'package:far_away_flutter/page/user/user_more_service_widget.dart';
-import 'package:far_away_flutter/properties/shared_preferences_keys.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
-import 'package:far_away_flutter/util/sp_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:convert' as convert;
 
 import 'package:provider/provider.dart';
 
@@ -34,7 +27,6 @@ class UserCenterPage extends StatefulWidget {
 
 class _UserCenterPageState extends State<UserCenterPage>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-
   @override
   bool get wantKeepAlive => true;
 
@@ -61,9 +53,18 @@ class _UserCenterPageState extends State<UserCenterPage>
     if (_textList.isNotEmpty) {
       for (int i = 0; i < _textList.length; i++) {
         Offset offset = Offset(
-            x0 + realRadius * math.cos((180 - ((i + 1) * (180 / (_textList.length + 1)))) * math.pi / 180),
-            y0 - realRadius * math.sin((180 - ((i + 1) * (180 / (_textList.length + 1)))) * math.pi / 180)
-        );
+            x0 +
+                realRadius *
+                    math.cos(
+                        (180 - ((i + 1) * (180 / (_textList.length + 1)))) *
+                            math.pi /
+                            180),
+            y0 -
+                realRadius *
+                    math.sin(
+                        (180 - ((i + 1) * (180 / (_textList.length + 1)))) *
+                            math.pi /
+                            180));
         _bubbleOffsetList.add(offset);
       }
     }
@@ -71,23 +72,26 @@ class _UserCenterPageState extends State<UserCenterPage>
 
   /// 计算小球直径
   double _calculateBubbleDiameter() {
-    return ScreenUtil().setWidth(110 - (_scrollPixels * 0.8) < 0 ? 0 : 110 - (_scrollPixels * 0.8));
+    return ScreenUtil().setWidth(
+        110 - (_scrollPixels * 0.8) < 0 ? 0 : 110 - (_scrollPixels * 0.8));
   }
 
   /// 计算小球文本内容大小
   double _calculateBubbleFontSize() {
-    return ScreenUtil().setSp(20 - (_scrollPixels * 0.2) < 0 ? 0 : 20 - (_scrollPixels * 0.2));
+    return ScreenUtil()
+        .setSp(20 - (_scrollPixels * 0.2) < 0 ? 0 : 20 - (_scrollPixels * 0.2));
   }
 
   /// 计算小球旋转角度
-  double _calculateBubbleRadians () {
+  double _calculateBubbleRadians() {
     return (_scrollPixels / 100 * math.pi);
   }
 
   /// 获取用户信息并更新
   _getUserInfo(GlobalInfoProvider globalInfoProvider) async {
     // 更新用户信息
-    Response<dynamic> userInfoResponse = await ApiMethodUtil.getUserInfo(token: globalInfoProvider.jwt);
+    Response<dynamic> userInfoResponse =
+        await ApiMethodUtil.getUserInfo(token: globalInfoProvider.jwt);
     ResponseBean response = ResponseBean.fromJson(userInfoResponse.data);
     globalInfoProvider.userInfoBean = UserInfoBean.fromJson(response.data);
     UserInfoBean userInfoBean = globalInfoProvider.userInfoBean;
@@ -100,8 +104,8 @@ class _UserCenterPageState extends State<UserCenterPage>
   _generateBubbleList(UserInfoBean userInfoBean) {
     _textList.clear();
     if (userInfoBean.birthday != null) {
-      DateTime birthday = DateTime.fromMillisecondsSinceEpoch(
-          userInfoBean.birthday);
+      DateTime birthday =
+          DateTime.fromMillisecondsSinceEpoch(userInfoBean.birthday);
       _textList.add(DateUtil.getBirthdayLabel(birthday));
       if (!StringUtil.isEmpty(userInfoBean.constellation)) {
         _textList.add(userInfoBean.constellation);
@@ -149,7 +153,8 @@ class _UserCenterPageState extends State<UserCenterPage>
           children: [
             NotificationListener(
                 onNotification: (scrollNotification) {
-                  if (scrollNotification is ScrollUpdateNotification && scrollNotification.depth == 0) {
+                  if (scrollNotification is ScrollUpdateNotification &&
+                      scrollNotification.depth == 0) {
                     _onScroll(scrollNotification.metrics.pixels);
                   }
                   return true;
@@ -187,14 +192,17 @@ class _UserCenterPageState extends State<UserCenterPage>
             Opacity(
               opacity: appbarOpacity,
               child: Container(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                padding:
+                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [BoxShadow(color: Colors.black)]),
                 alignment: Alignment.center,
                 height: 70.0,
                 child: Text(
-                  globalInfoProvider.userInfoBean == null ? '' : globalInfoProvider.userInfoBean.userName,
+                  globalInfoProvider.userInfoBean == null
+                      ? ''
+                      : globalInfoProvider.userInfoBean.userName,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: Colors.black,
@@ -209,5 +217,4 @@ class _UserCenterPageState extends State<UserCenterPage>
       },
     );
   }
-
 }
