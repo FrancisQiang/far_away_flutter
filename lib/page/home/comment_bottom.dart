@@ -162,33 +162,35 @@ class EditBottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+        height: ScreenUtil().setHeight(100),
         decoration: BoxDecoration(
-          boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 1.2)],
+          boxShadow: [BoxShadow(color: Colors.black45, blurRadius: 4)],
           color: Colors.white,
         ),
         padding: EdgeInsets.symmetric(
-            vertical: ScreenUtil().setHeight(10), horizontal: 2),
+            vertical: ScreenUtil().setHeight(15), horizontal: 2),
         child: Consumer<DynamicCommentChosenProvider>(
           builder: (context, dynamicCommentChosenProvider, child) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 2, bottom: 2),
-                  decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8)),
+                  margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   width: ScreenUtil().setWidth(450),
                   child: TextField(
                     controller: _controller,
                     maxLines: 5,
                     minLines: 1,
                     decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(
-                            left: ScreenUtil().setWidth(15),
-                            top: ScreenUtil().setHeight(5),
-                            bottom: ScreenUtil().setHeight(5)),
-                        border: InputBorder.none,
+                        focusedBorder: null,
+                        filled: true,
+                        fillColor: Color(0xFFF0F0F0),
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: ScreenUtil().setWidth(20)),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: BorderSide(
+                                color: Colors.transparent, width: 0.0)),
                         hintText:
                             '回复 ${dynamicCommentChosenProvider.targetUsername}: ',
                         hintStyle: TextStyleTheme.subH4),
