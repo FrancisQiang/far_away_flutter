@@ -11,11 +11,7 @@ class MediaViewPage extends StatefulWidget {
 
   final int currentIndex;
 
-  final String businessId;
-
-  final int businessType;
-
-  MediaViewPage({@required this.mediaList, this.currentIndex = 0, @required this.businessId, @required this.businessType});
+  MediaViewPage({@required this.mediaList, this.currentIndex = 0});
 
   @override
   _MediaViewPageState createState() => _MediaViewPageState();

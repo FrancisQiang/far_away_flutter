@@ -4,6 +4,7 @@ import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
+import 'package:far_away_flutter/component/link_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
@@ -103,13 +104,23 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
               style: TextStyleTheme.body,
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(
-              top: ScreenUtil().setHeight(10)
+          widget.dynamicDetailBean.type == 0
+              ? Container(
+                  margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+                  child: MediaPreview(
+                    mediaList: widget.dynamicDetailBean.mediaList,
+                  ),
+                )
+              : Container(
+            width: ScreenUtil().setWidth(650),
+            padding: EdgeInsets.symmetric(
+                vertical: ScreenUtil().setHeight(30)
             ),
-            child: MediaPreview(
-              dynamicDetailBean: widget.dynamicDetailBean,
-            ),
+            child: LinkWidget(
+                linkURL: widget.dynamicDetailBean.link,
+                linkImg: widget.dynamicDetailBean.linkImage,
+                linkTitle: widget.dynamicDetailBean.linkTitle,
+                imgSideLength: ScreenUtil().setWidth(120)),
           ),
           TimeLocationBar(
             width: ScreenUtil().setWidth(750),

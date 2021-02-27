@@ -11,26 +11,26 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 /// 动态 九宫格媒体组建 适配图片和视频类型
 class MediaPreview extends StatelessWidget {
 
-  final DynamicDetailBean dynamicDetailBean;
+  final List<MediaList> mediaList;
 
   final double spacing;
 
   final double runSpacing;
 
-  MediaPreview({@required this.dynamicDetailBean, this.spacing = 4, this.runSpacing = 4});
+  MediaPreview({@required this.mediaList, this.spacing = 4, this.runSpacing = 4});
 
   @override
   Widget build(BuildContext context) {
-    int rowCount = CalculateUtil.getJiugonggePercentage(dynamicDetailBean.mediaList.length);
+    int rowCount = CalculateUtil.getJiugonggePercentage(mediaList.length);
     return Container(
         child: LayoutBuilder(
           builder: (context, constrains) {
-            double sideLength = (constrains.maxWidth - (rowCount - 1) * spacing) / rowCount;
+            double sideLength = (constrains.maxWidth - (rowCount - 1) * spacing - 5) / rowCount;
             return Wrap(
                 alignment: WrapAlignment.start,
                 spacing: spacing,
                 runSpacing: runSpacing,
-                children: List.generate(dynamicDetailBean.mediaList.length, (mediaIndex) {
+                children: List.generate(mediaList.length, (mediaIndex) {
                   return Container(
                       width: sideLength,
                       height: sideLength,
@@ -38,38 +38,33 @@ class MediaPreview extends StatelessWidget {
                         onTap: () {
                           NavigatorUtil.toMediaViewPage(context,
                               param: MediaViewPageParam(
-                                  mediaList: dynamicDetailBean.mediaList,
-                                  currentIndex: mediaIndex,
-                                  businessId: dynamicDetailBean.id,
-                                  businessType: 1));
+                                  mediaList: mediaList,
+                                  currentIndex: mediaIndex)
+                          );
                         },
                         child: ClipRRect(
                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            child: dynamicDetailBean.mediaList[mediaIndex].type == 1
-                                ? Hero(
-                              tag: '1:${dynamicDetailBean.id}:tag:$mediaIndex',
-                              child: CachedNetworkImage(
-                                imageUrl:
-                                dynamicDetailBean.mediaList[mediaIndex].url,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  alignment: Alignment.center,
-                                  width: sideLength,
-                                  height: sideLength,
-                                  child: SpinKitPumpingHeart(
-                                    color: Theme.of(context).primaryColor,
-                                    size: ScreenUtil().setSp(40),
-                                    duration: Duration(milliseconds: 2000),
-                                  ),
+                            child: mediaList[mediaIndex].type == 1
+                                ? CachedNetworkImage(
+                              imageUrl: mediaList[mediaIndex].url,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                alignment: Alignment.center,
+                                width: sideLength,
+                                height: sideLength,
+                                child: SpinKitPumpingHeart(
+                                  color: Theme.of(context).primaryColor,
+                                  size: ScreenUtil().setSp(40),
+                                  duration: Duration(milliseconds: 2000),
                                 ),
-                                errorWidget: (context, url, error) => Icon(
-                                  Icons.error,
-                                  color: Colors.redAccent,
-                                ),
+                              ),
+                              errorWidget: (context, url, error) => Icon(
+                                Icons.error,
+                                color: Colors.redAccent,
                               ),
                             )
                                 : VideoPreview(
-                              url: dynamicDetailBean.mediaList[mediaIndex].url,
+                              url: mediaList[mediaIndex].url,
                               placeHolder: Container(
                                 alignment: Alignment.center,
                                 width: sideLength,

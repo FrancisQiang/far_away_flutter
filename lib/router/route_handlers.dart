@@ -48,8 +48,6 @@ var mediaViewHandler = Handler(
   return MediaViewPage(
     mediaList: arguments.mediaList,
     currentIndex: arguments.currentIndex,
-    businessId: arguments.businessId,
-    businessType: arguments.businessType,
   );
 });
 
