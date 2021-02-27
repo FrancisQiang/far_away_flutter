@@ -10,6 +10,7 @@ import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
+import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -164,18 +165,12 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                     width: double.infinity,
                     child: Text(
                       '评论',
-                      style: TextStyle(
-                          fontSize: ScreenUtil().setSp(30),
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2),
+                      style: TextStyleTheme.subH3,
                     ),
                   ),
                   Container(
                     child: commentList.isEmpty && emptyData
                         ? Container(
-                      margin: EdgeInsets.only(
-                        bottom: ScreenUtil().setHeight(100)
-                      ),
                       child: CommentEmpty(
                         iconHeight: ScreenUtil().setHeight(350),
                         iconWidth: ScreenUtil().setWidth(750),
@@ -191,8 +186,7 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                   ),
                   Container(
                     alignment: Alignment.center,
-                    height: ScreenUtil()
-                        .setHeight(commentList.isEmpty ? 15 : 40),
+                    height: ScreenUtil().setHeight(100),
                   )
                 ],
               ),
