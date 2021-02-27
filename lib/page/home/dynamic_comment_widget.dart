@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
+import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
+import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/avatar_component.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
@@ -107,10 +109,12 @@ class CommentDetailWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AvatarComponent(avatar,
+          AvatarComponent(
+              avatar,
               sideLength: ScreenUtil().setWidth(100),
               holderSize: ScreenUtil().setSp(30),
-              errorWidgetSize: ScreenUtil().setSp(30)),
+              errorWidgetSize: ScreenUtil().setSp(30)
+          ),
           Container(
             width: ScreenUtil().setWidth(560),
             margin: EdgeInsets.only(left: ScreenUtil().setWidth(20)),
@@ -118,7 +122,6 @@ class CommentDetailWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  // width: double.infinity,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -154,7 +157,8 @@ class CommentDetailWidget extends StatelessWidget {
                           ),
                         )
                       ],
-                    )),
+                    )
+                ),
                 Container(
                   child: Text(
                     DateUtil.getTimeString(
@@ -174,48 +178,18 @@ class CommentDetailWidget extends StatelessWidget {
                 ),
                 pictureList.length == 0
                     ? SizedBox()
-                    : Container(
-                    margin: EdgeInsets.only(
-                      top: ScreenUtil().setHeight(15),
-                    ),
-                    width: ScreenUtil().setWidth(750),
-                    child: Wrap(
-                        alignment: WrapAlignment.start,
-                        spacing: ScreenUtil().setWidth(5),
-                        runSpacing: ScreenUtil().setHeight(10),
-                        children: List.generate(pictureList.length,
-                                (pictureIndex) {
-                              return Container(
-                                width: ScreenUtil().setWidth(180),
-                                child: ClipRRect(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                                  child: CachedNetworkImage(
-                                    imageUrl: pictureList[pictureIndex],
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        Container(
-                                          width: ScreenUtil().setWidth(180),
-                                          height: ScreenUtil().setWidth(180),
-                                          alignment: Alignment.center,
-                                          child: SpinKitPumpingHeart(
-                                            color: Theme
-                                                .of(context)
-                                                .primaryColor,
-                                            size: ScreenUtil().setSp(40),
-                                            duration: Duration(
-                                                milliseconds: 2000),
-                                          ),
-                                        ),
-                                    errorWidget: (context, url, error) =>
-                                    new Icon(
-                                      Icons.error,
-                                      color: Colors.redAccent,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }))),
+                    : Builder(builder: (context) {
+                      return Container(
+                        margin: EdgeInsets.only(
+                          top: 5
+                        ),
+                        child: MediaPreview(
+                          flex: false,
+                          rowCount: 3,
+                          mediaList: List.generate(pictureList.length, (index) => MediaList(type: 1, url: pictureList[index])),
+                        ),
+                      );
+                }),
               ],
             ),
           )

@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
+import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
+import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
@@ -344,11 +346,9 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                                           children: [
                                             Container(
                                               child: Text(
-                                                CalculateUtil
-                                                    .simplifyCount(
-                                                        childrenCommentList[
-                                                                index]
-                                                            .thumbCount),
+                                                CalculateUtil.simplifyCount(
+                                                    childrenCommentList[index]
+                                                        .thumbCount),
                                                 style: TextStyle(
                                                     color: Colors.black54,
                                                     fontSize:
@@ -407,46 +407,23 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                                       ]),
                                     ),
                                   ),
-                                  _getPictureList(childrenCommentList[index]
-                                                  .pictureUrlList)
-                                              .length ==
-                                          0
-                                      ? SizedBox()
-                                      : Container(
-                                          margin: EdgeInsets.only(
-                                            top: ScreenUtil().setHeight(15),
-                                          ),
-                                          width: ScreenUtil().setWidth(750),
-                                          child: Wrap(
-                                              alignment: WrapAlignment.start,
-                                              spacing: ScreenUtil().setWidth(5),
-                                              runSpacing:
-                                                  ScreenUtil().setHeight(10),
-                                              children: List.generate(
-                                                  _getPictureList(
-                                                          childrenCommentList[
-                                                                  index]
-                                                              .pictureUrlList)
-                                                      .length, (pictureIndex) {
-                                                return Container(
-                                                  width: ScreenUtil()
-                                                      .setWidth(180),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                5.0)),
-                                                    child: Image.network(
-                                                      _getPictureList(
-                                                              childrenCommentList[
-                                                                      index]
-                                                                  .pictureUrlList)[
-                                                          pictureIndex],
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                );
-                                              }))),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                      top: 5
+                                    ),
+                                    child: Builder(builder: (context) {
+                                      List<String> pictureList =
+                                          _getPictureList(
+                                              childrenCommentList[index]
+                                                  .pictureUrlList);
+                                      return MediaPreview(
+                                          mediaList: List.generate(
+                                              pictureList.length,
+                                              (index) => MediaList(
+                                                  type: 1,
+                                                  url: pictureList[index])));
+                                    }),
+                                  )
                                 ],
                               ),
                             )
@@ -465,25 +442,24 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
           left: 0,
           top: 0,
           child: Container(
-            decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15)))),
-            height: ScreenUtil().setHeight(80),
-            width: ScreenUtil().setWidth(750),
-            child: Center(
-              child: Text(
-                '乏味',
-                style: TextStyle(
-                    fontFamily: AssetProperties.FZ_SIMPLE,
-                    fontWeight: FontWeight.bold,
-                    fontSize: ScreenUtil().setSp(36),
-                    letterSpacing: 3),
-              ),
-            )
-          ),
+              decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15)))),
+              height: ScreenUtil().setHeight(80),
+              width: ScreenUtil().setWidth(750),
+              child: Center(
+                child: Text(
+                  '乏味',
+                  style: TextStyle(
+                      fontFamily: AssetProperties.FZ_SIMPLE,
+                      fontWeight: FontWeight.bold,
+                      fontSize: ScreenUtil().setSp(36),
+                      letterSpacing: 3),
+                ),
+              )),
         ),
         Positioned(
           left: 0,

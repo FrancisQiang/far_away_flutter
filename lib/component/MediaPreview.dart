@@ -17,11 +17,21 @@ class MediaPreview extends StatelessWidget {
 
   final double runSpacing;
 
-  MediaPreview({@required this.mediaList, this.spacing = 4, this.runSpacing = 4});
+  /// 展现模式 0为九宫格 1为自定义
+  final bool flex;
+
+  final int rowCount;
+
+  MediaPreview({@required this.mediaList, this.spacing = 4, this.runSpacing = 4, this.flex = true, this.rowCount});
 
   @override
   Widget build(BuildContext context) {
-    int rowCount = CalculateUtil.getJiugonggePercentage(mediaList.length);
+    int rowCount;
+    if (flex) {
+      rowCount = CalculateUtil.getJiugonggePercentage(mediaList.length);
+    }  else {
+      rowCount = this.rowCount;
+    }
     return Container(
         child: LayoutBuilder(
           builder: (context, constrains) {
