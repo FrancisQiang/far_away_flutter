@@ -109,7 +109,6 @@ flutter:
   assets:
     - assets/images/
     - assets/background/
-    - assets/svg/
     - assets/png/
   fonts:
     - family: lobster

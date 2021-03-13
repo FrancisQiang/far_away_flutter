@@ -6,6 +6,7 @@ import 'package:far_away_flutter/component/avatar_component.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/provider/dynamic_comment_chosen_provider.dart';
+import 'package:far_away_flutter/provider/together_comment_chosen_provider.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
@@ -83,6 +84,63 @@ class DynamicCommentWidget extends StatelessWidget {
   }
 }
 
+
+class TogetherCommentWidget extends StatelessWidget {
+  final CommentListBean commentListBean;
+
+  TogetherCommentWidget({this.commentListBean});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<TogetherCommentChosenProvider>(
+      builder: (context, togetherCommentChosenProvider, child) {
+        return GestureDetector(
+          onTap: () {
+            togetherCommentChosenProvider.pid = commentListBean.id;
+            togetherCommentChosenProvider.targetUserId =
+                commentListBean.fromUserId;
+            togetherCommentChosenProvider.targetUsername =
+                commentListBean.fromUsername;
+            togetherCommentChosenProvider.refresh();
+          },
+          child: Container(
+              margin: EdgeInsets.symmetric(
+                vertical: 10,
+              ),
+              child: Column(
+                children: [
+                  CommentDetailWidget(
+                    avatar: commentListBean.fromUserAvatar,
+                    username: commentListBean.fromUsername,
+                    publishTime: commentListBean.publishTime,
+                    thumbCount: commentListBean.thumbCount,
+                    content: commentListBean.content,
+                  ),
+                  commentListBean.children.isNotEmpty
+                      ? Container(
+                    width: ScreenUtil().setWidth(550),
+                    margin: EdgeInsets.only(
+                        left: ScreenUtil().setWidth(90),
+                        top: ScreenUtil().setHeight(20)),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setWidth(15),
+                        vertical: ScreenUtil().setHeight(10)),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(5)),
+                    child: ChildrenCommentPreviewWidget(
+                        parentComment: commentListBean),
+                  )
+                      : SizedBox()
+                ],
+              )),
+        );
+      },
+    );
+  }
+}
+
+
 class CommentDetailWidget extends StatelessWidget {
   final String avatar;
 
@@ -101,7 +159,7 @@ class CommentDetailWidget extends StatelessWidget {
     @required this.publishTime,
     @required this.thumbCount,
     @required this.content,
-    @required this.pictureList});
+    this.pictureList = const [] });
 
   @override
   Widget build(BuildContext context) {

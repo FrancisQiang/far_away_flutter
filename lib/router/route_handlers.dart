@@ -4,6 +4,7 @@ import 'package:far_away_flutter/page/login/phone_login_page.dart';
 import 'package:far_away_flutter/page/photo/asset_view_page.dart';
 import 'package:far_away_flutter/page/photo/media_view_page.dart';
 import 'package:far_away_flutter/page/search/search_page.dart';
+import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/param/asset_view_page_param.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
 import 'package:far_away_flutter/param/media_view_page_param.dart';
@@ -65,8 +66,9 @@ var locationChooseHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   String longitude = params["longitude"][0];
   String latitude = params["latitude"][0];
+  String type = params["type"][0];
   return ProviderUtil.getLocationChoosePage(
-      longitude: longitude, latitude: latitude);
+      longitude: longitude, latitude: latitude, type: type);
 });
 
 var assetViewHandler = Handler(
@@ -78,3 +80,13 @@ var assetViewHandler = Handler(
     currentIndex: arguments.currentIndex,
   );
 });
+
+var togetherDetailHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      TogetherDetailParam arguments =
+      context.settings.arguments as TogetherDetailParam;
+      return ProviderUtil.getTogetherDetailPage(
+          scrollToComment: arguments.scrollToComment,
+          avatarHeroTag: arguments.avatarHeroTag,
+          togetherInfoBean: arguments.togetherInfoBean);
+    });

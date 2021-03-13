@@ -4,7 +4,7 @@ class CalculateUtil {
     if (commentCount > 0 && commentCount <= 999) {
       return commentCount.toString();
     } else if (commentCount == 0) {
-      return '';
+      return '0';
     } else if (commentCount >= 1000 && commentCount <= 9999) {
       return '${(commentCount / 1000.0).toStringAsFixed(1)}k';
     } else if (commentCount >= 10000 && commentCount <= 99999) {

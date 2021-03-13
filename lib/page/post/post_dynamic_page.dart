@@ -6,6 +6,7 @@ import 'package:far_away_flutter/bean/dynamic_post_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/upload_response_bean.dart';
 import 'package:far_away_flutter/bean/upload_token_bean.dart';
+import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_asset_wrap_builder.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';
@@ -31,9 +32,8 @@ class PostDynamicPage extends StatefulWidget {
 }
 
 class _PostDynamicPageState extends State<PostDynamicPage> {
-  TextEditingController _dynamicContentController = TextEditingController();
 
-  TextEditingController _linkContentController = TextEditingController();
+  final String postType = "dynamic";
 
   Future<void> _loadAssets(PostProvider postProvider) async {
     List<AssetEntity> resultList;
@@ -47,11 +47,12 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
     }
     // 用户选中才进行更改
     if (resultList != null) {
-      postProvider.assets = resultList;
-      if (postProvider.assets != null &&
-          postProvider.assets.isNotEmpty) {
-        postProvider.assetChoose = true;
+      postProvider.dynamicAssets = resultList;
+      if (postProvider.dynamicAssets != null &&
+          postProvider.dynamicAssets.isNotEmpty) {
+        postProvider.dynamicAssetChoose = true;
       }
+      postProvider.refresh();
     }
   }
 
@@ -66,19 +67,21 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
     return result;
   }
 
+  bool _showLocation(PostProvider postProvider) {
+    return postProvider.addressMapping[postType] != null && postProvider.addressMapping[postType].type != AddressBeanWrapper.hideType;
+  }
+
   /// 发布动态
-  _postDynamic(PostProvider postProvider, String jwt,
-      String content) async {
+  _postDynamic(PostProvider postProvider, String jwt, String content) async {
     // 暂存
-    bool showLocation = postProvider.showLocation;
-    String location = postProvider.location;
-    double longitude = postProvider.addressBeanWrapper?.longitude;
-    double latitude = postProvider.addressBeanWrapper?.latitude;
+    bool showLocation = _showLocation(postProvider);
+    String location = postProvider.addressMapping[postType]?.name;
+    double longitude = postProvider.addressMapping[postType]?.longitude;
+    double latitude = postProvider.addressMapping[postType]?.latitude;
     List<AssetFile> files =
-        await _convertAssetToFile(postProvider.assets);
-    postProvider.showLocation = false;
-    postProvider.addressBeanWrapper = null;
-    postProvider.assets.clear();
+        await _convertAssetToFile(postProvider.dynamicAssets);
+    postProvider.addressMapping[postType] = null;
+    postProvider.dynamicAssets.clear();
     if (!StringUtil.isEmpty(jwt)) {
       Navigator.pop(context);
       ToastUtil.showNoticeToast("发布中请稍后");
@@ -90,10 +93,10 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
             UploadTokenBean.fromJson(responseBean.data);
         DynamicPostBean dynamicPostBean = DynamicPostBean();
         dynamicPostBean.content = content;
-        if (postProvider.linkChoose) {
-          dynamicPostBean.link = postProvider.link;
-          dynamicPostBean.linkImage = postProvider.linkData['image'];
-          dynamicPostBean.linkTitle = postProvider.linkData['title'];
+        if (!StringUtil.isEmpty(postProvider.dynamicLinkController.text)) {
+          dynamicPostBean.link = postProvider.dynamicLinkController.text;
+          dynamicPostBean.linkImage = postProvider.dynamicLinkData['image'];
+          dynamicPostBean.linkTitle = postProvider.dynamicLinkData['title'];
           dynamicPostBean.type = 1;
         } else {
           // 上传图片
@@ -124,6 +127,7 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
       // 处理异常
       print('token异常');
     }
+    postProvider.refresh();
   }
 
   // 上传图片
@@ -160,7 +164,8 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
     // 获取地址并跳转选择地址详情
     NavigatorUtil.toLocationChoosePage(context,
         longitude: position.longitude.toString(),
-        latitude: position.latitude.toString());
+        latitude: position.latitude.toString(),
+        type: "dynamic");
   }
 
   /// 超链接对话框
@@ -186,7 +191,7 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
               width: ScreenUtil().setWidth(700),
               child: TextField(
                 cursorColor: Colors.black,
-                controller: _linkContentController,
+                controller: postProvider.dynamicLinkController,
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(
                         top: ScreenUtil().setHeight(15),
@@ -208,29 +213,28 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                   )),
               FlatButton(
                   onPressed: () async {
-                    if (!StringUtil.isEmpty(_linkContentController.text)) {
-                      postProvider.linkChoose = false;
-                      postProvider.link = _linkContentController.text;
-                      postProvider.linkChoose = true;
-                      Navigator.pop(context);
+                    Navigator.pop(context);
+                    if (!StringUtil.isEmpty(
+                        postProvider.dynamicLinkController.text)) {
                       http.Response response;
                       try {
-                        postProvider.linkData = null;
-                        response = await http.get(postProvider.link);
+                        postProvider.dynamicLinkData = null;
+                        response = await http
+                            .get(postProvider.dynamicLinkController.text);
                       } catch (e) {
                         print(e);
-                        postProvider.linkData = {
-                          "title": postProvider.link,
+                        postProvider.dynamicLinkData = {
+                          "title": postProvider.dynamicLinkController.text,
                           "image": ''
                         };
+                        postProvider.refresh();
                         return;
                       }
-                      postProvider.linkData =
-                          WebPageParser.getDataFromResponse(
-                              response, postProvider.link);
-                    } else {
-                      // 不能为空
+                      postProvider.dynamicLinkData =
+                          WebPageParser.getDataFromResponse(response,
+                              postProvider.dynamicLinkController.text);
                     }
+                    postProvider.refresh();
                   },
                   child: Text(
                     '确定',
@@ -244,8 +248,8 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
   }
 
   Widget _buildLinkContent(PostProvider postProvider) {
-    if (postProvider.linkChoose) {
-      if (postProvider.linkData != null) {
+    if (!StringUtil.isEmpty(postProvider.dynamicLinkController.text)) {
+      if (postProvider.dynamicLinkData != null) {
         return Container(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             margin: EdgeInsets.symmetric(
@@ -259,14 +263,14 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
               children: [
                 Container(
                   child:
-                      StringUtil.isEmpty(postProvider.linkData['image'])
+                      StringUtil.isEmpty(postProvider.dynamicLinkData['image'])
                           ? Image.asset(
                               'assets/png/network.png',
                               width: ScreenUtil().setWidth(120),
                               height: ScreenUtil().setWidth(120),
                             )
                           : CachedNetworkImage(
-                              imageUrl: postProvider.linkData['image'],
+                              imageUrl: postProvider.dynamicLinkData['image'],
                               width: ScreenUtil().setWidth(100),
                               height: ScreenUtil().setWidth(100),
                             ),
@@ -275,9 +279,9 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                   width: ScreenUtil().setWidth(420),
                   margin: EdgeInsets.only(left: ScreenUtil().setWidth(30)),
                   child: Text(
-                    StringUtil.isEmpty(postProvider.linkData['title'])
-                        ? postProvider.link
-                        : postProvider.linkData['title'],
+                    StringUtil.isEmpty(postProvider.dynamicLinkData['title'])
+                        ? postProvider.dynamicLinkController.text
+                        : postProvider.dynamicLinkData['title'],
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: ScreenUtil().setSp(27)),
@@ -285,8 +289,8 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    postProvider.linkChoose = false;
-                    postProvider.linkData = null;
+                    postProvider.dynamicLinkData = null;
+                    postProvider.refresh();
                   },
                   child: Container(
                     margin: EdgeInsets.only(left: ScreenUtil().setWidth(35)),
@@ -359,28 +363,28 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                   child: RaisedButton(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(35)),
-                    color: Colors.yellow,
-                    disabledColor: Colors.black26,
+                    color: StringUtil.isEmpty(
+                            postProvider.dynamicContentController.text)
+                        ? Colors.grey
+                        : Colors.yellow,
                     child: Text(
                       '发布',
                       style: TextStyle(
                           fontSize: ScreenUtil().setSp(25),
                           fontWeight: FontWeight.w600,
-                          color:
-                              StringUtil.isEmpty(_dynamicContentController.text)
-                                  ? Colors.white70
-                                  : Colors.black,
+                          color: StringUtil.isEmpty(
+                                  postProvider.dynamicContentController.text)
+                              ? Colors.white70
+                              : Colors.black,
                           letterSpacing: 2),
                     ),
-                    onPressed:
-                        StringUtil.isEmpty(_dynamicContentController.text)
-                            ? null
-                            : () {
-                                _postDynamic(
-                                    postProvider,
-                                    globalInfoProvider.jwt,
-                                    _dynamicContentController.text);
-                              },
+                    onPressed: StringUtil.isEmpty(
+                            postProvider.dynamicContentController.text)
+                        ? null
+                        : () {
+                            _postDynamic(postProvider, globalInfoProvider.jwt,
+                                postProvider.dynamicContentController.text);
+                          },
                   ),
                 )
               ],
@@ -400,10 +404,7 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                               minLines: 1,
                               maxLines: 100,
                               keyboardType: TextInputType.multiline,
-                              controller: _dynamicContentController,
-                              onChanged: (text) {
-                                setState(() {});
-                              },
+                              controller: postProvider.dynamicContentController,
                               decoration: InputDecoration(
                                   hintText: '分享你的想法...',
                                   hintStyle: TextStyle(color: Colors.black38),
@@ -411,14 +412,20 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                             ),
                           ),
                           _buildLinkContent(postProvider),
-                          postProvider.assets.isEmpty
+                          postProvider.dynamicAssets.isEmpty
                               ? Container()
                               : Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 15, vertical: 10),
                                   child: PostAssetWrapBuilder(
-                                    assets: postProvider.assets,
+                                    assets: postProvider.dynamicAssets,
                                     itemWidth: ScreenUtil().setWidth(220),
+                                    listListener: (assets) {
+                                      if (assets.isEmpty) {
+                                        postProvider.dynamicAssetChoose = false;
+                                        postProvider.refresh();
+                                      }
+                                    },
                                   ),
                                 ),
                           GestureDetector(
@@ -443,7 +450,7 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                                           child: Icon(
                                             Icons.location_on,
                                             color:
-                                                postProvider.showLocation
+                                                _showLocation(postProvider)
                                                     ? Colors.lightBlueAccent
                                                     : Colors.black45,
                                             size: ScreenUtil().setSp(30),
@@ -451,12 +458,11 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                                         ),
                                         Container(
                                           child: Text(
-                                            postProvider.showLocation
-                                                ? postProvider.location
+                                            _showLocation(postProvider)
+                                                ? postProvider.addressMapping[postType].name
                                                 : "你在哪里？",
                                             style: TextStyle(
-                                                color: postProvider
-                                                        .showLocation
+                                                color: _showLocation(postProvider)
                                                     ? Colors.lightBlueAccent
                                                     : Colors.black45,
                                                 fontSize:
@@ -491,7 +497,8 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: postProvider.linkChoose
+                            onTap: !StringUtil.isEmpty(
+                                    postProvider.dynamicLinkController.text)
                                 ? null
                                 : () async {
                                     await _loadAssets(postProvider);
@@ -501,7 +508,8 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  postProvider.linkChoose
+                                  !StringUtil.isEmpty(postProvider
+                                          .dynamicLinkController.text)
                                       ? 'assets/png/album_inactive.png'
                                       : 'assets/png/album.png',
                                   width: ScreenUtil().setWidth(60),
@@ -513,12 +521,16 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                                       '/',
                                       style: TextStyle(
                                           fontSize: ScreenUtil().setSp(50),
-                                          color: postProvider.linkChoose
+                                          color: !StringUtil.isEmpty(
+                                                  postProvider
+                                                      .dynamicLinkController
+                                                      .text)
                                               ? Colors.black38
                                               : Colors.black),
                                     )),
                                 Image.asset(
-                                  postProvider.linkChoose
+                                  !StringUtil.isEmpty(postProvider
+                                          .dynamicLinkController.text)
                                       ? 'assets/png/video_inactive.png'
                                       : 'assets/png/video_active.png',
                                   width: ScreenUtil().setWidth(60),
@@ -530,14 +542,13 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
                         ),
                         Expanded(
                             child: GestureDetector(
-                          onTap: postProvider.assetChoose
+                          onTap: postProvider.dynamicAssetChoose
                               ? null
                               : () {
-                                  _hyberlinkDialog(
-                                      context, postProvider);
+                                  _hyberlinkDialog(context, postProvider);
                                 },
                           child: Image.asset(
-                            postProvider.linkChoose
+                            postProvider.dynamicAssetChoose
                                 ? 'assets/png/link_inactive.png'
                                 : 'assets/png/link_active.png',
                             width: ScreenUtil().setWidth(50),

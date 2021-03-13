@@ -7,12 +7,13 @@ class Routes {
   static String loginChoose = "/login_choose";
   static String main = "/main";
   static String search = "/search";
-  static String dynamicDetail = "/dynamicDetail/:scrollToComment";
+  static String dynamicDetail = "/dynamicDetail";
   static String mediaView = "/mediaView";
   static String postDynamic = "/postDynamic";
   static String postTogether = "/postTogether";
-  static String locationChoose = "/locationChoose/:longitude/:latitude";
+  static String locationChoose = "/locationChoose/:longitude/:latitude/:type";
   static String assetView = "/assetView";
+  static String togetherDetail = "/togetherDetail";
 
   static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(
@@ -31,5 +32,6 @@ class Routes {
     router.define(postTogether, handler: postTogetherHandler);
     router.define(locationChoose, handler: locationChooseHandler);
     router.define(assetView, handler: assetViewHandler);
+    router.define(togetherDetail, handler: togetherDetailHandler);
   }
 }

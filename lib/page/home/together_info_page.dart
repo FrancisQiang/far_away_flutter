@@ -12,6 +12,7 @@ import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/init_refresh_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
 import 'package:far_away_flutter/constant/my_color.dart';
+import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
@@ -108,7 +109,11 @@ class _TogetherInfoPageState extends State<TogetherInfoPage>
           child: Column(
               children: List.generate(togetherList.length, (index) {
             return GestureDetector(
-                onTap: () => print("tap together"),
+                onTap: () => NavigatorUtil.toTogetherDetailPage(context,
+                    param: TogetherDetailParam(
+                        avatarHeroTag: 'together_${togetherList[index].id}',
+                        togetherInfoBean: togetherList[index])
+                ),
                 child: TogetherInfoPreviewCard(
                     togetherInfoBean: togetherList[index]));
           })));
@@ -120,7 +125,6 @@ class TogetherInfoPreviewCard extends StatelessWidget {
   final TogetherInfoBean togetherInfoBean;
 
   TogetherInfoPreviewCard({@required this.togetherInfoBean});
-
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +183,6 @@ class TogetherInfoPreviewCard extends StatelessWidget {
               ],
             ),
           ),
-          // 动态内容
           Container(
             margin: EdgeInsets.only(
               top: ScreenUtil().setHeight(20),
@@ -193,7 +196,7 @@ class TogetherInfoPreviewCard extends StatelessWidget {
             time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
                 togetherInfoBean.publishTime)),
             location: togetherInfoBean.location,
-            width: ScreenUtil().setWidth(500),
+            width: ScreenUtil().setWidth(750),
             margin: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
           ),
           Container(

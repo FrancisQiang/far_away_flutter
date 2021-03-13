@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_post_bean.dart';
+import 'package:far_away_flutter/bean/together_post_bean.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
@@ -203,5 +204,29 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> postTogether(
+      {@required String token, @required TogetherPostBean togetherPostBean}) {
+    return DioFactory.getDioClient().post(
+        ApiProperties.HOST_BASE_URL + "/together",
+        options: Options(headers: {"Authorization": token}),
+        data: togetherPostBean.toJson());
+  }
+
+  static Future<dynamic> getTogetherDetail(
+      {@required String id, @required String token}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/together/detail/$id",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
+  static Future<dynamic> togetherSignUp(
+      {@required String token,
+        @required String id}) {
+    return DioFactory.getDioClient().post(
+      ApiProperties.HOST_BASE_URL + "/together/signup/$id",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
 
 }

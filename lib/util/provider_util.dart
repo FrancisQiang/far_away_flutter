@@ -1,8 +1,10 @@
 
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
+import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/page/home/comment_draw_widget.dart';
 import 'package:far_away_flutter/page/home/dynamic_detail_page.dart';
+import 'package:far_away_flutter/page/home/together_detail_page.dart';
 import 'package:far_away_flutter/page/main/main_page.dart';
 import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
@@ -10,6 +12,7 @@ import 'package:far_away_flutter/page/post/post_together_page.dart';
 import 'package:far_away_flutter/provider/dynamic_comment_chosen_provider.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
+import 'package:far_away_flutter/provider/together_comment_chosen_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +23,8 @@ class ProviderUtil {
   static PostProvider postProvider = PostProvider();
 
   static DynamicCommentChosenProvider dynamicCommentChosenProvider = DynamicCommentChosenProvider();
+
+  static TogetherCommentChosenProvider togetherCommentChosenProvider = TogetherCommentChosenProvider();
 
   static MultiProvider getMainPage() {
     return MultiProvider(
@@ -68,7 +73,25 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getLocationChoosePage({@required String longitude, @required String latitude}) {
+  static MultiProvider getTogetherDetailPage({bool scrollToComment, String avatarHeroTag, TogetherInfoBean togetherInfoBean}) {
+    togetherCommentChosenProvider.targetBizId = togetherInfoBean.id;
+    togetherCommentChosenProvider.targetUserId = togetherInfoBean.userId;
+    togetherCommentChosenProvider.targetUsername = togetherInfoBean.username;
+    togetherCommentChosenProvider.pid = null;
+    togetherCommentChosenProvider.refresh();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<TogetherCommentChosenProvider>.value(value: togetherCommentChosenProvider),
+      ],
+      child: TogetherDetailPage(
+        scrollToComment: scrollToComment,
+        avatarHeroTag: avatarHeroTag,
+        togetherInfoBean: togetherInfoBean,
+      ),
+    );
+  }
+
+  static MultiProvider getLocationChoosePage({@required String longitude, @required String latitude, @required String type}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PostProvider>.value(value: postProvider),
@@ -76,6 +99,7 @@ class ProviderUtil {
       child: LocationChoosePage(
         longitude: longitude,
         latitude: latitude,
+        type: type,
       ),
     );
   }

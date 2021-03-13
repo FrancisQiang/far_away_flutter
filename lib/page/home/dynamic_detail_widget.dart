@@ -19,23 +19,15 @@ import 'package:like_button/like_button.dart';
 
 import 'dynamics_page.dart';
 
-class DynamicDetailWidget extends StatefulWidget {
+
+class DynamicDetailWidget extends StatelessWidget {
+
   final String avatarHeroTag;
 
   final DynamicDetailBean dynamicDetailBean;
 
   DynamicDetailWidget(
       {@required this.avatarHeroTag, @required this.dynamicDetailBean});
-
-  @override
-  _DynamicDetailWidgetState createState() => _DynamicDetailWidgetState();
-}
-
-class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +45,14 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                 Container(
                     width: ScreenUtil().setWidth(100),
                     child: Hero(
-                      tag: widget.avatarHeroTag,
+                      tag: avatarHeroTag,
                       child: ClipOval(
                         child: CachedNetworkImage(
-                            imageUrl: widget.dynamicDetailBean.userAvatar,
+                            imageUrl: dynamicDetailBean.userAvatar,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => ImageHolder(
-                                  size: ScreenUtil().setWidth(100),
-                                ),
+                              size: ScreenUtil().setWidth(100),
+                            ),
                             errorWidget: (context, url, error) =>
                                 ImageErrorWidget(
                                   size: ScreenUtil().setWidth(100),
@@ -74,17 +66,17 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                     children: [
                       Container(
                           child: Row(
-                        children: [
-                          Container(
-                            child: Text(
-                              widget.dynamicDetailBean.username,
-                              style: TextStyleTheme.h3,
-                            ),
-                          ),
-                        ],
-                      )),
+                            children: [
+                              Container(
+                                child: Text(
+                                  dynamicDetailBean.username,
+                                  style: TextStyleTheme.h3,
+                                ),
+                              ),
+                            ],
+                          )),
                       Container(
-                        child: Text(widget.dynamicDetailBean.signature,
+                        child: Text(dynamicDetailBean.signature,
                             style: TextStyleTheme.subH5),
                       )
                     ],
@@ -99,34 +91,34 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
               right: ScreenUtil().setWidth(20),
             ),
             child: Text(
-              widget.dynamicDetailBean.content,
+              dynamicDetailBean.content,
               textAlign: TextAlign.start,
               style: TextStyleTheme.body,
             ),
           ),
-          widget.dynamicDetailBean.type == 0
+          dynamicDetailBean.type == 0
               ? Container(
-                  margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-                  child: MediaPreview(
-                    mediaList: widget.dynamicDetailBean.mediaList,
-                  ),
-                )
+            margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+            child: MediaPreview(
+              mediaList: dynamicDetailBean.mediaList,
+            ),
+          )
               : Container(
             width: ScreenUtil().setWidth(650),
             padding: EdgeInsets.symmetric(
                 vertical: ScreenUtil().setHeight(30)
             ),
             child: LinkWidget(
-                linkURL: widget.dynamicDetailBean.link,
-                linkImg: widget.dynamicDetailBean.linkImage,
-                linkTitle: widget.dynamicDetailBean.linkTitle,
+                linkURL: dynamicDetailBean.link,
+                linkImg: dynamicDetailBean.linkImage,
+                linkTitle: dynamicDetailBean.linkTitle,
                 imgSideLength: ScreenUtil().setWidth(120)),
           ),
           TimeLocationBar(
             width: ScreenUtil().setWidth(750),
             time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
-                widget.dynamicDetailBean.publishTime)),
-            location: widget.dynamicDetailBean.location,
+                dynamicDetailBean.publishTime)),
+            location: dynamicDetailBean.location,
             margin: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
           ),
           Container(
@@ -134,8 +126,8 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
               top: ScreenUtil().setHeight(20),
             ),
             padding: EdgeInsets.symmetric(
-                // horizontal: ScreenUtil().setWidth(20)
-                ),
+              // horizontal: ScreenUtil().setWidth(20)
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -146,27 +138,26 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                       await ApiMethodUtil.dynamicThumbChange(
                           token: ProviderUtil.globalInfoProvider.jwt,
                           thumb: !isLiked,
-                          dynamicId: widget.dynamicDetailBean.id);
+                          dynamicId: dynamicDetailBean.id);
                       if (!isLiked) {
-                        widget.dynamicDetailBean.thumbCount++;
-                        widget.dynamicDetailBean.thumbed = true;
+                        dynamicDetailBean.thumbCount++;
+                        dynamicDetailBean.thumbed = true;
                       } else {
-                        widget.dynamicDetailBean.thumbCount--;
-                        widget.dynamicDetailBean.thumbed = false;
+                        dynamicDetailBean.thumbCount--;
+                        dynamicDetailBean.thumbed = false;
                       }
                       return !isLiked;
                     },
-                    isLiked: widget.dynamicDetailBean.thumbed,
+                    isLiked: dynamicDetailBean.thumbed,
                     circleColor: CircleColor(
                         start: Colors.orangeAccent, end: Colors.orange),
                     bubblesColor: BubblesColor(
                       dotPrimaryColor: Colors.orangeAccent,
                       dotSecondaryColor: Colors.orange,
                     ),
-                    likeCountAnimationType:
-                        widget.dynamicDetailBean.thumbCount < 1000
-                            ? LikeCountAnimationType.part
-                            : LikeCountAnimationType.none,
+                    likeCountAnimationType: dynamicDetailBean.thumbCount < 1000
+                        ? LikeCountAnimationType.part
+                        : LikeCountAnimationType.none,
                     likeBuilder: (bool isLiked) {
                       return Icon(
                         Icons.favorite,
@@ -174,7 +165,7 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                         size: ScreenUtil().setSp(42),
                       );
                     },
-                    likeCount: widget.dynamicDetailBean.thumbCount,
+                    likeCount: dynamicDetailBean.thumbCount,
                     likeCountPadding: EdgeInsets.only(left: 8),
                     countBuilder: (int count, bool isLiked, String text) {
                       Color color = isLiked ? Colors.redAccent : Colors.black;
@@ -205,7 +196,7 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                       ),
                       Container(
                         child: Text(
-                          '  ${CalculateUtil.simplifyCount(widget.dynamicDetailBean.commentsCount)}',
+                          '  ${CalculateUtil.simplifyCount(dynamicDetailBean.commentsCount)}',
                           style: TextStyle(
                               fontSize: ScreenUtil().setSp(25),
                               letterSpacing: 0.2),
@@ -218,7 +209,7 @@ class _DynamicDetailWidgetState extends State<DynamicDetailWidget> {
                   child: Icon(
                     FontAwesomeIcons.solidStar,
                     size: ScreenUtil().setSp(30),
-                    color: widget.dynamicDetailBean.collected
+                    color: dynamicDetailBean.collected
                         ? Colors.deepOrangeAccent
                         : Colors.black,
                   ),

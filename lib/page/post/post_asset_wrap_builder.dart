@@ -10,11 +10,12 @@ class PostAssetWrapBuilder extends StatelessWidget {
 
   final double itemWidth;
 
-  PostAssetWrapBuilder({@required this.assets,@required this.itemWidth});
+  final void Function(List<AssetEntity>) listListener;
+
+  PostAssetWrapBuilder({@required this.assets,@required this.itemWidth, this.listListener});
 
   @override
   Widget build(BuildContext context) {
-    print(assets.length);
     return Wrap(
       runSpacing: 2,
       children: List<Widget>.generate(assets.length, (index) {
@@ -28,9 +29,10 @@ class PostAssetWrapBuilder extends StatelessWidget {
             assetEntity: assetEntity,
             sideLength: itemWidth,
             remove: () {
-              print(assets);
               assets.remove(assetEntity);
-              print(assets);
+              if (listListener != null) {
+                listListener(assets);
+              }
             },
           ),
         );

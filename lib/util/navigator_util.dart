@@ -1,3 +1,4 @@
+import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/param/asset_view_page_param.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
 import 'package:far_away_flutter/param/media_view_page_param.dart';
@@ -62,10 +63,10 @@ class NavigatorUtil {
     );
   }
 
-  static void toLocationChoosePage(BuildContext context, {@required String longitude, @required String latitude}) {
+  static void toLocationChoosePage(BuildContext context, {@required String longitude, @required String latitude, @required String type}) {
     Application.router.navigateTo(
       context,
-      "/locationChoose/$longitude/$latitude",
+      "/locationChoose/$longitude/$latitude/$type",
       transition: TransitionType.fadeIn,
     );
   }
@@ -78,6 +79,17 @@ class NavigatorUtil {
           arguments: param
       ),
       transition: TransitionType.fadeIn,
+    );
+  }
+
+  static void toTogetherDetailPage(BuildContext context, {@required TogetherDetailParam param}) {
+    Application.router.navigateTo(
+        context,
+        Routes.togetherDetail,
+        routeSettings: RouteSettings(
+            arguments: param
+        ),
+        transition: TransitionType.inFromRight
     );
   }
 

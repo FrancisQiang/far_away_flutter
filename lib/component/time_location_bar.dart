@@ -28,7 +28,6 @@ class TimeLocationBar extends StatelessWidget {
       margin: margin,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             child: Text(time, style: TextStyleTheme.subH5),
@@ -41,11 +40,12 @@ class TimeLocationBar extends StatelessWidget {
                     Icons.location_on,
                     color: Colors.orangeAccent,
                     size: ScreenUtil().setSp(30),
-                  )),
+                  )
+          ),
           StringUtil.isEmpty(location)
               ? SizedBox()
               : Container(
-                  width: width * 0.45,
+                  width: width * 0.6,
                   child: Text(
                     location,
                     style: TextStyleTheme.subH5,

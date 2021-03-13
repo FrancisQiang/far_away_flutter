@@ -83,9 +83,7 @@ class _DynamicsPageState extends State<DynamicsPage>
   @override
   void initState() {
     super.initState();
-    timestamp = DateTime
-        .now()
-        .millisecondsSinceEpoch;
+    timestamp = DateTime.now().millisecondsSinceEpoch;
   }
 
   @override
@@ -93,46 +91,39 @@ class _DynamicsPageState extends State<DynamicsPage>
     super.build(context);
     return Consumer<GlobalInfoProvider>(
         builder: (context, globalInfoProvider, child) {
-          return EasyRefresh(
-              header: EasyRefreshWidget.refreshHeader,
-              footer: EasyRefreshWidget.refreshFooter,
-              firstRefresh: true,
-              firstRefreshWidget: InitRefreshWidget(
-                color: Theme
-                    .of(context)
-                    .primaryColor,
-              ),
-              emptyWidget: dynamicList.length == 0
-                  ? ListEmptyWidget(
-                width: ScreenUtil().setWidth(380),
-                height: ScreenUtil().setHeight(300),
-              )
-                  : null,
-              onRefresh: () async {
-                dynamicList = [];
-                currentPage = 1;
-                timestamp = DateTime
-                    .now()
-                    .millisecondsSinceEpoch;
-                await _loadDynamicData(globalInfoProvider.jwt);
-              },
-              onLoad: () async {
-                await _loadDynamicData(globalInfoProvider.jwt);
-              },
-              child: Column(
-                  children: List.generate(dynamicList.length, (index) {
-                    return GestureDetector(
-                        onTap: () =>
-                            NavigatorUtil.toDynamicDetailPage(context,
-                                param: DynamicDetailParam(
-                                    avatarHeroTag: 'dynamic_${dynamicList[index]
-                                        .id}',
-                                    dynamicDetailBean: dynamicList[index])),
-                        child:
-                        DynamicPreviewCard(
-                            dynamicDetailBean: dynamicList[index]));
-                  })));
-        });
+      return EasyRefresh(
+          header: EasyRefreshWidget.refreshHeader,
+          footer: EasyRefreshWidget.refreshFooter,
+          firstRefresh: true,
+          firstRefreshWidget: InitRefreshWidget(
+            color: Theme.of(context).primaryColor,
+          ),
+          emptyWidget: dynamicList.length == 0
+              ? ListEmptyWidget(
+                  width: ScreenUtil().setWidth(380),
+                  height: ScreenUtil().setHeight(300),
+                )
+              : null,
+          onRefresh: () async {
+            dynamicList = [];
+            currentPage = 1;
+            timestamp = DateTime.now().millisecondsSinceEpoch;
+            await _loadDynamicData(globalInfoProvider.jwt);
+          },
+          onLoad: () async {
+            await _loadDynamicData(globalInfoProvider.jwt);
+          },
+          child: Column(
+              children: List.generate(dynamicList.length, (index) {
+            return GestureDetector(
+                onTap: () => NavigatorUtil.toDynamicDetailPage(context,
+                    param: DynamicDetailParam(
+                        avatarHeroTag: 'dynamic_${dynamicList[index].id}',
+                        dynamicDetailBean: dynamicList[index])),
+                child:
+                    DynamicPreviewCard(dynamicDetailBean: dynamicList[index]));
+          })));
+    });
   }
 }
 
@@ -143,21 +134,22 @@ class DynamicPreviewCard extends StatelessWidget {
 
   Widget _buildMediaWrap() {
     return dynamicDetailBean.type == 1 ||
-        dynamicDetailBean.mediaList.isEmpty ||
-        dynamicDetailBean.mediaList == null
+            dynamicDetailBean.mediaList.isEmpty ||
+            dynamicDetailBean.mediaList == null
         ? SizedBox()
         : Container(
-      margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-      child: MediaPreview(
-        mediaList: dynamicDetailBean.mediaList,
-      ),
-    );
+            margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+            child: MediaPreview(
+              mediaList: dynamicDetailBean.mediaList,
+            ),
+          );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.white),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15), color: Colors.white),
       padding: EdgeInsets.all(ScreenUtil().setWidth(22)),
       margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
       child: Column(
@@ -175,8 +167,7 @@ class DynamicPreviewCard extends StatelessWidget {
                           child: CachedNetworkImage(
                               imageUrl: dynamicDetailBean.userAvatar,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  ImageHolder(
+                              placeholder: (context, url) => ImageHolder(
                                     size: ScreenUtil().setSp(40),
                                   ),
                               errorWidget: (context, url, error) =>
@@ -192,15 +183,15 @@ class DynamicPreviewCard extends StatelessWidget {
                     children: [
                       Container(
                           child: Row(
-                            children: [
-                              Container(
-                                child: Text(
-                                  dynamicDetailBean.username,
-                                  style: TextStyleTheme.h3,
-                                ),
-                              ),
-                            ],
-                          )),
+                        children: [
+                          Container(
+                            child: Text(
+                              dynamicDetailBean.username,
+                              style: TextStyleTheme.h3,
+                            ),
+                          ),
+                        ],
+                      )),
                       Container(
                         child: Text(dynamicDetailBean.signature,
                             style: TextStyleTheme.subH5),
@@ -225,125 +216,139 @@ class DynamicPreviewCard extends StatelessWidget {
           dynamicDetailBean.type == 0
               ? SizedBox()
               : Container(
-            width: ScreenUtil().setWidth(650),
-            padding: EdgeInsets.symmetric(
-              vertical: ScreenUtil().setHeight(30)
-            ),
-            child: LinkWidget(
-                linkURL: dynamicDetailBean.link,
-                linkImg: dynamicDetailBean.linkImage,
-                linkTitle: dynamicDetailBean.linkTitle,
-                imgSideLength: ScreenUtil().setWidth(120)
+                  width: ScreenUtil().setWidth(650),
+                  padding: EdgeInsets.symmetric(
+                      vertical: ScreenUtil().setHeight(30)),
+                  child: LinkWidget(
+                      linkURL: dynamicDetailBean.link,
+                      linkImg: dynamicDetailBean.linkImage,
+                      linkTitle: dynamicDetailBean.linkTitle,
+                      imgSideLength: ScreenUtil().setWidth(120)),
+                ),
+          Container(
+            child: TimeLocationBar(
+              time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
+                  dynamicDetailBean.publishTime)),
+              location: dynamicDetailBean.location,
+              width: ScreenUtil().setWidth(750),
+              margin: EdgeInsets.only(top: ScreenUtil().setHeight(18)),
             ),
           ),
           Container(
+            height: ScreenUtil().setHeight(45),
+            margin: EdgeInsets.only(top: ScreenUtil().setHeight(18)),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TimeLocationBar(
-                  time: DateUtil.getTimeString(
-                      DateTime.fromMillisecondsSinceEpoch(
-                          dynamicDetailBean.publishTime)),
-                  location: dynamicDetailBean.location,
-                  width: ScreenUtil().setWidth(500),
-                  margin: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
-                ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        child: LikeButton(
-                          size: ScreenUtil().setSp(40),
-                          onTap: (bool isLiked) async {
-                            await ApiMethodUtil.dynamicThumbChange(
-                                token: ProviderUtil.globalInfoProvider.jwt,
-                                thumb: !isLiked,
-                                dynamicId: dynamicDetailBean.id);
-                            if (!isLiked) {
-                              dynamicDetailBean.thumbCount++;
-                              dynamicDetailBean.thumbed = true;
-                            } else {
-                              dynamicDetailBean.thumbCount--;
-                              dynamicDetailBean.thumbed = false;
-                            }
-                            return !isLiked;
-                          },
-                          isLiked: dynamicDetailBean.thumbed,
-                          circleColor: CircleColor(
-                              start: Colors.orangeAccent, end: Colors.orange),
-                          bubblesColor: BubblesColor(
-                            dotPrimaryColor: Colors.orangeAccent,
-                            dotSecondaryColor: Colors.orange,
-                          ),
-                          likeBuilder: (bool isLiked) {
-                            if (isLiked) {
-                              return Icon(
-                                FontAwesomeIcons.solidHeart,
-                                color: Colors.redAccent,
-                                size: ScreenUtil().setSp(35),
-                              );
-                            } else {
-                              return Icon(
-                                FontAwesomeIcons.heart,
-                                color: Colors.black,
-                                size: ScreenUtil().setSp(35),
-                              );
-                            }
-                          },
-                          likeCount: dynamicDetailBean.thumbCount,
-                          likeCountPadding: EdgeInsets.only(left: 5),
-                          likeCountAnimationType:
-                          dynamicDetailBean.thumbCount < 1000
-                              ? LikeCountAnimationType.part
-                              : LikeCountAnimationType.none,
-                          countBuilder: (int count, bool isLiked, String text) {
-                            Color color =
-                            isLiked ? Colors.redAccent : Colors.black;
-                            Widget result;
-                            if (count == 0) {
-                              result = SizedBox();
-                            } else
-                              result = Text(
-                                count >= 1000
-                                    ? CalculateUtil.simplifyCount(count)
-                                    : text,
-                                style: TextStyle(color: color),
-                              );
-                            return result;
-                          },
+                FlatButton(
+                    onPressed: () {},
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.share_outlined,
+                          size: ScreenUtil().setSp(35),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          NavigatorUtil.toDynamicDetailPage(context,
-                              param: DynamicDetailParam(
-                                  scrollToComment: true,
-                                  dynamicDetailBean: dynamicDetailBean));
-                        },
-                        child: Container(
-                            margin:
-                            EdgeInsets.only(left: ScreenUtil().setWidth(8)),
-                            child: Row(
-                              children: [
-                                Container(
-                                    child: Icon(
-                                      FontAwesomeIcons.commentDots,
-                                      size: ScreenUtil().setSp(35),
-                                    )),
-                                Container(
-                                  margin: EdgeInsets.only(left: 5),
-                                  child: Text(
-                                    CalculateUtil.simplifyCount(
-                                        dynamicDetailBean.commentsCount),
-                                  ),
-                                )
-                              ],
-                            )),
-                      ),
-                    ],
+                        Container(
+                          width: ScreenUtil().setWidth(100),
+                          margin: EdgeInsets.only(left: 10),
+                          child: Text(
+                            "分享",
+                          ),
+                        )
+                      ],
+                    )
+                ),
+                FlatButton(
+                  onPressed: () {
+                    NavigatorUtil.toDynamicDetailPage(context,
+                        param: DynamicDetailParam(
+                            scrollToComment: true,
+                            dynamicDetailBean: dynamicDetailBean));
+                  },
+                  child: Container(
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              child: Icon(
+                                FontAwesomeIcons.commentDots,
+                                size: ScreenUtil().setSp(35),
+                              )),
+                          Container(
+                            width: ScreenUtil().setWidth(70),
+                            margin: EdgeInsets.only(left: 10),
+                            child: Text(
+                              CalculateUtil.simplifyCount(
+                                  dynamicDetailBean.commentsCount),
+                            ),
+                          )
+                        ],
+                      )
                   ),
-                )
+                ),
+                FlatButton(
+                  onPressed: () {},
+                  child: LikeButton(
+                    size: ScreenUtil().setSp(35),
+                    onTap: (bool isLiked) async {
+                      await ApiMethodUtil.dynamicThumbChange(
+                          token: ProviderUtil.globalInfoProvider.jwt,
+                          thumb: !isLiked,
+                          dynamicId: dynamicDetailBean.id);
+                      if (!isLiked) {
+                        dynamicDetailBean.thumbCount++;
+                        dynamicDetailBean.thumbed = true;
+                      } else {
+                        dynamicDetailBean.thumbCount--;
+                        dynamicDetailBean.thumbed = false;
+                      }
+                      return !isLiked;
+                    },
+                    isLiked: dynamicDetailBean.thumbed,
+                    circleColor: CircleColor(
+                        start: Colors.orangeAccent, end: Colors.orange),
+                    bubblesColor: BubblesColor(
+                      dotPrimaryColor: Colors.orangeAccent,
+                      dotSecondaryColor: Colors.orange,
+                    ),
+                    likeBuilder: (bool isLiked) {
+                      if (isLiked) {
+                        return Icon(
+                          FontAwesomeIcons.solidHeart,
+                          color: Colors.redAccent,
+                          size: ScreenUtil().setSp(35),
+                        );
+                      } else {
+                        return Icon(
+                          FontAwesomeIcons.heart,
+                          color: Colors.black,
+                          size: ScreenUtil().setSp(35),
+                        );
+                      }
+                    },
+                    likeCount: dynamicDetailBean.thumbCount,
+                    likeCountPadding: EdgeInsets.only(left: 10),
+                    likeCountAnimationType:
+                    dynamicDetailBean.thumbCount < 1000
+                        ? LikeCountAnimationType.part
+                        : LikeCountAnimationType.none,
+                    countBuilder: (int count, bool isLiked, String text) {
+                      Color color = isLiked ? Colors.redAccent : Colors.black;
+                      Widget result;
+                      return Container(
+                        width: ScreenUtil().setWidth(70),
+                        child: Text(
+                          count >= 1000
+                              ? CalculateUtil.simplifyCount(count)
+                              : text,
+                          style: TextStyle(color: color),
+                        ),
+                      );
+                      return result;
+                    },
+                  ),
+                ),
               ],
             ),
           )
