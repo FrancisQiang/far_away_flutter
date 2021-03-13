@@ -56,6 +56,11 @@ var postDynamicHandler = Handler(
   return ProviderUtil.getPostDynamicPage();
 });
 
+var postTogetherHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      return ProviderUtil.getPostTogetherPage();
+    });
+
 var locationChooseHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   String longitude = params["longitude"][0];

@@ -54,6 +54,14 @@ class NavigatorUtil {
     );
   }
 
+  static void toPostTogetherPage(BuildContext context) {
+    Application.router.navigateTo(
+      context,
+      Routes.postTogether,
+      transition: TransitionType.fadeIn,
+    );
+  }
+
   static void toLocationChoosePage(BuildContext context, {@required String longitude, @required String latitude}) {
     Application.router.navigateTo(
       context,

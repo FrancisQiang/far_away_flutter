@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class DynamicPostProvider with ChangeNotifier {
-
+class PostProvider with ChangeNotifier {
+  /// -----------------动态相关------------------
   /// 资源列表
   List<AssetEntity> _assets = [];
 
@@ -57,8 +57,6 @@ class DynamicPostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-
   String get location => _location;
 
   set location(String value) {
@@ -80,14 +78,24 @@ class DynamicPostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void refresh() {
-    notifyListeners();
-  }
-
   bool get assetChoose => _assetChoose;
 
   set assetChoose(bool value) {
     _assetChoose = value;
     notifyListeners();
   }
+
+  /// -----------------动态相关------------------
+
+  /// -----------------结伴相关------------------
+
+  Map<String, AddressBeanWrapper> addressWrapperMapping = {};
+
+  /// -----------------结伴相关------------------
+
+
+  void refresh() {
+    notifyListeners();
+  }
+  
 }

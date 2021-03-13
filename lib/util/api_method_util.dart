@@ -195,4 +195,13 @@ class ApiMethodUtil {
       options: Options(headers: {"Authorization": token}),
     );
   }
+
+  static Future<dynamic> getTogetherInfoList({@required int timestamp, @required int currentPage, @required String token}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/together/list/$timestamp/$currentPage",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
+
 }

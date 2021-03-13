@@ -103,7 +103,7 @@ class _DynamicsPageState extends State<DynamicsPage>
                     .primaryColor,
               ),
               emptyWidget: dynamicList.length == 0
-                  ? DynamicEmptyWidget(
+                  ? ListEmptyWidget(
                 width: ScreenUtil().setWidth(380),
                 height: ScreenUtil().setHeight(300),
               )
@@ -154,59 +154,10 @@ class DynamicPreviewCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLink() {
-    return dynamicDetailBean.type == 0
-        ? SizedBox()
-        : GestureDetector(
-      onTap: () {
-        launch(dynamicDetailBean.link);
-      },
-      child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          margin: EdgeInsets.only(
-              top: ScreenUtil().setHeight(15),
-              right: ScreenUtil().setWidth(20)),
-          height: ScreenUtil().setHeight(150),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.grey[100]),
-          child: Row(
-            children: [
-              Container(
-                child: StringUtil.isEmpty(dynamicDetailBean.linkImage)
-                    ? Image.asset(
-                  'assets/png/network.png',
-                  width: ScreenUtil().setWidth(120),
-                  height: ScreenUtil().setWidth(120),
-                )
-                    : CachedNetworkImage(
-                  imageUrl: dynamicDetailBean.linkImage,
-                  width: ScreenUtil().setWidth(120),
-                  height: ScreenUtil().setWidth(120),
-                ),
-              ),
-              Container(
-                width: ScreenUtil().setWidth(420),
-                margin: EdgeInsets.only(left: ScreenUtil().setWidth(30)),
-                child: Text(
-                  StringUtil.isEmpty(dynamicDetailBean.linkTitle)
-                      ? dynamicDetailBean.link
-                      : dynamicDetailBean.linkTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyleTheme.h4,
-                ),
-              ),
-            ],
-          )),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15), color: Colors.white),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.white),
       padding: EdgeInsets.all(ScreenUtil().setWidth(22)),
       margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
       child: Column(

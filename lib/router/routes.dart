@@ -10,6 +10,7 @@ class Routes {
   static String dynamicDetail = "/dynamicDetail/:scrollToComment";
   static String mediaView = "/mediaView";
   static String postDynamic = "/postDynamic";
+  static String postTogether = "/postTogether";
   static String locationChoose = "/locationChoose/:longitude/:latitude";
   static String assetView = "/assetView";
 
@@ -27,6 +28,7 @@ class Routes {
     router.define(dynamicDetail, handler: dynamicDetailHandler);
     router.define(mediaView, handler: mediaViewHandler);
     router.define(postDynamic, handler: postDynamicHandler);
+    router.define(postTogether, handler: postTogetherHandler);
     router.define(locationChoose, handler: locationChooseHandler);
     router.define(assetView, handler: assetViewHandler);
   }

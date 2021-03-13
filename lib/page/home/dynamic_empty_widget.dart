@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class DynamicEmptyWidget extends StatelessWidget {
+class ListEmptyWidget extends StatelessWidget {
 
   final double height;
 
   final double width;
 
-  DynamicEmptyWidget({this.height = 300, this.width = 350});
+  ListEmptyWidget({this.height = 300, this.width = 350});
 
   @override
   Widget build(BuildContext context) {

@@ -30,7 +30,10 @@ class PostChooseWidget extends StatelessWidget {
             title: '发结伴',
             colors: [Colors.cyan, Colors.cyanAccent],
             icon: FontAwesomeIcons.userFriends,
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              Navigator.pop(context);
+              NavigatorUtil.toPostTogetherPage(context);
+            },
           ),
           PostChooseItem(
             title: '招义工',

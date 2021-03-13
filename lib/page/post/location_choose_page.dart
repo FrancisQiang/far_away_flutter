@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/address_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
-import 'package:far_away_flutter/provider/dynamic_post_provider.dart';
+import 'package:far_away_flutter/provider/post_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +10,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class LocationChoosePage extends StatefulWidget {
+
+  final String type;
+
   final String longitude;
 
   final String latitude;
 
-  LocationChoosePage({@required this.longitude, @required this.latitude});
+  LocationChoosePage({@required this.longitude, @required this.latitude, this.type});
 
   @override
   _LocationChoosePageState createState() => _LocationChoosePageState();
@@ -47,16 +50,19 @@ class _LocationChoosePageState extends State<LocationChoosePage> {
 
   @override
   void initState() {
-    if(ProviderUtil.dynamicPostProvider.addressBeanWrapper == null || ProviderUtil.dynamicPostProvider.addressBeanWrapper.type != 2) {
-      AddressBeanWrapper none = AddressBeanWrapper();
-      none.type = 2;
-      none.name = '不显示当前位置';
-      none.choose = !ProviderUtil.dynamicPostProvider.showLocation;
-      _addressList.add(none);
+    Map<String, AddressBeanWrapper> mapping = ProviderUtil.postProvider.addressWrapperMapping;
+    AddressBeanWrapper wrapper = mapping[widget.type];
+
+    if(wrapper == null || wrapper.type != 2) {
+      AddressBeanWrapper hide = AddressBeanWrapper();
+      hide.type = 2;
+      hide.name = '不显示当前位置';
+      hide.choose = !ProviderUtil.postProvider.showLocation;
+      _addressList.add(hide);
     }
-    if (ProviderUtil.dynamicPostProvider.addressBeanWrapper != null) {
+    if (ProviderUtil.postProvider.addressBeanWrapper != null) {
       AddressBeanWrapper chooseWrapper =
-          ProviderUtil.dynamicPostProvider.addressBeanWrapper;
+          ProviderUtil.postProvider.addressBeanWrapper;
       _addressList.add(chooseWrapper);
     }
     _getAround();
@@ -112,8 +118,8 @@ class _LocationChoosePageState extends State<LocationChoosePage> {
           ),
           itemBuilder: (context, index) {
             AddressBeanWrapper wrapper = _addressList[index];
-            return Consumer<DynamicPostProvider>(
-                builder: (context, dynamicPostProvider, child) {
+            return Consumer<PostProvider>(
+                builder: (context, postProvider, child) {
                   return GestureDetector(
                     onTap: () {
                       AddressBeanWrapper change = AddressBeanWrapper();
@@ -123,9 +129,9 @@ class _LocationChoosePageState extends State<LocationChoosePage> {
                       change.addressDetail = wrapper.addressDetail;
                       change.choose = true;
                       change.type = wrapper.type;
-                      dynamicPostProvider.showLocation = (change.type != 2);
-                      dynamicPostProvider.location = change.name;
-                      dynamicPostProvider.addressBeanWrapper = change;
+                      postProvider.showLocation = (change.type != 2);
+                      postProvider.location = change.name;
+                      postProvider.addressBeanWrapper = change;
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -184,6 +190,10 @@ class _LocationChoosePageState extends State<LocationChoosePage> {
     );
   }
 }
+
+var defaultType = 0;
+var cityType = 1;
+var hideType = 2;
 
 class AddressBeanWrapper {
   double longitude;

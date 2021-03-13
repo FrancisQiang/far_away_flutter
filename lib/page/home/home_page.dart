@@ -2,11 +2,11 @@
 import 'package:far_away_flutter/page/home/aid_education_page.dart';
 import 'package:far_away_flutter/page/home/dynamics_page.dart';
 import 'package:far_away_flutter/page/home/search_text_field.dart';
+import 'package:far_away_flutter/page/home/together_info_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'go_with_page.dart';
 import 'hotel_recruitment_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage>
           physics: BouncingScrollPhysics(),
           children: [
             DynamicsPage(),
-            GoWithPage(),
+            TogetherInfoPage(),
             HotelRecruitmentPage(),
             AidEducationPage(),
           ]),

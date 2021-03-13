@@ -1,3 +1,5 @@
+import 'package:date_format/date_format.dart';
+
 class DateUtil {
 
   static String getTimeString(DateTime dateTime) {
@@ -57,5 +59,28 @@ class DateUtil {
     return yearString[yearString.length - 3] + (int.parse(yearString[yearString.length - 1]) >= 5 ? "5后" : "0后");
   }
 
+  static String getFormatTime(int timestamp) {
+    return formatDate(DateTime.fromMillisecondsSinceEpoch(timestamp), [
+      yyyy,
+      '-',
+      mm,
+      '-',
+      dd,
+      " ",
+      HH,
+      ':',
+      nn,
+    ]);
+  }
+
+  static String getFormatDate(int timestamp) {
+    return formatDate(DateTime.fromMillisecondsSinceEpoch(timestamp), [
+      yyyy,
+      '-',
+      mm,
+      '-',
+      dd,
+    ]);
+  }
 
 }
