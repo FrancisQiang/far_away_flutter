@@ -122,16 +122,59 @@ class DynamicDetailWidget extends StatelessWidget {
             margin: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
           ),
           Container(
+            height: ScreenUtil().setHeight(35),
             margin: EdgeInsets.only(
               top: ScreenUtil().setHeight(20),
             ),
-            padding: EdgeInsets.symmetric(
-              // horizontal: ScreenUtil().setWidth(20)
-            ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
+                FlatButton(
+                    onPressed: () {},
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/png/share_rect.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text(
+                            "分享",
+                          ),
+                        )
+                      ],
+                    )
+                ),
+                FlatButton(
+                  onPressed: null,
+                  padding: EdgeInsets.zero,
+                  child: Container(
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/png/comment.png',
+                            width: ScreenUtil().setWidth(45),
+                            height: ScreenUtil().setWidth(40),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 5),
+                            child: Text(
+                              CalculateUtil.simplifyCount(
+                                  dynamicDetailBean.commentsCount),
+                            ),
+                          )
+                        ],
+                      )
+                  ),
+                ),
+                FlatButton(
+                  onPressed: () {},
+                  padding: EdgeInsets.zero,
                   child: LikeButton(
                     size: ScreenUtil().setSp(40),
                     onTap: (bool isLiked) async {
@@ -182,36 +225,6 @@ class DynamicDetailWidget extends StatelessWidget {
                       }
                       return result;
                     },
-                  ),
-                ),
-                Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        child: Icon(
-                          FontAwesomeIcons.commentDots,
-                          size: ScreenUtil().setSp(32),
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '  ${CalculateUtil.simplifyCount(dynamicDetailBean.commentsCount)}',
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(25),
-                              letterSpacing: 0.2),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Icon(
-                    FontAwesomeIcons.solidStar,
-                    size: ScreenUtil().setSp(30),
-                    color: dynamicDetailBean.collected
-                        ? Colors.deepOrangeAccent
-                        : Colors.black,
                   ),
                 ),
               ],

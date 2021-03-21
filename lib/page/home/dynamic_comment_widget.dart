@@ -5,8 +5,7 @@ import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/avatar_component.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
-import 'package:far_away_flutter/provider/dynamic_comment_chosen_provider.dart';
-import 'package:far_away_flutter/provider/together_comment_chosen_provider.dart';
+import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
@@ -34,16 +33,16 @@ class DynamicCommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DynamicCommentChosenProvider>(
-      builder: (context, dynamicCommentChosenProvider, child) {
+    return Consumer<CommentChosenProvider>(
+      builder: (context, commentChosenProvider, child) {
         return GestureDetector(
           onTap: () {
-            dynamicCommentChosenProvider.pid = commentListBean.id;
-            dynamicCommentChosenProvider.targetUserId =
+            commentChosenProvider.pid = commentListBean.id;
+            commentChosenProvider.targetUserId =
                 commentListBean.fromUserId;
-            dynamicCommentChosenProvider.targetUsername =
+            commentChosenProvider.targetUsername =
                 commentListBean.fromUsername;
-            dynamicCommentChosenProvider.refresh();
+            commentChosenProvider.refresh();
           },
           child: Container(
               margin: EdgeInsets.symmetric(
@@ -92,16 +91,16 @@ class TogetherCommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TogetherCommentChosenProvider>(
-      builder: (context, togetherCommentChosenProvider, child) {
+    return Consumer<CommentChosenProvider>(
+      builder: (context, commentChosenProvider, child) {
         return GestureDetector(
           onTap: () {
-            togetherCommentChosenProvider.pid = commentListBean.id;
-            togetherCommentChosenProvider.targetUserId =
+            commentChosenProvider.pid = commentListBean.id;
+            commentChosenProvider.targetUserId =
                 commentListBean.fromUserId;
-            togetherCommentChosenProvider.targetUsername =
+            commentChosenProvider.targetUsername =
                 commentListBean.fromUsername;
-            togetherCommentChosenProvider.refresh();
+            commentChosenProvider.refresh();
           },
           child: Container(
               margin: EdgeInsets.symmetric(
@@ -300,13 +299,13 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DynamicCommentChosenProvider>(
-      builder: (context, dynamicCommentChosenProvider, child) {
+    return Consumer<CommentChosenProvider>(
+      builder: (context, commentChosenProvider, child) {
         List<CommentListBean> childrenList = parentComment.children;
         int showLength = childrenList.length > 2 ? 2 : childrenList.length;
         List<Widget> childrenWidget = List<Widget>.generate(
             showLength, (index) {
-              return generateChildComment(childrenList[index], dynamicCommentChosenProvider);
+              return generateChildComment(childrenList[index], commentChosenProvider);
         });
         if (childrenList.length > 2) {
           childrenWidget.add(GestureDetector(

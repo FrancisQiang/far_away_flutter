@@ -242,15 +242,16 @@ class DynamicPreviewCard extends StatelessWidget {
               children: [
                 FlatButton(
                     onPressed: () {},
+                    padding: EdgeInsets.zero,
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.share_outlined,
-                          size: ScreenUtil().setSp(35),
+                        Image.asset(
+                          'assets/png/share_rect.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
                         ),
                         Container(
-                          width: ScreenUtil().setWidth(100),
-                          margin: EdgeInsets.only(left: 10),
+                          margin: EdgeInsets.only(left: 5),
                           child: Text(
                             "分享",
                           ),
@@ -265,19 +266,19 @@ class DynamicPreviewCard extends StatelessWidget {
                             scrollToComment: true,
                             dynamicDetailBean: dynamicDetailBean));
                   },
+                  padding: EdgeInsets.zero,
                   child: Container(
                       alignment: Alignment.center,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          Image.asset(
+                            'assets/png/comment.png',
+                            width: ScreenUtil().setWidth(45),
+                            height: ScreenUtil().setWidth(40),
+                          ),
                           Container(
-                              child: Icon(
-                                FontAwesomeIcons.commentDots,
-                                size: ScreenUtil().setSp(35),
-                              )),
-                          Container(
-                            width: ScreenUtil().setWidth(70),
-                            margin: EdgeInsets.only(left: 10),
+                            margin: EdgeInsets.only(left: 5),
                             child: Text(
                               CalculateUtil.simplifyCount(
                                   dynamicDetailBean.commentsCount),
@@ -289,8 +290,9 @@ class DynamicPreviewCard extends StatelessWidget {
                 ),
                 FlatButton(
                   onPressed: () {},
+                  padding: EdgeInsets.zero,
                   child: LikeButton(
-                    size: ScreenUtil().setSp(35),
+                    size: ScreenUtil().setSp(40),
                     onTap: (bool isLiked) async {
                       await ApiMethodUtil.dynamicThumbChange(
                           token: ProviderUtil.globalInfoProvider.jwt,
@@ -317,18 +319,18 @@ class DynamicPreviewCard extends StatelessWidget {
                         return Icon(
                           FontAwesomeIcons.solidHeart,
                           color: Colors.redAccent,
-                          size: ScreenUtil().setSp(35),
+                          size: ScreenUtil().setSp(40),
                         );
                       } else {
                         return Icon(
                           FontAwesomeIcons.heart,
                           color: Colors.black,
-                          size: ScreenUtil().setSp(35),
+                          size: ScreenUtil().setSp(40),
                         );
                       }
                     },
                     likeCount: dynamicDetailBean.thumbCount,
-                    likeCountPadding: EdgeInsets.only(left: 10),
+                    likeCountPadding: EdgeInsets.only(left: 5),
                     likeCountAnimationType:
                     dynamicDetailBean.thumbCount < 1000
                         ? LikeCountAnimationType.part
@@ -337,7 +339,6 @@ class DynamicPreviewCard extends StatelessWidget {
                       Color color = isLiked ? Colors.redAccent : Colors.black;
                       Widget result;
                       return Container(
-                        width: ScreenUtil().setWidth(70),
                         child: Text(
                           count >= 1000
                               ? CalculateUtil.simplifyCount(count)

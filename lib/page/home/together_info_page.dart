@@ -17,6 +17,7 @@ import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
+import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
@@ -26,6 +27,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 
 import 'dynamic_empty_widget.dart';
@@ -112,8 +114,7 @@ class _TogetherInfoPageState extends State<TogetherInfoPage>
                 onTap: () => NavigatorUtil.toTogetherDetailPage(context,
                     param: TogetherDetailParam(
                         avatarHeroTag: 'together_${togetherList[index].id}',
-                        togetherInfoBean: togetherList[index])
-                ),
+                        togetherInfoBean: togetherList[index])),
                 child: TogetherInfoPreviewCard(
                     togetherInfoBean: togetherList[index]));
           })));
@@ -190,56 +191,90 @@ class TogetherInfoPreviewCard extends StatelessWidget {
             ),
             child: Text(togetherInfoBean.content,
                 maxLines: 50,
-                overflow: TextOverflow.ellipsis, style: TextStyleTheme.body),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyleTheme.body),
           ),
           TimeLocationBar(
             time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
                 togetherInfoBean.publishTime)),
             location: togetherInfoBean.location,
             width: ScreenUtil().setWidth(750),
-            margin: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
+            margin: EdgeInsets.only(top: ScreenUtil().setHeight(18)),
           ),
           Container(
-            margin: EdgeInsets.only(top: 5),
+            height: ScreenUtil().setHeight(50),
+            margin: EdgeInsets.only(top: 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 FlatButton(
                     onPressed: () {},
+                    padding: EdgeInsets.zero,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(Icons.share_outlined),
+                        Image.asset(
+                          'assets/png/share_rect.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
+                        ),
                         Container(
-                          width: ScreenUtil().setWidth(60),
-                          margin: EdgeInsets.only(left: 20),
+                          margin: EdgeInsets.only(left: 5),
                           child: Text("分享"),
                         )
                       ],
                     )),
                 FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      NavigatorUtil.toTogetherDetailPage(context,
+                          param: TogetherDetailParam(
+                              scrollToComment: true,
+                              togetherInfoBean: togetherInfoBean));
+                    },
+                    padding: EdgeInsets.zero,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(Icons.comment_outlined),
+                        Image.asset(
+                          'assets/png/comment.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
+                        ),
                         Container(
-                          width: ScreenUtil().setWidth(60),
-                          margin: EdgeInsets.only(left: 20),
-                          child: Text("10"),
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text('${togetherInfoBean.commentsCount}'),
                         )
                       ],
                     )),
                 FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // TODO 跳转到私聊界面
+                      Response<dynamic> response = await ApiMethodUtil.togetherSignUp(
+                          token: ProviderUtil.globalInfoProvider.jwt,
+                          id: togetherInfoBean.id);
+                      if (ResponseBean.fromJson(response.data).isSuccess()) {
+                        togetherInfoBean.signUp = true;
+                      } else {
+                        ToastUtil.showErrorToast("网络异常，请稍后再试");
+                      }
+                    },
+                    padding: EdgeInsets.zero,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(Icons.favorite_border),
+                        togetherInfoBean.signUp
+                            ? Image.asset(
+                                'assets/png/handed.png',
+                                width: ScreenUtil().setWidth(45),
+                                height: ScreenUtil().setWidth(40),
+                              )
+                            : Image.asset(
+                                'assets/png/hands.png',
+                                width: ScreenUtil().setWidth(45),
+                                height: ScreenUtil().setWidth(40),
+                              ),
                         Container(
-                          width: ScreenUtil().setWidth(60),
-                          margin: EdgeInsets.only(left: 20),
-                          child: Text("10"),
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text('${togetherInfoBean.signUpCount}', style: TextStyle(
+                            color: togetherInfoBean.signUpCount > 0 ? Color.fromRGBO(255, 122, 0, 1) : Colors.black
+                          ),),
                         )
                       ],
                     )),

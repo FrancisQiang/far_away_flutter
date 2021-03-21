@@ -14,6 +14,7 @@ import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
@@ -52,17 +53,23 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
 
   Function _dataRefresh;
 
+  bool scrollToComment;
+
   @override
   void initState() {
-    super.initState();
+    scrollToComment = widget.scrollToComment;
     _dataRefresh = () async {
       commentList = [];
       currentPage = 1;
       await _loadCommentListData();
+      // 等待数据刷新之后进行滚动，否则无法滚动
+      // 主要原因是会进行两次刷新，第二次刷新会覆盖掉前面的滚动动作
+      if (scrollToComment) {
+        WidgetsBinding.instance.addPostFrameCallback(_scrollToCommentList);
+        scrollToComment = false;
+      }
     };
-    if (widget.scrollToComment) {
-      WidgetsBinding.instance.addPostFrameCallback(_scrollToCommentList);
-    }
+    super.initState();
   }
 
   // 跳转到评论列表
@@ -77,8 +84,7 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
         offset.dy -
         MediaQueryData.fromWindow(window).padding.top -
         56.0;
-    _controller.animateTo(animateHeight,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+    _controller.animateTo(animateHeight, duration: Duration(milliseconds: 400), curve: Curves.ease);
   }
 
   _loadCommentListData() async {
@@ -101,7 +107,7 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
     hasLoadData = true;
     Response<dynamic> data = await ApiMethodUtil.getCommentList(
         commentQueryParam: CommentQueryParam(
-            businessType: 3,
+            businessType: 10,
             businessId: widget.togetherInfoBean.id,
             currentPage: currentPage));
     ResponseBean response = ResponseBean.fromJson(data.data);
@@ -145,6 +151,10 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
               avatarHeroTag: widget.avatarHeroTag,
             ),
             Container(
+              color: Colors.grey[100],
+              height: 5,
+            ),
+            Container(
               decoration: BoxDecoration(color: Colors.white),
               padding: EdgeInsets.symmetric(
                   horizontal: ScreenUtil().setWidth(22)),
@@ -168,7 +178,7 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
                     child: commentList.isEmpty && emptyData
                         ? Container(
                       child: CommentEmpty(
-                        iconHeight: ScreenUtil().setHeight(350),
+                        iconHeight: ScreenUtil().setHeight(500),
                         iconWidth: ScreenUtil().setWidth(750),
                       ),
                     )
@@ -180,10 +190,6 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
                       }),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: ScreenUtil().setHeight(100),
-                  )
                 ],
               ),
             )

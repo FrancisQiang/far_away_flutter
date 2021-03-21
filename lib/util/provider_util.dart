@@ -9,10 +9,9 @@ import 'package:far_away_flutter/page/main/main_page.dart';
 import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
 import 'package:far_away_flutter/page/post/post_together_page.dart';
-import 'package:far_away_flutter/provider/dynamic_comment_chosen_provider.dart';
+import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
-import 'package:far_away_flutter/provider/together_comment_chosen_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
@@ -22,9 +21,9 @@ class ProviderUtil {
 
   static PostProvider postProvider = PostProvider();
 
-  static DynamicCommentChosenProvider dynamicCommentChosenProvider = DynamicCommentChosenProvider();
+  static CommentChosenProvider dynamicCommentChosenProvider = CommentChosenProvider();
 
-  static TogetherCommentChosenProvider togetherCommentChosenProvider = TogetherCommentChosenProvider();
+  static CommentChosenProvider togetherCommentChosenProvider = CommentChosenProvider();
 
   static MultiProvider getMainPage() {
     return MultiProvider(
@@ -63,7 +62,7 @@ class ProviderUtil {
     dynamicCommentChosenProvider.refresh();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<DynamicCommentChosenProvider>.value(value: dynamicCommentChosenProvider),
+        ChangeNotifierProvider<CommentChosenProvider>.value(value: dynamicCommentChosenProvider),
       ],
       child: DynamicDetailPage(
         scrollToComment: scrollToComment,
@@ -81,7 +80,7 @@ class ProviderUtil {
     togetherCommentChosenProvider.refresh();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<TogetherCommentChosenProvider>.value(value: togetherCommentChosenProvider),
+        ChangeNotifierProvider<CommentChosenProvider>.value(value: togetherCommentChosenProvider),
       ],
       child: TogetherDetailPage(
         scrollToComment: scrollToComment,
@@ -108,7 +107,7 @@ class ProviderUtil {
   static MultiProvider getCommentDrawWidget(CommentListBean commentListBean) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<DynamicCommentChosenProvider>.value(value: dynamicCommentChosenProvider),
+        ChangeNotifierProvider<CommentChosenProvider>.value(value: dynamicCommentChosenProvider),
       ],
       child: CommentDrawWidget(
         comment: commentListBean,

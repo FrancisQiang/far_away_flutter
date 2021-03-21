@@ -27,9 +27,10 @@ class DynamicDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white70,
-          elevation: 0.0,
+          backgroundColor: Colors.white,
+          elevation: 2.0,
           leading: InkWell(
             onTap: () {
               Navigator.pop(context);
@@ -53,10 +54,7 @@ class DynamicDetailPage extends StatelessWidget {
               child: Container(
                   padding: EdgeInsets.symmetric(
                       horizontal: ScreenUtil().setWidth(30)),
-                  child: Icon(
-                    FontAwesomeIcons.ellipsisH
-                  )
-              ),
+                  child: Icon(FontAwesomeIcons.ellipsisH)),
             )
           ],
         ),

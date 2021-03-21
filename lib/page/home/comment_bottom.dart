@@ -8,7 +8,7 @@ import 'package:far_away_flutter/bean/upload_response_bean.dart';
 import 'package:far_away_flutter/bean/upload_token_bean.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
-import 'package:far_away_flutter/provider/dynamic_comment_chosen_provider.dart';
+import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/asset_picker_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
@@ -28,7 +28,7 @@ class CommentBottom extends StatefulWidget {
 
 class _CommentBottomState extends State<CommentBottom> {
   _loadPictures(
-      DynamicCommentChosenProvider dynamicCommentChosenProvider) async {
+      CommentChosenProvider commentChosenProvider) async {
     List<AssetEntity> resultList;
     try {
       resultList = await AssetPickerUtil.pickerCommon(context);
@@ -40,8 +40,8 @@ class _CommentBottomState extends State<CommentBottom> {
     }
     // 用户选中才进行更改
     if (resultList != null) {
-      dynamicCommentChosenProvider.assetList = resultList;
-      dynamicCommentChosenProvider.refresh();
+      commentChosenProvider.assetList = resultList;
+      commentChosenProvider.refresh();
     }
   }
 
@@ -52,9 +52,9 @@ class _CommentBottomState extends State<CommentBottom> {
       child: Column(
         children: [
           // 已选择的图片列表
-          Consumer<DynamicCommentChosenProvider>(
-              builder: (context, dynamicCommentChosenProvider, child) {
-            return dynamicCommentChosenProvider.assetList.isNotEmpty
+          Consumer<CommentChosenProvider>(
+              builder: (context, commentChosenProvider, child) {
+            return commentChosenProvider.assetList.isNotEmpty
                 ? Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -68,7 +68,7 @@ class _CommentBottomState extends State<CommentBottom> {
                         horizontal: ScreenUtil().setWidth(10)),
                     height: ScreenUtil().setWidth(200),
                     child: ListView.builder(
-                      itemCount: dynamicCommentChosenProvider.assetList.length,
+                      itemCount: commentChosenProvider.assetList.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return Container(
@@ -90,7 +90,7 @@ class _CommentBottomState extends State<CommentBottom> {
                                     width: ScreenUtil().setWidth(160),
                                     height: ScreenUtil().setWidth(160),
                                     image: AssetEntityImageProvider(
-                                      dynamicCommentChosenProvider
+                                      commentChosenProvider
                                           .assetList[index],
                                       isOriginal: false,
                                       thumbSize: [160, 160],
@@ -169,8 +169,8 @@ class EditBottom extends StatelessWidget {
         ),
         padding: EdgeInsets.symmetric(
             vertical: ScreenUtil().setHeight(15), horizontal: 2),
-        child: Consumer<DynamicCommentChosenProvider>(
-          builder: (context, dynamicCommentChosenProvider, child) {
+        child: Consumer<CommentChosenProvider>(
+          builder: (context, commentChosenProvider, child) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -182,7 +182,9 @@ class EditBottom extends StatelessWidget {
                     maxLines: 5,
                     minLines: 1,
                     decoration: InputDecoration(
-                        focusedBorder: null,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
                         filled: true,
                         fillColor: Color(0xFFF0F0F0),
                         contentPadding: EdgeInsets.symmetric(
@@ -190,15 +192,16 @@ class EditBottom extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(6),
                             borderSide: BorderSide(
-                                color: Colors.transparent, width: 0.0)),
+                                color: Colors.transparent, width: 0.0)
+                        ),
                         hintText:
-                            '回复 ${dynamicCommentChosenProvider.targetUsername}: ',
+                            '回复 ${commentChosenProvider.targetUsername}: ',
                         hintStyle: TextStyleTheme.subH4),
                   ),
                 ),
                 GestureDetector(
                   onTap: () async {
-                    await loadPictures(dynamicCommentChosenProvider);
+                    await loadPictures(commentChosenProvider);
                   },
                   child: Container(
                       width: ScreenUtil().setWidth(55),
@@ -213,31 +216,25 @@ class EditBottom extends StatelessWidget {
                   onTap: () async {
                     // 保存一份资源列表
                     List<AssetEntity> duplicateAssets = [];
-                    dynamicCommentChosenProvider.assetList.forEach((asset) {
+                    commentChosenProvider.assetList.forEach((asset) {
                       duplicateAssets.add(asset);
                     });
                     String duplicateContent = _controller.text;
                     _controller.text = '';
-                    dynamicCommentChosenProvider.assetList.clear();
-                    dynamicCommentChosenProvider.refresh();
+                    commentChosenProvider.assetList.clear();
+                    commentChosenProvider.refresh();
                     FocusScope.of(context).requestFocus(FocusNode());
                     ToastUtil.showNoticeToast("评论发布中");
                     String jwt = ProviderUtil.globalInfoProvider.jwt;
-                    print('PID ${dynamicCommentChosenProvider.pid}'
-                        'CONTENT ${dynamicCommentChosenProvider.content}'
-                        'targetUserId ${dynamicCommentChosenProvider.targetUserId}'
-                        'targetBizId ${dynamicCommentChosenProvider.targetBizId}'
-                        'targetUsername ${dynamicCommentChosenProvider.targetUsername}');
                     Response<dynamic> response =
                         await ApiMethodUtil.postComment(
                             token: jwt,
-                            bizId: dynamicCommentChosenProvider.targetBizId,
-                            toUserId: dynamicCommentChosenProvider.targetUserId,
+                            bizId: commentChosenProvider.targetBizId,
+                            toUserId: commentChosenProvider.targetUserId,
                             content: duplicateContent,
-                            pid: dynamicCommentChosenProvider.pid,
+                            pid: commentChosenProvider.pid,
                             bizType: "2",
-                            pictureList:
-                                await _uploadPicture(jwt, duplicateAssets));
+                            pictureList: await _uploadPicture(jwt, duplicateAssets));
                     ResponseBean responseBean =
                         ResponseBean.fromJson(response.data);
                     if (responseBean.isSuccess()) {

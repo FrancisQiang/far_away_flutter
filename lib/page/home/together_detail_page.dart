@@ -7,8 +7,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'comment_bottom.dart';
-
 class TogetherDetailPage extends StatelessWidget {
   // 是否滚动到评论页
   final bool scrollToComment;
@@ -25,9 +23,10 @@ class TogetherDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white70,
-          elevation: 0.0,
+          backgroundColor: Colors.white,
+          elevation: 1.0,
           leading: InkWell(
             onTap: () {
               Navigator.pop(context);
@@ -51,10 +50,7 @@ class TogetherDetailPage extends StatelessWidget {
               child: Container(
                   padding: EdgeInsets.symmetric(
                       horizontal: ScreenUtil().setWidth(30)),
-                  child: Icon(
-                      FontAwesomeIcons.ellipsisH
-                  )
-              ),
+                  child: Icon(FontAwesomeIcons.ellipsisH)),
             )
           ],
         ),
@@ -62,12 +58,18 @@ class TogetherDetailPage extends StatelessWidget {
           child: Stack(
             children: [
               Container(
+                  margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(100)),
                   child: TogetherDetailComponent(
                     scrollToComment: scrollToComment,
                     avatarHeroTag: avatarHeroTag,
                     togetherInfoBean: togetherInfoBean,
                   )),
-              Positioned(left: 0, bottom: 0, child: TextCommentBottom())
+              Positioned(
+                  left: 0,
+                  bottom: 0,
+                  child: TextCommentBottom(
+                    bizType: 10,
+                  ))
             ],
           ),
         ));

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
-import 'package:far_away_flutter/provider/together_comment_chosen_provider.dart';
+import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
@@ -10,6 +10,10 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:provider/provider.dart';
 
 class TextCommentBottom extends StatelessWidget {
+
+  final int bizType;
+
+  TextCommentBottom({@required this.bizType});
 
   final TextEditingController _controller = TextEditingController();
 
@@ -24,8 +28,8 @@ class TextCommentBottom extends StatelessWidget {
         ),
         padding: EdgeInsets.symmetric(
             vertical: ScreenUtil().setHeight(15), horizontal: 2),
-        child: Consumer<TogetherCommentChosenProvider>(
-          builder: (context, togetherCommentChosenProvider, child) {
+        child: Consumer<CommentChosenProvider>(
+          builder: (context, commentChosenProvider, child) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -47,7 +51,7 @@ class TextCommentBottom extends StatelessWidget {
                             borderSide: BorderSide(
                                 color: Colors.transparent, width: 0.0)),
                         hintText:
-                        '回复 ${togetherCommentChosenProvider.targetUsername}: ',
+                        '回复 ${commentChosenProvider.targetUsername}: ',
                         hintStyle: TextStyleTheme.subH4),
                   ),
                 ),
@@ -55,23 +59,18 @@ class TextCommentBottom extends StatelessWidget {
                   onTap: () async {
                     String duplicateContent = _controller.text;
                     _controller.text = '';
-                    togetherCommentChosenProvider.refresh();
+                    commentChosenProvider.refresh();
                     FocusScope.of(context).requestFocus(FocusNode());
                     ToastUtil.showNoticeToast("评论发布中");
                     String jwt = ProviderUtil.globalInfoProvider.jwt;
-                    print('PID ${togetherCommentChosenProvider.pid}'
-                        'CONTENT ${togetherCommentChosenProvider.content}'
-                        'targetUserId ${togetherCommentChosenProvider.targetUserId}'
-                        'targetBizId ${togetherCommentChosenProvider.targetBizId}'
-                        'targetUsername ${togetherCommentChosenProvider.targetUsername}');
                     Response<dynamic> response =
                     await ApiMethodUtil.postComment(
                         token: jwt,
-                        bizId: togetherCommentChosenProvider.targetBizId,
-                        toUserId: togetherCommentChosenProvider.targetUserId,
+                        bizId: commentChosenProvider.targetBizId,
+                        toUserId: commentChosenProvider.targetUserId,
                         content: duplicateContent,
-                        pid: togetherCommentChosenProvider.pid,
-                        bizType: "3",);
+                        pid: commentChosenProvider.pid,
+                        bizType: bizType.toString(),);
                     ResponseBean responseBean =
                     ResponseBean.fromJson(response.data);
                     if (responseBean.isSuccess()) {

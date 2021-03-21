@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
@@ -20,7 +21,6 @@ import 'dynamic_comment_widget.dart';
 import 'dynamic_detail_widget.dart';
 
 class DynamicDetailComponent extends StatefulWidget {
-
   // 是否滚动到评论页
   final bool scrollToComment;
 
@@ -30,14 +30,14 @@ class DynamicDetailComponent extends StatefulWidget {
   // 动态详情
   final DynamicDetailBean dynamicDetailBean;
 
-  DynamicDetailComponent({this.scrollToComment, this.avatarHeroTag, this.dynamicDetailBean});
+  DynamicDetailComponent(
+      {this.scrollToComment, this.avatarHeroTag, this.dynamicDetailBean});
 
   @override
   _DynamicDetailComponentState createState() => _DynamicDetailComponentState();
 }
 
 class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
-
   final GlobalKey _globalKey = GlobalKey();
 
   final ScrollController _controller = ScrollController();
@@ -52,17 +52,21 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
 
   Function _dataRefresh;
 
+  bool scrollToComment;
+
   @override
   void initState() {
     super.initState();
+    scrollToComment = widget.scrollToComment;
     _dataRefresh = () async {
       commentList = [];
       currentPage = 1;
       await _loadCommentListData();
+      if (scrollToComment) {
+        WidgetsBinding.instance.addPostFrameCallback(_scrollToCommentList);
+        scrollToComment = false;
+      }
     };
-    if (widget.scrollToComment) {
-      WidgetsBinding.instance.addPostFrameCallback(_scrollToCommentList);
-    }
   }
 
   // 跳转到评论列表
@@ -78,19 +82,19 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
         MediaQueryData.fromWindow(window).padding.top -
         56.0;
     _controller.animateTo(animateHeight,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+        duration: Duration(milliseconds: 500), curve: Curves.linear);
   }
 
   _loadCommentListData() async {
     if (hasLoadData) {
       Response<dynamic> dynamicDetailData =
-      await ApiMethodUtil.getDynamicDetail(
-          id: widget.dynamicDetailBean.id,
-          token: ProviderUtil.globalInfoProvider.jwt);
+          await ApiMethodUtil.getDynamicDetail(
+              id: widget.dynamicDetailBean.id,
+              token: ProviderUtil.globalInfoProvider.jwt);
       ResponseBean dynamicDetailDataResponse =
-      ResponseBean.fromJson(dynamicDetailData.data);
+          ResponseBean.fromJson(dynamicDetailData.data);
       DynamicDetailBean dynamicDetailBean =
-      DynamicDetailBean.fromJson(dynamicDetailDataResponse.data);
+          DynamicDetailBean.fromJson(dynamicDetailDataResponse.data);
       setState(() {
         widget.dynamicDetailBean.username = dynamicDetailBean.username;
         widget.dynamicDetailBean.userAvatar = dynamicDetailBean.userAvatar;
@@ -149,17 +153,20 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
               avatarHeroTag: widget.avatarHeroTag,
             ),
             Container(
+              color: Colors.grey[100],
+              height: 5,
+            ),
+            Container(
               decoration: BoxDecoration(color: Colors.white),
-              padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(22)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22)),
               child: Column(
                 children: [
                   Container(
                     key: _globalKey,
                     decoration: BoxDecoration(
                       border: Border(
-                          bottom: BorderSide(
-                              color: Colors.black, width: 0.05)),
+                          bottom: BorderSide(color: Colors.black, width: 0.05)),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 5),
                     width: double.infinity,
@@ -171,18 +178,19 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                   Container(
                     child: commentList.isEmpty && emptyData
                         ? Container(
-                      child: CommentEmpty(
-                        iconHeight: ScreenUtil().setHeight(350),
-                        iconWidth: ScreenUtil().setWidth(750),
-                      ),
-                    )
+                            child: CommentEmpty(
+                              iconHeight: ScreenUtil().setHeight(350),
+                              iconWidth: ScreenUtil().setWidth(750),
+                            ),
+                          )
                         : Column(
-                      children: List.generate(commentList.length, (commentIndex) {
-                        return DynamicCommentWidget(
-                          commentListBean: commentList[commentIndex],
-                        );
-                      }),
-                    ),
+                            children: List.generate(commentList.length,
+                                (commentIndex) {
+                              return DynamicCommentWidget(
+                                commentListBean: commentList[commentIndex],
+                              );
+                            }),
+                          ),
                   ),
                   Container(
                     alignment: Alignment.center,

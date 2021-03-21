@@ -1,13 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
+import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
+import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
+import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
+import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TogetherDetailWidget extends StatelessWidget {
   final String avatarHeroTag;
@@ -92,36 +96,79 @@ class TogetherDetailWidget extends StatelessWidget {
             margin: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
           ),
           Container(
-            margin: EdgeInsets.only(
-              top: ScreenUtil().setHeight(20),
-            ),
-            padding: EdgeInsets.symmetric(
-                // horizontal: ScreenUtil().setWidth(20)
-                ),
+            height: ScreenUtil().setHeight(50),
+            margin: EdgeInsets.only(top: 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        child: Icon(
-                          FontAwesomeIcons.commentDots,
-                          size: ScreenUtil().setSp(32),
+                FlatButton(
+                    onPressed: () {},
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/png/share_rect.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
                         ),
-                      ),
-                      Container(
-                        child: Text(
-                          '100',
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(25),
-                              letterSpacing: 0.2),
+                        Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text("分享"),
+                        )
+                      ],
+                    )),
+                FlatButton(
+                    onPressed: () {},
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/png/comment.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
                         ),
-                      )
-                    ],
-                  ),
-                ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text(
+                              '${togetherInfoBean.commentsCount}'
+                          ),
+                        )
+                      ],
+                    )),
+                FlatButton(
+                    onPressed: () async {
+                      // TODO 跳转到私聊界面
+                      Response<dynamic> response = await ApiMethodUtil.togetherSignUp(
+                          token: ProviderUtil.globalInfoProvider.jwt,
+                          id: togetherInfoBean.id);
+                      if (ResponseBean.fromJson(response.data).isSuccess()) {
+                        togetherInfoBean.signUp = true;
+                      } else {
+                        ToastUtil.showErrorToast("网络异常，请稍后再试");
+                      }
+                    },
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        togetherInfoBean.signUp
+                            ? Image.asset(
+                          'assets/png/handed.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
+                        )
+                            : Image.asset(
+                          'assets/png/hands.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text('${togetherInfoBean.signUpCount}', style: TextStyle(
+                              color: togetherInfoBean.signUpCount > 0 ? Color.fromRGBO(255, 122, 0, 1) : Colors.black
+                          ),),
+                        )
+                      ],
+                    )),
               ],
             ),
           )
