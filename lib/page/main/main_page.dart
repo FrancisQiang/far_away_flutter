@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/my_icons.dart';
+import 'package:far_away_flutter/page/chat/chat_page.dart';
 import 'package:far_away_flutter/page/home/home_page.dart';
 import 'package:far_away_flutter/page/post/post_choose_widget.dart';
 import 'package:far_away_flutter/page/user/user_center_page.dart';
@@ -11,12 +12,14 @@ import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/sp_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
+import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -45,6 +48,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ResponseBean response = ResponseBean.fromJson(userInfoResponse.data);
           // 存放在全局变量中
           ProviderUtil.globalInfoProvider.userInfoBean = UserInfoBean.fromJson(response.data);
+          print('获取data ${response.data}');
+          RongIMClient.init("cpj2xarlcmi6n");
+          print('获取Token${ProviderUtil.globalInfoProvider.userInfoBean.IMToken}');
+          RongIMClient.connect(ProviderUtil.globalInfoProvider.userInfoBean.IMToken, (int code, String userId) {
+            if (code == 31004 || code == 12) {
+              ToastUtil.showErrorToast("消息系统登录失败");
+            } else if (code == 0) {
+              print("connect userId" + userId);
+              // 连接成功后打开数据库
+              // _initUserInfoCache();
+            }
+          });
         } catch (ex) {
           print(ex);
           occurException = true;
@@ -71,15 +86,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     ScreenUtil.init(context,
         designSize: Size(750, 1334), allowFontScaling: false);
     return Scaffold(
-
       body: PageView(
         physics: NeverScrollableScrollPhysics(),
         controller: this._pageController,
         children: [
           HomePage(),
-          Container(
-            child: Text('2'),
-          ),
+          ChatPage(),
           Container(),
           Container(
             child: Text('3'),

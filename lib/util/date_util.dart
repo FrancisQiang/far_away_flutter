@@ -83,4 +83,19 @@ class DateUtil {
     ]);
   }
 
+  static String getSimpleDate(int timestamp) {
+    print('time: $timestamp');
+    DateTime now = DateTime.now();
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    // 如果是今天
+    if (dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day) {
+      return '${dateTime.hour}:${dateTime.minute}';
+    }
+    if (dateTime.year == now.year) {
+      return '${dateTime.month}-${dateTime.day}';
+    } else {
+      return '${dateTime.year.toString().substring(3,4)}-${dateTime.month}-${dateTime.day}';
+    }
+  }
+
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_post_bean.dart';
 import 'package:far_away_flutter/bean/together_post_bean.dart';
+import 'package:far_away_flutter/bean/user_id_list_bean.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
@@ -197,7 +198,10 @@ class ApiMethodUtil {
     );
   }
 
-  static Future<dynamic> getTogetherInfoList({@required int timestamp, @required int currentPage, @required String token}) {
+  static Future<dynamic> getTogetherInfoList(
+      {@required int timestamp,
+      @required int currentPage,
+      @required String token}) {
     return DioFactory.getDioClient().get(
       ApiProperties.HOST_BASE_URL + "/together/list/$timestamp/$currentPage",
       options: Options(headers: {"Authorization": token}),
@@ -221,12 +225,18 @@ class ApiMethodUtil {
   }
 
   static Future<dynamic> togetherSignUp(
-      {@required String token,
-        @required String id}) {
+      {@required String token, @required String id}) {
     return DioFactory.getDioClient().post(
       ApiProperties.HOST_BASE_URL + "/together/signup/$id",
       options: Options(headers: {"Authorization": token}),
     );
   }
 
+  static Future<dynamic> getSimpleUserInfoList(
+      {@required List<String> userIds}) {
+    return DioFactory.getDioClient().post(
+        ApiProperties.HOST_BASE_URL + "/user/getSimpleUserInfo",
+        data: UserIdListBean(userIdList: userIds).toJson()
+    );
+  }
 }

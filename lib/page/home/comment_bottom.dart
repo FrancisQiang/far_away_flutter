@@ -27,8 +27,7 @@ class CommentBottom extends StatefulWidget {
 }
 
 class _CommentBottomState extends State<CommentBottom> {
-  _loadPictures(
-      CommentChosenProvider commentChosenProvider) async {
+  _loadPictures(CommentChosenProvider commentChosenProvider) async {
     List<AssetEntity> resultList;
     try {
       resultList = await AssetPickerUtil.pickerCommon(context);
@@ -90,8 +89,7 @@ class _CommentBottomState extends State<CommentBottom> {
                                     width: ScreenUtil().setWidth(160),
                                     height: ScreenUtil().setWidth(160),
                                     image: AssetEntityImageProvider(
-                                      commentChosenProvider
-                                          .assetList[index],
+                                      commentChosenProvider.assetList[index],
                                       isOriginal: false,
                                       thumbSize: [160, 160],
                                     ),
@@ -175,25 +173,27 @@ class EditBottom extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  width: ScreenUtil().setWidth(450),
+                  width: ScreenUtil().setWidth(500),
                   child: TextField(
                     controller: _controller,
-                    maxLines: 5,
+                    textAlignVertical: TextAlignVertical.center,
+                    maxLines: 10,
+                    keyboardType: TextInputType.multiline,
                     minLines: 1,
                     decoration: InputDecoration(
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: Colors.transparent, width: 0.0)),
                         filled: true,
                         fillColor: Color(0xFFF0F0F0),
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(20)),
+                        isDense: true,
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                         enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                                color: Colors.transparent, width: 0.0)
-                        ),
+                                color: Colors.transparent, width: 0.0)),
                         hintText:
                             '回复 ${commentChosenProvider.targetUsername}: ',
                         hintStyle: TextStyleTheme.subH4),
@@ -208,10 +208,10 @@ class EditBottom extends StatelessWidget {
                       height: ScreenUtil().setWidth(55),
                       child: Image.asset('assets/png/album.png')),
                 ),
-                Container(
-                    width: ScreenUtil().setWidth(55),
-                    height: ScreenUtil().setWidth(55),
-                    child: Image.asset('assets/png/expression.png')),
+                // Container(
+                //     width: ScreenUtil().setWidth(55),
+                //     height: ScreenUtil().setWidth(55),
+                //     child: Image.asset('assets/png/expression.png')),
                 InkWell(
                   onTap: () async {
                     // 保存一份资源列表
@@ -234,7 +234,8 @@ class EditBottom extends StatelessWidget {
                             content: duplicateContent,
                             pid: commentChosenProvider.pid,
                             bizType: "2",
-                            pictureList: await _uploadPicture(jwt, duplicateAssets));
+                            pictureList:
+                                await _uploadPicture(jwt, duplicateAssets));
                     ResponseBean responseBean =
                         ResponseBean.fromJson(response.data);
                     if (responseBean.isSuccess()) {

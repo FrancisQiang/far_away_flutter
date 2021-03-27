@@ -13,6 +13,7 @@ class UserInfoBean {
   String signature;
   String avatar;
   String cover;
+  String IMToken;
   int thumbCount;
   int followCount;
   int fansCount;
@@ -38,6 +39,7 @@ class UserInfoBean {
         this.followCount,
         this.fansCount,
         this.gender,
+        this.IMToken,
         this.gmtCreate});
 
   UserInfoBean.fromJson(Map<String, dynamic> json) {
@@ -60,6 +62,7 @@ class UserInfoBean {
     fansCount = json['fansCount'];
     gender = json['gender'];
     gmtCreate = json['gmtCreate'];
+    IMToken = json['imtoken'];
   }
 
   Map<String, dynamic> toJson() {
@@ -83,6 +86,7 @@ class UserInfoBean {
     data['fansCount'] = this.fansCount;
     data['gender'] = this.gender;
     data['gmtCreate'] = this.gmtCreate;
+    data['IMToken'] = this.IMToken;
     return data;
   }
 }
