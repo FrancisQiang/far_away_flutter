@@ -17,6 +17,11 @@ class ConversationWrapper {
 }
 
 class PrivateMessageWrapper {
+
+  int msgId;
+
+  bool read;
+
   String userId;
 
   // 消息内容

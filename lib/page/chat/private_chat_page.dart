@@ -41,18 +41,13 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
       return;
     }
     for (Message m in msgList) {
-      if (m.receivedStatus == RCReceivedStatus.Unread) {
-        RongIMClient.setMessageReceivedStatus(
-            m.messageId, RCReceivedStatus.Read, (code) async {
-          print("setMessageReceivedStatus result:$code");
-        });
-      }
       PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
       TextMessage message = m.content as TextMessage;
-      print("消息：" + message.content);
+      messageWrapper.msgId = m.messageId;
       messageWrapper.content = message.content;
       messageWrapper.type = 0;
       messageWrapper.userId = m.senderUserId;
+      messageWrapper.read = (m.receivedStatus == RCReceivedStatus.Read);
       ProviderUtil.imProvider.messages[widget.userId].add(messageWrapper);
     }
     ProviderUtil.imProvider.refresh();
@@ -60,8 +55,43 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
   }
 
   Widget messageItemBuilder(PrivateMessageWrapper message) {
+    if (!message.read) {
+      RongIMClient.setMessageReceivedStatus(message.msgId, RCReceivedStatus.Read, (code) async {
+        message.read = true;
+        ProviderUtil.imProvider.needRefreshConversations = true;
+      });
+    }
     // 如果是发送方
     if (message.userId == widget.userId) {
+      if (message.type == 1) {
+        return Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(15),
+              vertical: ScreenUtil().setHeight(20)),
+          child: Row(
+            children: [
+              Container(
+                child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: widget.avatar,
+                      width: ScreenUtil().setWidth(85),
+                      height: ScreenUtil().setWidth(85),
+                      fit: BoxFit.cover,
+                    )),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
+                padding: EdgeInsets.symmetric(
+                    vertical: ScreenUtil().setHeight(10),
+                    horizontal: ScreenUtil().setWidth(20)),
+                decoration: BoxDecoration(
+                    color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                child: Text("Hello,能和你一起结伴同行吗？"),
+              )
+            ],
+          ),
+        );
+      }
       return Container(
         margin: EdgeInsets.symmetric(
             horizontal: ScreenUtil().setWidth(15),
@@ -89,6 +119,37 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
           ],
         ),
       );
+    } else {
+      if (message.type == 1) {
+        Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(15),
+              vertical: ScreenUtil().setHeight(20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: ScreenUtil().setHeight(10),
+                    horizontal: ScreenUtil().setWidth(20)),
+                decoration: BoxDecoration(
+                    color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                child: Text("Hello,能和你一起结伴同行吗？"),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
+                child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: ProviderUtil.globalInfoProvider.userInfoBean.avatar,
+                      width: ScreenUtil().setWidth(85),
+                      height: ScreenUtil().setWidth(85),
+                      fit: BoxFit.cover,
+                    )),
+              ),
+            ],
+          ),
+        );
+      }
     }
     return Container(
       margin: EdgeInsets.symmetric(
@@ -215,18 +276,17 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
                                     String messageContent =
                                         _messageController.text;
                                     textMessage.content = messageContent;
-                                    await RongIMClient.sendMessage(
+                                    Message msg = await RongIMClient.sendMessage(
                                         RCConversationType.Private,
                                         widget.userId,
                                         textMessage);
-                                    PrivateMessageWrapper messageWrapper =
-                                        PrivateMessageWrapper();
+                                    PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
+                                    messageWrapper.msgId = msg.messageId;
                                     messageWrapper.content = messageContent;
                                     messageWrapper.type = 0;
-                                    messageWrapper.userId = ProviderUtil
-                                        .globalInfoProvider.userInfoBean.id;
-                                    imProvider.messages[widget.userId]
-                                        .insert(0, messageWrapper);
+                                    messageWrapper.userId = ProviderUtil.globalInfoProvider.userInfoBean.id;
+                                    messageWrapper.read = true;
+                                    imProvider.messages[widget.userId].insert(0, messageWrapper);
                                     _messageController.clear();
                                     imProvider.refreshConversationList();
                                     setState(() {});

@@ -9,6 +9,7 @@ import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 class ImProvider with ChangeNotifier{
 
   ImProvider() {
+    refreshConversationList();
     //消息接收回调
     RongIMClient.onMessageReceived = (Message msg,int left) async {
       await refreshConversationList();
@@ -17,6 +18,8 @@ class ImProvider with ChangeNotifier{
       messageWrapper.content = textMessage.content;
       messageWrapper.type = 0;
       messageWrapper.userId = msg.senderUserId;
+      messageWrapper.read = false;
+      messageWrapper.msgId = msg.messageId;
       List<PrivateMessageWrapper> msgList = messages[msg.senderUserId];
       if (msgList == null) {
         msgList = [];
@@ -24,7 +27,6 @@ class ImProvider with ChangeNotifier{
       } else {
         msgList.insert(0, messageWrapper);
       }
-      print('msg::' + messageWrapper.content);
       messages[msg.senderUserId] = msgList;
       notifyListeners();
     };
@@ -33,6 +35,8 @@ class ImProvider with ChangeNotifier{
   List<ConversationWrapper> conversations = [];
 
   Map<String, List<PrivateMessageWrapper>> messages = {};
+
+  bool needRefreshConversations = false;
 
   refreshConversationList() async {
     conversations = [];
@@ -61,6 +65,7 @@ class ImProvider with ChangeNotifier{
       conversationWrapper.avatar = simpleUserInfo.avatar;
       conversationWrapper.userId = simpleUserInfo.userId;
     }
+    needRefreshConversations = false;
     notifyListeners();
   }
 

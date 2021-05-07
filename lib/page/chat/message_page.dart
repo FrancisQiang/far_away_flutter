@@ -13,10 +13,9 @@ class MessagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ImProvider>(
-        builder: (context, imProvider, child) {
-          if(imProvider.conversations.isEmpty) {
+        builder: (context, imProvider, child){
+          if (imProvider.needRefreshConversations) {
             imProvider.refreshConversationList();
-            return Container();
           }
           return Container(
             child: ListView.separated(
