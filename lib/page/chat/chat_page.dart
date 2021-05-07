@@ -1,6 +1,9 @@
 import 'package:far_away_flutter/page/chat/message_page.dart';
+import 'package:far_away_flutter/provider/im_provider.dart';
+import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -57,7 +60,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin<ChatP
           controller: _tabController,
           physics: BouncingScrollPhysics(),
           children: [
-            MessagePage(),
+            MultiProvider(
+              providers: [
+                ChangeNotifierProvider<ImProvider>.value(
+                    value: ProviderUtil.imProvider),
+              ],
+              child: MessagePage(),
+            ),
             Container(child: Text('与我相关'),),
           ]),
     );

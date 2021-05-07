@@ -1,3 +1,4 @@
+import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/param/asset_view_page_param.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
@@ -86,6 +87,17 @@ class NavigatorUtil {
     Application.router.navigateTo(
         context,
         Routes.togetherDetail,
+        routeSettings: RouteSettings(
+            arguments: param
+        ),
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toPrivateChatPage(BuildContext context, {@required PrivateChatParam param}) {
+    Application.router.navigateTo(
+        context,
+        Routes.privateChat,
         routeSettings: RouteSettings(
             arguments: param
         ),

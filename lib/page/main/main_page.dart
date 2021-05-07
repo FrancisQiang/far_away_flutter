@@ -48,16 +48,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ResponseBean response = ResponseBean.fromJson(userInfoResponse.data);
           // 存放在全局变量中
           ProviderUtil.globalInfoProvider.userInfoBean = UserInfoBean.fromJson(response.data);
-          print('获取data ${response.data}');
           RongIMClient.init("cpj2xarlcmi6n");
-          print('获取Token${ProviderUtil.globalInfoProvider.userInfoBean.IMToken}');
           RongIMClient.connect(ProviderUtil.globalInfoProvider.userInfoBean.IMToken, (int code, String userId) {
             if (code == 31004 || code == 12) {
               ToastUtil.showErrorToast("消息系统登录失败");
             } else if (code == 0) {
-              print("connect userId" + userId);
-              // 连接成功后打开数据库
-              // _initUserInfoCache();
+              // 登录成功
             }
           });
         } catch (ex) {

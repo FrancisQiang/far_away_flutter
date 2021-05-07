@@ -33,11 +33,6 @@ class PostProvider with ChangeNotifier {
 
   TextEditingController togetherContentController = TextEditingController();
 
-  /// -----------------结伴相关------------------
-
-
-  /// -----------------结伴相关------------------
-
 
   void refresh() {
     notifyListeners();

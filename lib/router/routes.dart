@@ -14,6 +14,7 @@ class Routes {
   static String locationChoose = "/locationChoose/:longitude/:latitude/:type";
   static String assetView = "/assetView";
   static String togetherDetail = "/togetherDetail";
+  static String privateChat = "/privateChat";
 
   static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(
@@ -33,5 +34,6 @@ class Routes {
     router.define(locationChoose, handler: locationChooseHandler);
     router.define(assetView, handler: assetViewHandler);
     router.define(togetherDetail, handler: togetherDetailHandler);
+    router.define(privateChat, handler: privateChatHandler);
   }
 }
