@@ -39,7 +39,10 @@ class PostChooseWidget extends StatelessWidget {
             title: '招义工',
             colors: [Colors.lightGreen, Colors.lightGreenAccent],
             icon: FontAwesomeIcons.userGraduate,
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+              NavigatorUtil.toPostRecruitPage(context);
+            },
           ),
         ],
       ),

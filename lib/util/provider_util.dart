@@ -8,6 +8,7 @@ import 'package:far_away_flutter/page/home/together_detail_page.dart';
 import 'package:far_away_flutter/page/main/main_page.dart';
 import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
+import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/post/post_together_page.dart';
 import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
@@ -60,6 +61,18 @@ class ProviderUtil {
       child: PostTogetherPage(),
     );
   }
+
+  static MultiProvider getPostRecruitPage() {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PostProvider>.value(value: postProvider),
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: PostRecruitPage(),
+    );
+  }
+
 
   static MultiProvider getDynamicDetailPage(
       {bool scrollToComment,

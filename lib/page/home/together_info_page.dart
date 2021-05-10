@@ -32,6 +32,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'dart:convert' as convert;
 
 import 'dynamic_empty_widget.dart';
 
@@ -81,7 +82,9 @@ class _TogetherInfoPageState extends State<TogetherInfoPage>
   @override
   void initState() {
     super.initState();
-    timestamp = DateTime.now().millisecondsSinceEpoch;
+    timestamp = DateTime
+        .now()
+        .millisecondsSinceEpoch;
   }
 
   @override
@@ -89,39 +92,45 @@ class _TogetherInfoPageState extends State<TogetherInfoPage>
     super.build(context);
     return Consumer<GlobalInfoProvider>(
         builder: (context, globalInfoProvider, child) {
-      return EasyRefresh(
-          header: EasyRefreshWidget.refreshHeader,
-          footer: EasyRefreshWidget.refreshFooter,
-          firstRefresh: true,
-          firstRefreshWidget: InitRefreshWidget(
-            color: Theme.of(context).primaryColor,
-          ),
-          emptyWidget: togetherList.length == 0
-              ? ListEmptyWidget(
-                  width: ScreenUtil().setWidth(380),
-                  height: ScreenUtil().setHeight(300),
-                )
-              : null,
-          onRefresh: () async {
-            togetherList = [];
-            currentPage = 1;
-            timestamp = DateTime.now().millisecondsSinceEpoch;
-            await _loadTogetherData(globalInfoProvider.jwt);
-          },
-          onLoad: () async {
-            await _loadTogetherData(globalInfoProvider.jwt);
-          },
-          child: Column(
-              children: List.generate(togetherList.length, (index) {
-            return GestureDetector(
-                onTap: () => NavigatorUtil.toTogetherDetailPage(context,
-                    param: TogetherDetailParam(
-                        avatarHeroTag: 'together_${togetherList[index].id}',
-                        togetherInfoBean: togetherList[index])),
-                child: TogetherInfoPreviewCard(
-                    togetherInfoBean: togetherList[index]));
-          })));
-    });
+          return EasyRefresh(
+              header: EasyRefreshWidget.refreshHeader,
+              footer: EasyRefreshWidget.refreshFooter,
+              firstRefresh: true,
+              firstRefreshWidget: InitRefreshWidget(
+                color: Theme
+                    .of(context)
+                    .primaryColor,
+              ),
+              emptyWidget: togetherList.length == 0
+                  ? ListEmptyWidget(
+                width: ScreenUtil().setWidth(380),
+                height: ScreenUtil().setHeight(300),
+              )
+                  : null,
+              onRefresh: () async {
+                togetherList = [];
+                currentPage = 1;
+                timestamp = DateTime
+                    .now()
+                    .millisecondsSinceEpoch;
+                await _loadTogetherData(globalInfoProvider.jwt);
+              },
+              onLoad: () async {
+                await _loadTogetherData(globalInfoProvider.jwt);
+              },
+              child: Column(
+                  children: List.generate(togetherList.length, (index) {
+                    return GestureDetector(
+                        onTap: () =>
+                            NavigatorUtil.toTogetherDetailPage(context,
+                                param: TogetherDetailParam(
+                                    avatarHeroTag: 'together_${togetherList[index]
+                                        .id}',
+                                    togetherInfoBean: togetherList[index])),
+                        child: TogetherInfoPreviewCard(
+                            togetherInfoBean: togetherList[index]));
+                  })));
+        });
   }
 }
 
@@ -152,7 +161,8 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                           child: CachedNetworkImage(
                               imageUrl: togetherInfoBean.userAvatar,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => ImageHolder(
+                              placeholder: (context, url) =>
+                                  ImageHolder(
                                     size: ScreenUtil().setSp(40),
                                   ),
                               errorWidget: (context, url, error) =>
@@ -168,15 +178,15 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                     children: [
                       Container(
                           child: Row(
-                        children: [
-                          Container(
-                            child: Text(
-                              togetherInfoBean.username,
-                              style: TextStyleTheme.h3,
-                            ),
-                          ),
-                        ],
-                      )),
+                            children: [
+                              Container(
+                                child: Text(
+                                  togetherInfoBean.username,
+                                  style: TextStyleTheme.h3,
+                                ),
+                              ),
+                            ],
+                          )),
                       Container(
                         child: Text(togetherInfoBean.signature,
                             style: TextStyleTheme.subH5),
@@ -249,24 +259,35 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                     )),
                 FlatButton(
                     onPressed: () async {
-                      Response<dynamic> response = await ApiMethodUtil.togetherSignUp(
+                      Response<dynamic> response = await ApiMethodUtil
+                          .togetherSignUp(
                           token: ProviderUtil.globalInfoProvider.jwt,
                           id: togetherInfoBean.id);
                       if (ResponseBean.fromJson(response.data).isSuccess()) {
                         // 发送结伴消息
                         TextMessage textMessage = TextMessage();
-                        String content = "Hello,可以一起结伴同行吗？";
-                        textMessage.extra = "together";
-                        textMessage.content = content;
+                        MessageContentJson json = MessageContentJson(
+                            content: "",
+                            type: MessageType.TOGETHER,
+                            extraInfo: convert.jsonEncode(TogetherMessageJson(
+                              togetherId: togetherInfoBean.id,
+                              username: togetherInfoBean.username,
+                              togetherInfo: togetherInfoBean.content,
+                              avatar: togetherInfoBean.userAvatar,
+                              title: "我想和你结伴同行"
+                            ))
+                        );
+                        textMessage.content = convert.jsonEncode(json);
                         Message msg = await RongIMClient.sendMessage(
                             RCConversationType.Private,
                             togetherInfoBean.userId,
                             textMessage);
                         PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
                         messageWrapper.msgId = msg.messageId;
-                        messageWrapper.content = content;
-                        messageWrapper.type = 1;
-                        messageWrapper.userId = ProviderUtil.globalInfoProvider.userInfoBean.id;
+                        messageWrapper.content = convert.jsonEncode(json);
+                        messageWrapper.type = MessageType.TOGETHER;
+                        messageWrapper.userId =
+                            ProviderUtil.globalInfoProvider.userInfoBean.id;
                         messageWrapper.read = true;
                         if (ProviderUtil.imProvider.messages[togetherInfoBean.userId] == null) {
                           ProviderUtil.imProvider.messages[togetherInfoBean.userId] = [];
@@ -274,7 +295,10 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                         ProviderUtil.imProvider.messages[togetherInfoBean.userId].insert(0, messageWrapper);
                         NavigatorUtil.toPrivateChatPage(
                             context,
-                            param: PrivateChatParam(username: togetherInfoBean.username, userId: togetherInfoBean.userId, avatar: togetherInfoBean.userAvatar)
+                            param: PrivateChatParam(
+                                username: togetherInfoBean.username,
+                                userId: togetherInfoBean.userId,
+                                avatar: togetherInfoBean.userAvatar)
                         );
                         togetherInfoBean.signUp = true;
                       } else {
@@ -286,19 +310,21 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                       children: [
                         togetherInfoBean.signUp
                             ? Image.asset(
-                                'assets/png/handed.png',
-                                width: ScreenUtil().setWidth(45),
-                                height: ScreenUtil().setWidth(40),
-                              )
+                          'assets/png/handed.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
+                        )
                             : Image.asset(
-                                'assets/png/hands.png',
-                                width: ScreenUtil().setWidth(45),
-                                height: ScreenUtil().setWidth(40),
-                              ),
+                          'assets/png/hands.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
+                        ),
                         Container(
                           margin: EdgeInsets.only(left: 5),
-                          child: Text('${togetherInfoBean.signUpCount}', style: TextStyle(
-                            color: togetherInfoBean.signUpCount > 0 ? Color.fromRGBO(255, 122, 0, 1) : Colors.black
+                          child: Text(
+                            '${togetherInfoBean.signUpCount}', style: TextStyle(
+                              color: togetherInfoBean.signUpCount > 0 ? Color
+                                  .fromRGBO(255, 122, 0, 1) : Colors.black
                           ),),
                         )
                       ],

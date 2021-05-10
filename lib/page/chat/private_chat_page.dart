@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert' as convert;
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class PrivateChatPage extends StatefulWidget {
@@ -42,10 +43,17 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
     }
     for (Message m in msgList) {
       PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
-      TextMessage message = m.content as TextMessage;
+      if (m.content is TextMessage) {
+        TextMessage message = m.content as TextMessage;
+        MessageContentJson json =
+            MessageContentJson.fromJson(convert.jsonDecode(message.content));
+        messageWrapper.extraInfo = json.extraInfo;
+        messageWrapper.content = json.content;
+        messageWrapper.type = json.type;
+      }
+      // TODO 处理其他类型数据
+      // .....
       messageWrapper.msgId = m.messageId;
-      messageWrapper.content = message.content;
-      messageWrapper.type = 0;
       messageWrapper.userId = m.senderUserId;
       messageWrapper.read = (m.receivedStatus == RCReceivedStatus.Read);
       ProviderUtil.imProvider.messages[widget.userId].add(messageWrapper);
@@ -56,14 +64,17 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
 
   Widget messageItemBuilder(PrivateMessageWrapper message) {
     if (!message.read) {
-      RongIMClient.setMessageReceivedStatus(message.msgId, RCReceivedStatus.Read, (code) async {
+      RongIMClient.setMessageReceivedStatus(
+          message.msgId, RCReceivedStatus.Read, (code) async {
         message.read = true;
         ProviderUtil.imProvider.needRefreshConversations = true;
       });
     }
     // 如果是发送方
     if (message.userId == widget.userId) {
-      if (message.type == 1) {
+      if (message.type == MessageType.TOGETHER) {
+        TogetherMessageJson togetherMessageJson =
+            TogetherMessageJson.fromJson(convert.jsonDecode(message.extraInfo));
         return Container(
           margin: EdgeInsets.symmetric(
               horizontal: ScreenUtil().setWidth(15),
@@ -73,112 +84,221 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
               Container(
                 child: ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: widget.avatar,
-                      width: ScreenUtil().setWidth(85),
-                      height: ScreenUtil().setWidth(85),
-                      fit: BoxFit.cover,
-                    )),
+                  imageUrl: widget.avatar,
+                  width: ScreenUtil().setWidth(85),
+                  height: ScreenUtil().setWidth(85),
+                  fit: BoxFit.cover,
+                )),
               ),
               Container(
+                constraints:
+                    BoxConstraints(maxWidth: ScreenUtil().setWidth(500)),
                 margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
                 padding: EdgeInsets.symmetric(
                     vertical: ScreenUtil().setHeight(10),
-                    horizontal: ScreenUtil().setWidth(20)),
+                    horizontal: ScreenUtil().setWidth(15)),
                 decoration: BoxDecoration(
-                    color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                child: Text("Hello,能和你一起结伴同行吗？"),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                  children: [
+                    Container(
+                      child: Text(
+                        '${togetherMessageJson.username}，我想与你结伴同行',
+                        maxLines: 2,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: ScreenUtil().setSp(28)),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(15),
+              vertical: ScreenUtil().setHeight(20)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: ClipOval(
+                    child: CachedNetworkImage(
+                  imageUrl: widget.avatar,
+                  width: ScreenUtil().setWidth(85),
+                  height: ScreenUtil().setWidth(85),
+                  fit: BoxFit.cover,
+                )),
+              ),
+              Container(
+                constraints:
+                    BoxConstraints(maxWidth: ScreenUtil().setWidth(500)),
+                margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
+                padding: EdgeInsets.symmetric(
+                    vertical: ScreenUtil().setHeight(10),
+                    horizontal: ScreenUtil().setWidth(15)),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Text(
+                  message.content,
+                  maxLines: 200,
+                ),
               )
             ],
           ),
         );
       }
-      return Container(
-        margin: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(15),
-            vertical: ScreenUtil().setHeight(20)),
-        child: Row(
-          children: [
-            Container(
-              child: ClipOval(
-                  child: CachedNetworkImage(
-                imageUrl: widget.avatar,
-                width: ScreenUtil().setWidth(85),
-                height: ScreenUtil().setWidth(85),
-                fit: BoxFit.cover,
-              )),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
-              padding: EdgeInsets.symmetric(
-                  vertical: ScreenUtil().setHeight(10),
-                  horizontal: ScreenUtil().setWidth(20)),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              child: Text(message.content),
-            )
-          ],
-        ),
-      );
     } else {
-      if (message.type == 1) {
-        Container(
+      if (message.type == MessageType.TOGETHER) {
+        TogetherMessageJson togetherMessageJson =
+            TogetherMessageJson.fromJson(convert.jsonDecode(message.extraInfo));
+        return Container(
           margin: EdgeInsets.symmetric(
               horizontal: ScreenUtil().setWidth(15),
               vertical: ScreenUtil().setHeight(20)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
+                constraints:
+                    BoxConstraints(maxWidth: ScreenUtil().setWidth(520)),
+                margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
+                padding: EdgeInsets.symmetric(
+                    vertical: ScreenUtil().setHeight(15),
+                    horizontal: ScreenUtil().setWidth(15)),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Row(
+                        children: [
+                          Container(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: CachedNetworkImage(
+                                width: ScreenUtil().setWidth(80),
+                                height: ScreenUtil().setWidth(80),
+                                imageUrl: togetherMessageJson.avatar,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: ScreenUtil().setWidth(15)),
+                            constraints: BoxConstraints(
+                                maxWidth: ScreenUtil().setWidth(380)),
+                            child: Text(
+                              '${togetherMessageJson.username}，我想与你结伴同行',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: ScreenUtil().setSp(30)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        margin:
+                            EdgeInsets.only(top: ScreenUtil().setHeight(12)),
+                        child: Container(
+                          child: Text(
+                            '${togetherMessageJson.togetherInfo}',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Colors.black87),
+                          ),
+                        )),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: ScreenUtil().setHeight(15),
+                        left: ScreenUtil().setWidth(5),
+                        right: ScreenUtil().setWidth(5),
+                        bottom: ScreenUtil().setHeight(5),
+                      ),
+                      child: Divider(
+                        color: Colors.black87,
+                        height: 1,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin:
+                              EdgeInsets.only(top: ScreenUtil().setHeight(5)),
+                          child: Text(
+                            '点击查看全文',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: ScreenUtil().setSp(24)),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: ScreenUtil().setWidth(12),
+                ),
+                child: ClipOval(
+                    child: CachedNetworkImage(
+                  imageUrl: ProviderUtil.globalInfoProvider.userInfoBean.avatar,
+                  width: ScreenUtil().setWidth(85),
+                  height: ScreenUtil().setWidth(85),
+                  fit: BoxFit.cover,
+                )),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(15),
+              vertical: ScreenUtil().setHeight(20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                constraints:
+                    BoxConstraints(maxWidth: ScreenUtil().setWidth(520)),
                 padding: EdgeInsets.symmetric(
                     vertical: ScreenUtil().setHeight(10),
                     horizontal: ScreenUtil().setWidth(20)),
                 decoration: BoxDecoration(
-                    color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                child: Text("Hello,能和你一起结伴同行吗？"),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Text(message.content),
               ),
               Container(
                 margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
                 child: ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: ProviderUtil.globalInfoProvider.userInfoBean.avatar,
-                      width: ScreenUtil().setWidth(85),
-                      height: ScreenUtil().setWidth(85),
-                      fit: BoxFit.cover,
-                    )),
+                  imageUrl: ProviderUtil.globalInfoProvider.userInfoBean.avatar,
+                  width: ScreenUtil().setWidth(85),
+                  height: ScreenUtil().setWidth(85),
+                  fit: BoxFit.cover,
+                )),
               ),
             ],
           ),
         );
       }
     }
-    return Container(
-      margin: EdgeInsets.symmetric(
-          horizontal: ScreenUtil().setWidth(15),
-          vertical: ScreenUtil().setHeight(20)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(
-                vertical: ScreenUtil().setHeight(10),
-                horizontal: ScreenUtil().setWidth(20)),
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(10)),
-            child: Text(message.content),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: ScreenUtil().setWidth(12)),
-            child: ClipOval(
-                child: CachedNetworkImage(
-              imageUrl: ProviderUtil.globalInfoProvider.userInfoBean.avatar,
-              width: ScreenUtil().setWidth(85),
-              height: ScreenUtil().setWidth(85),
-              fit: BoxFit.cover,
-            )),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -275,18 +395,28 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
                                     TextMessage textMessage = TextMessage();
                                     String messageContent =
                                         _messageController.text;
-                                    textMessage.content = messageContent;
-                                    Message msg = await RongIMClient.sendMessage(
-                                        RCConversationType.Private,
-                                        widget.userId,
-                                        textMessage);
-                                    PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
+                                    MessageContentJson contentJson =
+                                        MessageContentJson(
+                                            content: messageContent,
+                                            extraInfo: "",
+                                            type: MessageType.DEFAULT);
+                                    textMessage.content =
+                                        convert.jsonEncode(contentJson);
+                                    Message msg =
+                                        await RongIMClient.sendMessage(
+                                            RCConversationType.Private,
+                                            widget.userId,
+                                            textMessage);
+                                    PrivateMessageWrapper messageWrapper =
+                                        PrivateMessageWrapper();
                                     messageWrapper.msgId = msg.messageId;
                                     messageWrapper.content = messageContent;
                                     messageWrapper.type = 0;
-                                    messageWrapper.userId = ProviderUtil.globalInfoProvider.userInfoBean.id;
+                                    messageWrapper.userId = ProviderUtil
+                                        .globalInfoProvider.userInfoBean.id;
                                     messageWrapper.read = true;
-                                    imProvider.messages[widget.userId].insert(0, messageWrapper);
+                                    imProvider.messages[widget.userId]
+                                        .insert(0, messageWrapper);
                                     _messageController.clear();
                                     imProvider.refreshConversationList();
                                     setState(() {});

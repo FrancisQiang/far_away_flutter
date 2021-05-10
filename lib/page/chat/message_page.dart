@@ -7,6 +7,7 @@ import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert' as convert;
 
 class MessagePage extends StatelessWidget {
 
@@ -46,6 +47,14 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MessageContentJson messageContentJson = MessageContentJson.fromJson(convert.jsonDecode(messageBean.content));
+    String content;
+    if (messageContentJson.type == MessageType.DEFAULT) {
+      content = messageContentJson.content;
+    } else {
+      TogetherMessageJson togetherJson = TogetherMessageJson.fromJson(convert.jsonDecode(messageContentJson.extraInfo));
+      content = togetherJson.username + "，我想与你结伴同行";
+    }
     return FlatButton(
       padding: EdgeInsets.zero,
       onPressed: (){
@@ -100,7 +109,7 @@ class MessageTile extends StatelessWidget {
                     children: [
                       Container(
                         width: ScreenUtil().setWidth(480),
-                        child: Text(messageBean.content,
+                        child: Text(content,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: ScreenUtil().setSp(30),

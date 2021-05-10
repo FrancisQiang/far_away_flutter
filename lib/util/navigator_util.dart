@@ -64,6 +64,14 @@ class NavigatorUtil {
     );
   }
 
+  static void toPostRecruitPage(BuildContext context) {
+    Application.router.navigateTo(
+      context,
+      Routes.postRecruit,
+      transition: TransitionType.fadeIn,
+    );
+  }
+
   static void toLocationChoosePage(BuildContext context, {@required String longitude, @required String latitude, @required String type}) {
     Application.router.navigateTo(
       context,

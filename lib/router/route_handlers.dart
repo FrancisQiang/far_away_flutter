@@ -63,6 +63,12 @@ var postTogetherHandler = Handler(
   return ProviderUtil.getPostTogetherPage();
 });
 
+var postRecruitHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      return ProviderUtil.getPostRecruitPage();
+    });
+
+
 var locationChooseHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   String longitude = params["longitude"][0];

@@ -11,6 +11,7 @@ class Routes {
   static String mediaView = "/mediaView";
   static String postDynamic = "/postDynamic";
   static String postTogether = "/postTogether";
+  static String postRecruit = "/postRecruit";
   static String locationChoose = "/locationChoose/:longitude/:latitude/:type";
   static String assetView = "/assetView";
   static String togetherDetail = "/togetherDetail";
@@ -31,6 +32,7 @@ class Routes {
     router.define(mediaView, handler: mediaViewHandler);
     router.define(postDynamic, handler: postDynamicHandler);
     router.define(postTogether, handler: postTogetherHandler);
+    router.define(postRecruit, handler: postRecruitHandler);
     router.define(locationChoose, handler: locationChooseHandler);
     router.define(assetView, handler: assetViewHandler);
     router.define(togetherDetail, handler: togetherDetailHandler);
