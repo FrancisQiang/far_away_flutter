@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_post_bean.dart';
+import 'package:far_away_flutter/bean/recruit_post_bean.dart';
 import 'package:far_away_flutter/bean/together_post_bean.dart';
 import 'package:far_away_flutter/bean/user_id_list_bean.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
@@ -239,4 +240,14 @@ class ApiMethodUtil {
         data: UserIdListBean(userIdList: userIds).toJson()
     );
   }
+
+  static Future<dynamic> postRecruit(
+      {@required String token, @required RecruitPostBean recruitPostBean}) {
+    return DioFactory.getDioClient().post(
+        ApiProperties.HOST_BASE_URL + "/recruit",
+        options: Options(headers: {"Authorization": token}),
+        data: recruitPostBean.toJson()
+    );
+  }
+
 }

@@ -14,6 +14,7 @@ import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
+import 'package:far_away_flutter/provider/post_recruit_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,8 @@ class ProviderUtil {
   static GlobalInfoProvider globalInfoProvider = GlobalInfoProvider();
 
   static PostProvider postProvider = PostProvider();
+
+  static PostRecruitProvider postRecruitProvider = PostRecruitProvider();
 
   static CommentChosenProvider dynamicCommentChosenProvider =
       CommentChosenProvider();
@@ -65,7 +68,7 @@ class ProviderUtil {
   static MultiProvider getPostRecruitPage() {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<PostProvider>.value(value: postProvider),
+        ChangeNotifierProvider<PostRecruitProvider>.value(value: postRecruitProvider),
         ChangeNotifierProvider<GlobalInfoProvider>.value(
             value: globalInfoProvider)
       ],

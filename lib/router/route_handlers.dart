@@ -65,9 +65,8 @@ var postTogetherHandler = Handler(
 
 var postRecruitHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      return ProviderUtil.getPostRecruitPage();
-    });
-
+  return ProviderUtil.getPostRecruitPage();
+});
 
 var locationChooseHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -102,5 +101,7 @@ var privateChatHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   PrivateChatParam arguments = context.settings.arguments as PrivateChatParam;
   return ProviderUtil.getPrivateChatPage(
-      username: arguments.username, userId: arguments.userId, avatar: arguments.avatar);
+      username: arguments.username,
+      userId: arguments.userId,
+      avatar: arguments.avatar);
 });
