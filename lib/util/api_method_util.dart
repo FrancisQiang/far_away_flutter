@@ -250,4 +250,22 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> getRecruitInfoList(
+      {@required int timestamp,
+        @required int currentPage,
+        @required String token}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/recruit/list/$timestamp/$currentPage",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
+  static Future<dynamic> getRecruitDetail(
+      {@required String id, @required String token}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/recruit/detail/$id",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
 }

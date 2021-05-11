@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage>
           children: [
             DynamicsPage(),
             TogetherInfoPage(),
-            HotelRecruitmentPage(),
+            RecruitInfoPage(),
             AidEducationPage(),
           ]),
     );

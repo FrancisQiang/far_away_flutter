@@ -1,9 +1,11 @@
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
+import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/page/chat/private_chat_page.dart';
 import 'package:far_away_flutter/page/home/comment_draw_widget.dart';
 import 'package:far_away_flutter/page/home/dynamic_detail_page.dart';
+import 'package:far_away_flutter/page/home/recruit_detail_page.dart';
 import 'package:far_away_flutter/page/home/together_detail_page.dart';
 import 'package:far_away_flutter/page/main/main_page.dart';
 import 'package:far_away_flutter/page/post/location_choose_page.dart';
@@ -30,6 +32,9 @@ class ProviderUtil {
 
   static CommentChosenProvider togetherCommentChosenProvider =
       CommentChosenProvider();
+
+  static CommentChosenProvider recruitCommentChosenProvider =
+  CommentChosenProvider();
 
   static ImProvider imProvider = ImProvider();
 
@@ -117,6 +122,24 @@ class ProviderUtil {
         scrollToComment: scrollToComment,
         avatarHeroTag: avatarHeroTag,
         togetherInfoBean: togetherInfoBean,
+      ),
+    );
+  }
+
+  static MultiProvider getRecruitDetailPage(
+      {RecruitDetailInfoBean recruitDetailInfoBean}) {
+    recruitCommentChosenProvider.targetBizId = recruitDetailInfoBean.id;
+    recruitCommentChosenProvider.targetUserId = recruitDetailInfoBean.userId;
+    recruitCommentChosenProvider.targetUsername = recruitDetailInfoBean.username;
+    recruitCommentChosenProvider.pid = null;
+    recruitCommentChosenProvider.refresh();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<CommentChosenProvider>.value(
+            value: recruitCommentChosenProvider),
+      ],
+      child: RecruitDetailPage(
+        recruitDetailInfoBean: recruitDetailInfoBean,
       ),
     );
   }

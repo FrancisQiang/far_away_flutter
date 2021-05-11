@@ -5,6 +5,7 @@ import 'package:far_away_flutter/page/photo/asset_view_page.dart';
 import 'package:far_away_flutter/page/photo/media_view_page.dart';
 import 'package:far_away_flutter/page/search/search_page.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
+import 'package:far_away_flutter/param/recruit_param.dart';
 import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/param/asset_view_page_param.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
@@ -95,6 +96,14 @@ var togetherDetailHandler = Handler(
       scrollToComment: arguments.scrollToComment,
       avatarHeroTag: arguments.avatarHeroTag,
       togetherInfoBean: arguments.togetherInfoBean);
+});
+
+var recruitDetailHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  RecruitDetailPageParam arguments =
+      context.settings.arguments as RecruitDetailPageParam;
+  return ProviderUtil.getRecruitDetailPage(
+      recruitDetailInfoBean: arguments.recruitDetailInfoBean);
 });
 
 var privateChatHandler = Handler(

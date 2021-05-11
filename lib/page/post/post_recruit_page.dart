@@ -9,6 +9,11 @@ import 'package:far_away_flutter/bean/upload_response_bean.dart';
 import 'package:far_away_flutter/bean/upload_token_bean.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
+import 'package:far_away_flutter/custom_zefyr/widgets/buttons.dart';
+import 'package:far_away_flutter/custom_zefyr/widgets/editor.dart';
+import 'package:far_away_flutter/custom_zefyr/widgets/image.dart';
+import 'package:far_away_flutter/custom_zefyr/widgets/scaffold.dart';
+import 'package:far_away_flutter/custom_zefyr/widgets/toolbar.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
 import 'package:far_away_flutter/provider/post_recruit_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
@@ -20,7 +25,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:zefyr/zefyr.dart';
 import 'dart:convert' as convert;
 import 'package:city_pickers/city_pickers.dart';
 import 'package:quill_delta/quill_delta.dart';
@@ -43,11 +47,7 @@ class PostRecruitPage extends StatelessWidget {
     provider.titleController.clear();
     provider.locationDetail = null;
     provider.cover = null;
-    Delta delta = Delta()..insert("\n");
-    NotusDocument.fromDelta(delta);
-    provider.markdownController = ZefyrController(NotusDocument.fromDelta(delta))..addListener(() {
-      provider.refresh();
-    });
+    provider.refresh();
     Response postResponse = await ApiMethodUtil.postRecruit(token: ProviderUtil.globalInfoProvider.jwt, recruitPostBean: recruitPostBean);
     ResponseBean postResponseBean = ResponseBean.fromJson(postResponse.data);
     if (postResponseBean.isSuccess()) {
@@ -125,7 +125,7 @@ class PostRecruitPage extends StatelessWidget {
                           vertical: ScreenUtil().setHeight(20),
                         ),
                         controller: postRecruitProvider.markdownController,
-                        focusNode: FocusNode(),
+                        focusNode: postRecruitProvider.markdownFocusNode,
                         imageDelegate: MarkdownImageDelegate(),
                         toolbarDelegate: MarkdownToolbarDelegate(),
                         customAboveWidget: Container(
