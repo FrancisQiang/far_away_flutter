@@ -1,9 +1,12 @@
+import 'dart:convert' as convert;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
+import 'package:far_away_flutter/component/avatar_component.dart';
 import 'package:far_away_flutter/component/comment_empty.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/custom_zefyr/widgets/controller.dart';
@@ -13,17 +16,17 @@ import 'package:far_away_flutter/custom_zefyr/widgets/scaffold.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
+import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:notus/notus.dart';
-import 'dart:convert' as convert;
-import 'package:quill_delta/quill_delta.dart';
 
 import 'dynamic_comment_widget.dart';
 
@@ -36,7 +39,11 @@ class RecruitDetailPage extends StatefulWidget {
   _RecruitDetailPageState createState() => _RecruitDetailPageState();
 }
 
-class _RecruitDetailPageState extends State<RecruitDetailPage> {
+class _RecruitDetailPageState extends State<RecruitDetailPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   ZefyrController markdownController;
 
   int currentPage = 1;
@@ -79,6 +86,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: ScreenUtil().setHeight(80),
@@ -132,6 +140,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage> {
                     imageDelegate: MarkdownImageDelegate(),
                     customAboveWidget: Container(
                         child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
                           height: ScreenUtil().setHeight(90),
@@ -222,44 +231,101 @@ class _RecruitDetailPageState extends State<RecruitDetailPage> {
                   ),
                 )),
             Positioned(
-                left: 0,
-                bottom: 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border(
-                          top: BorderSide(color: Colors.black, width: 0.1))),
-                  height: ScreenUtil().setHeight(80),
-                  width: ScreenUtil().setWidth(750),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      GestureDetector(
+              left: 0,
+              bottom: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                        top: BorderSide(color: Colors.black, width: 0.1))),
+                height: ScreenUtil().setHeight(80),
+                width: ScreenUtil().setWidth(750),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
                         onTap: () {},
                         child: Container(
-                          child: Icon(Icons.comment),
+                          child: Row(
+                            children: [
+                              Container(
+                                child: Image.asset(
+                                  'assets/png/comment.png',
+                                  width: ScreenUtil().setWidth(45),
+                                  height: ScreenUtil().setWidth(40),
+                                ),
+                              ),
+                              Container(
+                                child: Text(widget.recruitDetailInfoBean
+                                            .commentsCount ==
+                                        0
+                                    ? ''
+                                    : '${widget.recruitDetailInfoBean.commentsCount}'),
+                              )
+                            ],
+                          ),
+                        )),
+                    GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          child: Row(
+                            children: [
+                              Container(
+                                child: Image.asset(
+                                  widget.recruitDetailInfoBean.thumbed
+                                      ? 'assets/png/thumbed.png'
+                                      : 'assets/png/thumbs.png',
+                                  width: ScreenUtil().setWidth(45),
+                                  height: ScreenUtil().setWidth(40),
+                                ),
+                              ),
+                              Container(
+                                child: Text(widget
+                                            .recruitDetailInfoBean.thumbCount ==
+                                        0
+                                    ? ''
+                                    : '${widget.recruitDetailInfoBean.thumbCount}'),
+                              )
+                            ],
+                          ),
+                        )),
+                    GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          child: Row(
+                            children: [
+                              Container(
+                                child: Image.asset(
+                                  widget.recruitDetailInfoBean.signUp
+                                      ? 'assets/png/handed.png'
+                                      : 'assets/png/hands.png',
+                                  width: ScreenUtil().setWidth(45),
+                                  height: ScreenUtil().setWidth(40),
+                                ),
+                              ),
+                              Container(
+                                child: Text(widget.recruitDetailInfoBean
+                                            .signUpCount ==
+                                        0
+                                    ? ''
+                                    : '${widget.recruitDetailInfoBean.signUpCount}'),
+                              )
+                            ],
+                          ),
+                        )),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        child: Image.asset(
+                          'assets/png/share_without_outline.png',
+                          width: ScreenUtil().setWidth(45),
+                          height: ScreenUtil().setWidth(40),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          child: Icon(Icons.comment),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          child: Icon(Icons.comment),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          child: Icon(Icons.comment),
-                        ),
-                      )
-                    ],
-                  ),
-                ))
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ));
   }
@@ -323,7 +389,6 @@ class _RecruitCommentState extends State<RecruitComment> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22)),
       child: Column(
         children: [
           Container(
@@ -335,25 +400,241 @@ class _RecruitCommentState extends State<RecruitComment> {
             width: double.infinity,
             child: Text(
               '评论',
-              style: TextStyleTheme.subH3,
+              style: TextStyle(
+                  color: Colors.black38,
+                  fontSize: ScreenUtil().setSp(30),
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Container(
             child: commentList.isEmpty && emptyData
                 ? Container(
                     child: CommentEmpty(
-                      iconHeight: ScreenUtil().setHeight(500),
+                      iconHeight: ScreenUtil().setHeight(300),
                       iconWidth: ScreenUtil().setWidth(750),
                     ),
                   )
                 : Column(
                     children: List.generate(commentList.length, (commentIndex) {
-                      return TogetherCommentWidget(
+                      return RecruitCommentWidget(
                         commentListBean: commentList[commentIndex],
                       );
                     }),
                   ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class RecruitCommentWidget extends StatelessWidget {
+  final CommentListBean commentListBean;
+
+  RecruitCommentWidget({this.commentListBean});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+          margin: EdgeInsets.symmetric(
+            vertical: 10,
+          ),
+          child: Column(
+            children: [
+              CommentDetailWidget(
+                avatar: commentListBean.fromUserAvatar,
+                username: commentListBean.fromUsername,
+                publishTime: commentListBean.publishTime,
+                thumbCount: commentListBean.thumbCount,
+                content: commentListBean.content,
+              ),
+              commentListBean.children.isNotEmpty
+                  ? Container(
+                      width: ScreenUtil().setWidth(550),
+                      margin: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(90),
+                          top: ScreenUtil().setHeight(20)),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(15),
+                          vertical: ScreenUtil().setHeight(10)),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: ChildrenCommentPreviewWidget(
+                          parentComment: commentListBean),
+                    )
+                  : SizedBox()
+            ],
+          )),
+    );
+  }
+}
+
+class ChildrenCommentPreviewWidget extends StatelessWidget {
+  final CommentListBean parentComment;
+
+  ChildrenCommentPreviewWidget({this.parentComment});
+
+  Widget generateChildComment(item) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        alignment: Alignment.centerLeft,
+        child: RichText(
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          text: TextSpan(children: [
+            TextSpan(
+                text: item.toUserId == item.fromUserId
+                    ? '${item.fromUsername}: '
+                    : '${item.fromUsername} ',
+                style: TextStyle(color: Colors.blueAccent),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    print("点击了");
+                  }),
+            TextSpan(
+              text: item.toUserId == item.fromUserId
+                  ? ''
+                  : ' 回复 ${item.toUsername}: ',
+              style: TextStyle(color: Colors.black54),
+            ),
+            TextSpan(text: item.content, style: TextStyle(color: Colors.black))
+          ]),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<CommentListBean> childrenList = parentComment.children;
+    int showLength = childrenList.length > 2 ? 2 : childrenList.length;
+    List<Widget> childrenWidget = List<Widget>.generate(showLength, (index) {
+      return generateChildComment(childrenList[index]);
+    });
+    if (childrenList.length > 2) {
+      childrenWidget.add(GestureDetector(
+        onTap: () {
+          showMaterialModalBottomSheet(
+              backgroundColor: Colors.grey[100],
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15))),
+              context: context,
+              builder: (context) =>
+                  ProviderUtil.getCommentDrawWidget(parentComment));
+        },
+        child: Container(
+          child: Text(
+            '查看全部${childrenList.length}条评论',
+            style: TextStyle(color: Colors.blueAccent),
+          ),
+        ),
+      ));
+    }
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start, children: childrenWidget);
+  }
+}
+
+class CommentDetailWidget extends StatelessWidget {
+  final String avatar;
+
+  final String username;
+
+  final int publishTime;
+
+  final int thumbCount;
+
+  final String content;
+
+  final List<String> pictureList;
+
+  CommentDetailWidget(
+      {@required this.avatar,
+      @required this.username,
+      @required this.publishTime,
+      @required this.thumbCount,
+      @required this.content,
+      this.pictureList = const []});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AvatarComponent(avatar,
+              sideLength: ScreenUtil().setWidth(80),
+              holderSize: ScreenUtil().setSp(30),
+              errorWidgetSize: ScreenUtil().setSp(30)),
+          Container(
+            width: ScreenUtil().setWidth(560),
+            margin: EdgeInsets.only(left: ScreenUtil().setWidth(20)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Text(
+                        username,
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: ScreenUtil().setSp(26),
+                            letterSpacing: 0.4),
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        children: [
+                          Container(
+                            child: Text(
+                              CalculateUtil.simplifyCount(thumbCount),
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: ScreenUtil().setSp(22)),
+                            ),
+                          ),
+                          Container(
+                            child: Icon(
+                              FontAwesomeIcons.thumbsUp,
+                              color: Colors.black54,
+                              size: ScreenUtil().setSp(30),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                )),
+                Container(
+                  child: Text(
+                    DateUtil.getTimeString(
+                        DateTime.fromMillisecondsSinceEpoch(publishTime)),
+                    style: TextStyle(
+                        color: Colors.black38,
+                        fontSize: ScreenUtil().setSp(20)),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: ScreenUtil().setHeight(8)),
+                  child: Text(
+                    content,
+                    style: TextStyle(
+                        fontSize: ScreenUtil().setSp(25), letterSpacing: 0.4),
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
