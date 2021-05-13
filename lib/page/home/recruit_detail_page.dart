@@ -17,11 +17,8 @@ import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/recurit/comment_input_bottom_page.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
-import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
-import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
-import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +26,6 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:notus/notus.dart';
-
-import 'dynamic_comment_widget.dart';
 
 class RecruitDetailPage extends StatefulWidget {
   final RecruitDetailInfoBean recruitDetailInfoBean;
@@ -117,7 +112,9 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
         body: Stack(
           children: [
             Container(
-                margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(80),),
+                margin: EdgeInsets.only(
+                  bottom: ScreenUtil().setHeight(80),
+                ),
                 child: ZefyrScaffold(
                   child: ZefyrEditor(
                     autofocus: false,
@@ -157,12 +154,12 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                 children: [
                                   ClipOval(
                                       child: Container(
-                                        child: CachedNetworkImage(
-                                          imageUrl: widget
-                                              .recruitDetailInfoBean.userAvatar,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )),
+                                    child: CachedNetworkImage(
+                                      imageUrl: widget
+                                          .recruitDetailInfoBean.userAvatar,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )),
                                   Container(
                                     width: ScreenUtil().setWidth(520),
                                     margin: EdgeInsets.only(
@@ -170,7 +167,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           child: Text(
@@ -186,7 +183,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                                 .signature,
                                             style: TextStyle(
                                                 fontSize:
-                                                ScreenUtil().setSp(20)),
+                                                    ScreenUtil().setSp(20)),
                                           ),
                                         )
                                       ],
@@ -228,7 +225,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                         height: ScreenUtil().setHeight(250),
                                         width: double.infinity,
                                         imageUrl:
-                                        widget.recruitDetailInfoBean.cover,
+                                            widget.recruitDetailInfoBean.cover,
                                         fit: BoxFit.cover,
                                       ),
                                     ))),
@@ -358,7 +355,6 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
 }
 
 class RecruitComment extends StatefulWidget {
-
   final String id;
 
   final RecruitCommentController recruitCommentController;
@@ -367,7 +363,11 @@ class RecruitComment extends StatefulWidget {
 
   final String bizId;
 
-  RecruitComment({@required this.id, @required this.recruitCommentController, @required this.commentEditController, this.bizId});
+  RecruitComment(
+      {@required this.id,
+      @required this.recruitCommentController,
+      @required this.commentEditController,
+      this.bizId});
 
   @override
   _RecruitCommentState createState() => _RecruitCommentState();
@@ -464,14 +464,16 @@ class _RecruitCommentState extends State<RecruitComment> {
 }
 
 class RecruitCommentWidget extends StatelessWidget {
-
   final CommentListBean commentListBean;
 
   final TextEditingController commentEditController;
 
   final String bizId;
 
-  RecruitCommentWidget({@required this.commentListBean, @required this.commentEditController, this.bizId});
+  RecruitCommentWidget(
+      {@required this.commentListBean,
+      @required this.commentEditController,
+      this.bizId});
 
   @override
   Widget build(BuildContext context) {
@@ -484,6 +486,8 @@ class RecruitCommentWidget extends StatelessWidget {
             opaque: false,
             pageBuilder: (_, __, ___) {
               return CommentInputBottomPage(
+                avatar: commentListBean.fromUserAvatar,
+                content: commentListBean.content,
                 toUserId: commentListBean.fromUserId,
                 bizId: bizId,
                 pid: commentListBean.id,
@@ -511,7 +515,10 @@ class RecruitCommentWidget extends StatelessWidget {
                     bottom: ScreenUtil().setHeight(10),
                   ),
                   child: ChildrenCommentPreviewWidget(
-                      parentComment: commentListBean),
+                    parentComment: commentListBean,
+                    bizId: bizId,
+                    commentEditController: commentEditController,
+                  ),
                 )
               : SizedBox(),
         ],
@@ -521,13 +528,36 @@ class RecruitCommentWidget extends StatelessWidget {
 }
 
 class ChildrenCommentPreviewWidget extends StatelessWidget {
+  final String bizId;
+
   final CommentListBean parentComment;
 
-  ChildrenCommentPreviewWidget({this.parentComment});
+  final TextEditingController commentEditController;
 
-  Widget generateChildComment(item) {
-    return GestureDetector(
-      onTap: () {},
+  ChildrenCommentPreviewWidget(
+      {this.parentComment, this.bizId, this.commentEditController});
+
+  Widget generateChildComment(CommentListBean item, context) {
+    return InkWell(
+      highlightColor: Colors.orangeAccent.withOpacity(0.2),
+      splashColor: Colors.orangeAccent.withOpacity(0.4),
+      onTap: () {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) {
+              return CommentInputBottomPage(
+                avatar: item.fromUserAvatar,
+                content: item.content,
+                toUserId: item.fromUserId,
+                bizId: bizId,
+                pid: parentComment.id,
+                controller: commentEditController,
+              );
+            },
+          ),
+        );
+      },
       child: Container(
         alignment: Alignment.centerLeft,
         child: RichText(
@@ -535,15 +565,16 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
           maxLines: 2,
           text: TextSpan(children: [
             TextSpan(
-                text: item.toUserId == item.fromUserId
-                    ? '${item.fromUsername}: '
-                    : '${item.fromUsername} ',
-                style: TextStyle(
-                    color: Colors.blueAccent, fontSize: ScreenUtil().setSp(25)),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    print("点击了");
-                  }),
+              text: item.toUserId == item.fromUserId
+                  ? '${item.fromUsername}: '
+                  : '${item.fromUsername} ',
+              style: TextStyle(
+                  color: Colors.blueAccent, fontSize: ScreenUtil().setSp(25)),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  print("点击了");
+                },
+            ),
             TextSpan(
               text: item.toUserId == item.fromUserId
                   ? ''
@@ -568,7 +599,7 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
     List<CommentListBean> childrenList = parentComment.children;
     int showLength = childrenList.length > 2 ? 2 : childrenList.length;
     List<Widget> childrenWidget = List<Widget>.generate(showLength, (index) {
-      return generateChildComment(childrenList[index]);
+      return generateChildComment(childrenList[index], context);
     });
     if (childrenList.length > 2) {
       childrenWidget.add(InkWell(
@@ -580,8 +611,7 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15))),
               context: context,
-              builder: (context) =>
-                  ProviderUtil.getCommentDrawWidget(parentComment));
+              builder: (context) => ProviderUtil.getRecruitCommentDrawWidget(parentComment, bizId, commentEditController));
         },
         child: Container(
           margin: EdgeInsets.only(top: 2),

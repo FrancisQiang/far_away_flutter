@@ -12,6 +12,7 @@ import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/post/post_together_page.dart';
+import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
 import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';
@@ -168,6 +169,20 @@ class ProviderUtil {
         ],
         child: CommentDrawWidget(
           comment: commentListBean,
+        ));
+  }
+
+
+  static MultiProvider getRecruitCommentDrawWidget(CommentListBean commentListBean, String bizId, TextEditingController controller) {
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CommentChosenProvider>.value(
+              value: dynamicCommentChosenProvider),
+        ],
+        child: RecruitCommentDrawWidget(
+          comment: commentListBean,
+          bizId: bizId,
+          commentEditController: controller,
         ));
   }
 

@@ -9,7 +9,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CommentInputBottomPage extends StatelessWidget {
 
-  CommentInputBottomPage({@required this.toUserId, @required this.pid, @required this.controller, @required this.bizId});
+  CommentInputBottomPage({@required this.toUserId, @required this.pid, @required this.controller, @required this.bizId, this.avatar, this.content});
+
+  final String avatar;
+
+  final String content;
 
   final String bizId;
 
@@ -37,6 +41,37 @@ class CommentInputBottomPage extends StatelessWidget {
                   },
                 ),
               ),
+              pid != '0' && avatar != null && content != null ? Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: ScreenUtil().setWidth(22),
+                  vertical: 5
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: ScreenUtil().setWidth(60),
+                      child: ClipOval(
+                        child: Image.network(
+                          avatar,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: ScreenUtil().setWidth(550),
+                      margin: EdgeInsets.only(
+                        left: ScreenUtil().setWidth(15)
+                      ),
+                      child: Text(
+                        content,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    )
+                  ],
+                ),
+              ) : SizedBox(),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
