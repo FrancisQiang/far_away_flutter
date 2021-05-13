@@ -237,6 +237,8 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                     customBottomWidget: RecruitComment(
                       id: widget.recruitDetailInfoBean.id,
                       recruitCommentController: recruitCommentController,
+                      bizId: widget.recruitDetailInfoBean.id,
+                      commentEditController: commentEditController,
                     ),
                   ),
                 )),
@@ -356,11 +358,16 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
 }
 
 class RecruitComment extends StatefulWidget {
+
   final String id;
 
   final RecruitCommentController recruitCommentController;
 
-  RecruitComment({@required this.id, this.recruitCommentController});
+  final TextEditingController commentEditController;
+
+  final String bizId;
+
+  RecruitComment({@required this.id, @required this.recruitCommentController, @required this.commentEditController, this.bizId});
 
   @override
   _RecruitCommentState createState() => _RecruitCommentState();
@@ -444,6 +451,8 @@ class _RecruitCommentState extends State<RecruitComment> {
                     children: List.generate(commentList.length, (commentIndex) {
                       return RecruitCommentWidget(
                         commentListBean: commentList[commentIndex],
+                        commentEditController: widget.commentEditController,
+                        bizId: widget.bizId,
                       );
                     }),
                   ),
@@ -455,9 +464,14 @@ class _RecruitCommentState extends State<RecruitComment> {
 }
 
 class RecruitCommentWidget extends StatelessWidget {
+
   final CommentListBean commentListBean;
 
-  RecruitCommentWidget({this.commentListBean});
+  final TextEditingController commentEditController;
+
+  final String bizId;
+
+  RecruitCommentWidget({@required this.commentListBean, @required this.commentEditController, this.bizId});
 
   @override
   Widget build(BuildContext context) {
@@ -465,7 +479,19 @@ class RecruitCommentWidget extends StatelessWidget {
       highlightColor: Colors.orangeAccent.withOpacity(0.2),
       splashColor: Colors.orangeAccent.withOpacity(0.4),
       onTap: () {
-        print("父组件");
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) {
+              return CommentInputBottomPage(
+                toUserId: commentListBean.fromUserId,
+                bizId: bizId,
+                pid: commentListBean.id,
+                controller: commentEditController,
+              );
+            },
+          ),
+        );
       },
       child: Container(
           child: Column(
@@ -547,7 +573,6 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
     if (childrenList.length > 2) {
       childrenWidget.add(InkWell(
         onTap: () {
-          print('Ontap有效果');
           showMaterialModalBottomSheet(
               backgroundColor: Colors.grey[100],
               shape: RoundedRectangleBorder(
@@ -559,7 +584,6 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
                   ProviderUtil.getCommentDrawWidget(parentComment));
         },
         child: Container(
-          color: Colors.green,
           margin: EdgeInsets.only(top: 2),
           child: Text(
             '查看全部${childrenList.length}条评论',
