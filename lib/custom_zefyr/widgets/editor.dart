@@ -1,12 +1,20 @@
 // Copyright (c) 2018, the Zefyr project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+import 'package:far_away_flutter/config/OverScrollBehavior.dart';
+import 'package:far_away_flutter/custom_zefyr/widgets/common.dart';
+import 'package:far_away_flutter/custom_zefyr/widgets/rich_text.dart';
+import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_screenutil/screenutil.dart';
+import 'package:notus/notus.dart';
 
 import 'controller.dart';
+import 'editable_box.dart';
 import 'editable_text.dart';
 import 'image.dart';
 import 'mode.dart';
@@ -92,8 +100,6 @@ class ZefyrEditor extends StatefulWidget {
 
   final bool topBouncing;
   final bool bottomBouncing;
-
-
 
   /// Controls the document being edited.
   final ZefyrController controller;
@@ -252,6 +258,28 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
     final keyboardAppearance =
         widget.keyboardAppearance ?? themeData.primaryColorBrightness;
 
+    if (widget.mode == ZefyrMode.view) {
+      return EasyRefresh(
+        scrollController: widget.scrollController,
+        firstRefresh: widget.firstRefresh,
+        firstRefreshWidget: widget.firstRefreshWidget,
+        header: widget.header,
+        footer: widget.footer,
+        onRefresh: widget.onRefresh,
+        onLoad: widget.onLoad,
+        behavior: OverScrollBehavior(),
+        child: Column(
+          children: [
+            widget.customAboveWidget,
+            ListBody(children: _buildChildren(context)),
+            widget.customBottomWidget == null
+                ? Container()
+                : widget.customBottomWidget,
+          ],
+        ),
+      );
+    }
+
     Widget editable = ZefyrEditableText(
       controller: _scope.controller,
       focusNode: _scope.focusNode,
@@ -288,6 +316,190 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
         scope: _scope,
         child: editable,
       ),
+    );
+  }
+
+  List<Widget> _buildChildren(BuildContext context) {
+    final result = <Widget>[];
+    for (var node in widget.controller.document.root.children) {
+      result.add(_defaultChildBuilder(context, node));
+    }
+    return result;
+  }
+
+  Widget _defaultChildBuilder(BuildContext context, Node node) {
+    if (node is LineNode) {
+      return ZefyrParagraphCustom(
+          node: node,
+          lineStyle: TextStyle(),
+          padding: EdgeInsets.symmetric(
+            horizontal: ScreenUtil().setWidth(30),
+            vertical: 6
+          ),
+          imageDelegate: widget.imageDelegate);
+    }
+
+    final BlockNode block = node;
+    final blockStyle = block.style.get(NotusAttribute.block);
+
+    throw UnimplementedError('Block format $blockStyle.');
+  }
+}
+
+class ZefyrParagraphCustom extends StatelessWidget {
+  ZefyrParagraphCustom(
+      {Key key,
+      @required this.node,
+      this.blockStyle,
+      this.lineStyle,
+      this.padding,
+      this.imageDelegate})
+      : super(key: key);
+
+  final LineNode node;
+  final TextStyle blockStyle;
+  final TextStyle lineStyle;
+  final EdgeInsets padding;
+  final ZefyrImageDelegate imageDelegate;
+
+  @override
+  Widget build(BuildContext context) {
+    return ZefyrLineCustom(
+      node: node,
+      style: lineStyle,
+      padding: padding,
+      imageDelegate: imageDelegate,
+    );
+  }
+}
+
+class ZefyrLineCustom extends StatefulWidget {
+  const ZefyrLineCustom(
+      {Key key,
+      @required this.node,
+      this.style,
+      this.padding,
+      this.imageDelegate})
+      : assert(node != null),
+        super(key: key);
+
+  /// Line in the document represented by this widget.
+  final LineNode node;
+
+  /// Style to apply to this line. Required for lines with text contents,
+  /// ignored for lines containing embeds.
+  final TextStyle style;
+
+  /// Padding to add around this paragraph.
+  final EdgeInsets padding;
+
+  final ZefyrImageDelegate imageDelegate;
+
+  @override
+  _ZefyrLineCustomState createState() => _ZefyrLineCustomState();
+}
+
+class _ZefyrLineCustomState extends State<ZefyrLineCustom> {
+  @override
+  Widget build(BuildContext context) {
+    Widget content;
+    if (widget.node.hasEmbed) {
+      content = buildEmbed(context);
+    } else {
+      content = ZefyrRichText(
+        node: widget.node,
+        text: buildText(context),
+      );
+    }
+
+    if (widget.padding != null) {
+      return Padding(padding: widget.padding, child: content);
+    }
+    return content;
+  }
+
+  void bringIntoView(BuildContext context) {
+    final scrollable = Scrollable.of(context);
+    final object = context.findRenderObject();
+    assert(object.attached);
+    final viewport = RenderAbstractViewport.of(object);
+    assert(viewport != null);
+
+    final offset = scrollable.position.pixels;
+    var target = viewport.getOffsetToReveal(object, 0.0).offset;
+    if (target - offset < 0.0) {
+      scrollable.position.jumpTo(target);
+      return;
+    }
+    target = viewport.getOffsetToReveal(object, 1.0).offset;
+    if (target - offset > 0.0) {
+      scrollable.position.jumpTo(target);
+    }
+  }
+
+  TextSpan buildText(BuildContext context) {
+    final children = widget.node.children
+        .map((node) => _segmentToTextSpan(node))
+        .toList(growable: false);
+    return TextSpan(
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 16.0,
+          height: 1.3,
+        ),
+        children: children);
+  }
+
+  TextSpan _segmentToTextSpan(Node node) {
+    final TextNode segment = node;
+    final attrs = segment.style;
+
+    return TextSpan(
+      text: segment.value,
+      style: _getTextStyle(attrs),
+    );
+  }
+
+  TextStyle _getTextStyle(NotusStyle style) {
+    var result = TextStyle();
+    return result;
+  }
+
+  Widget buildEmbed(BuildContext context) {
+    EmbedNode node = widget.node.children.single;
+    EmbedAttribute embed = node.style.get(NotusAttribute.embed);
+
+    if (embed.type == EmbedType.image) {
+      return ZefyrImageCustom(node: node, delegate: widget.imageDelegate);
+    }
+    return Container();
+  }
+}
+
+class ZefyrImageCustom extends StatefulWidget {
+  const ZefyrImageCustom(
+      {Key key, @required this.node, @required this.delegate})
+      : super(key: key);
+
+  final EmbedNode node;
+  final ZefyrImageDelegate delegate;
+
+  @override
+  _ZefyrImageCustomState createState() => _ZefyrImageCustomState();
+}
+
+class _ZefyrImageCustomState extends State<ZefyrImageCustom> {
+  String get imageSource {
+    EmbedAttribute attribute = widget.node.style.get(NotusAttribute.embed);
+    return attribute.value['source'] as String;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final image = widget.delegate.buildImage(context, imageSource);
+    return Padding(
+      padding: EdgeInsets.zero,
+      child: image,
     );
   }
 }

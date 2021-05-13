@@ -212,6 +212,12 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
     super.build(context); // See AutomaticKeepAliveState.
 
     Widget body = ListBody(children: _buildChildren(context));
+
+    if (widget.padding != null) {
+      body = Padding(padding: widget.padding, child: body);
+    }
+
+
     if (widget.useEasyRefresh) {
       body = EasyRefresh(
         scrollController: widget.scrollController,
@@ -224,6 +230,12 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
         behavior: OverScrollBehavior(),
         child: Column(
           children: [
+            GestureDetector(
+              onTap: () {
+                print("fuck");
+              },
+              child: Container(height: 100, color: Colors.red,),
+            ),
             widget.customAboveWidget,
             body,
             widget.customBottomWidget == null ? Container() : widget.customBottomWidget,
@@ -243,14 +255,15 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
       );
     }
 
-    if (widget.padding != null) {
-      body = Padding(padding: widget.padding, child: body);
-    }
 
     final layers = <Widget>[body];
     layers.add(ZefyrSelectionOverlay(
       controls: widget.selectionControls ?? defaultSelectionControls(context),
     ));
+
+    if (widget.mode == ZefyrMode.view) {
+      return Stack(fit: StackFit.expand, children: layers);
+    }
 
     return MouseRegion(
       cursor: SystemMouseCursors.text,

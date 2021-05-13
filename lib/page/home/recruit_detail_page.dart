@@ -48,10 +48,6 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
 
   ZefyrController markdownController;
 
-  int currentPage = 1;
-
-  List<CommentListBean> commentList = [];
-
   final ScrollController _controller = ScrollController();
 
   final TextEditingController commentEditController = TextEditingController();
@@ -85,7 +81,6 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
       widget.recruitDetailInfoBean.signUpCount =
           recruitDetailInfoBean.signUpCount;
     });
-    recruitCommentController.init();
   }
 
   @override
@@ -109,8 +104,12 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                 padding: EdgeInsets.zero,
                 elevation: 0,
                 color: Colors.transparent,
-                onPressed: () => Navigator.pop(context),
-                child: Icon(FontAwesomeIcons.ellipsisH),
+                onPressed: () => {},
+                child: Image.asset(
+                  'assets/png/three_dots.png',
+                  width: ScreenUtil().setWidth(45),
+                  height: ScreenUtil().setWidth(40),
+                ),
               ),
             )
           ],
@@ -118,116 +117,123 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
         body: Stack(
           children: [
             Container(
-                margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(80)),
+                margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(80),),
                 child: ZefyrScaffold(
                   child: ZefyrEditor(
+                    autofocus: false,
                     bottomBouncing: false,
                     topBouncing: false,
                     useEasyRefresh: true,
                     scrollController: _controller,
-                    firstRefresh: true,
-                    firstRefreshWidget: Container(),
                     header: EasyRefreshWidget.refreshHeader,
                     footer: EasyRefreshWidget.refreshFooter,
+                    focusNode: FocusNode(),
                     onRefresh: () async {
                       _getRecruitDetail();
+                      recruitCommentController.init();
                     },
                     onLoad: () async {
                       recruitCommentController.refresh();
                     },
                     controller: markdownController,
-                    focusNode: FocusNode(),
                     padding: EdgeInsets.symmetric(
                       horizontal: ScreenUtil().setWidth(30),
                     ),
                     mode: ZefyrMode.view,
                     imageDelegate: MarkdownImageDelegate(),
                     customAboveWidget: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(30),
+                        ),
                         child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: ScreenUtil().setHeight(90),
-                          padding: EdgeInsets.symmetric(
-                              vertical: ScreenUtil().setHeight(15)),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ClipOval(
-                                  child: Container(
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      widget.recruitDetailInfoBean.userAvatar,
-                                  fit: BoxFit.cover,
-                                ),
-                              )),
-                              Container(
-                                width: ScreenUtil().setWidth(520),
-                                margin: EdgeInsets.only(
-                                    left: ScreenUtil().setWidth(15)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: Text(
-                                        widget.recruitDetailInfoBean.username,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: ScreenUtil().setHeight(90),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: ScreenUtil().setHeight(15)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ClipOval(
+                                      child: Container(
+                                        child: CachedNetworkImage(
+                                          imageUrl: widget
+                                              .recruitDetailInfoBean.userAvatar,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )),
+                                  Container(
+                                    width: ScreenUtil().setWidth(520),
+                                    margin: EdgeInsets.only(
+                                        left: ScreenUtil().setWidth(15)),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            widget
+                                                .recruitDetailInfoBean.username,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Container(
+                                          child: Text(
+                                            widget.recruitDetailInfoBean
+                                                .signature,
+                                            style: TextStyle(
+                                                fontSize:
+                                                ScreenUtil().setSp(20)),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: ScreenUtil().setWidth(15)),
+                                    child: Text(
+                                      DateUtil.getSimpleDate(widget
+                                          .recruitDetailInfoBean.publishTime),
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: ScreenUtil().setSp(25),
                                       ),
                                     ),
-                                    Container(
-                                      child: Text(
-                                        widget.recruitDetailInfoBean.signature,
-                                        style: TextStyle(
-                                            fontSize: ScreenUtil().setSp(20)),
-                                      ),
-                                    )
-                                  ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                widget.recruitDetailInfoBean.title,
+                                maxLines: 2,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: ScreenUtil().setSp(40),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: ScreenUtil().setWidth(15)),
-                                child: Text(
-                                  DateUtil.getSimpleDate(
-                                      widget.recruitDetailInfoBean.publishTime),
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: ScreenUtil().setSp(25),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Text(
-                            widget.recruitDetailInfoBean.title,
-                            maxLines: 2,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: ScreenUtil().setSp(40),
-                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(top: 10),
-                            alignment: Alignment.center,
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  child: CachedNetworkImage(
-                                    height: ScreenUtil().setHeight(250),
-                                    width: double.infinity,
-                                    imageUrl:
+                            Container(
+                                margin: EdgeInsets.only(top: 10),
+                                alignment: Alignment.center,
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      child: CachedNetworkImage(
+                                        height: ScreenUtil().setHeight(250),
+                                        width: double.infinity,
+                                        imageUrl:
                                         widget.recruitDetailInfoBean.cover,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ))),
-                      ],
-                    )),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ))),
+                          ],
+                        )),
                     customBottomWidget: RecruitComment(
                       id: widget.recruitDetailInfoBean.id,
                       recruitCommentController: recruitCommentController,
@@ -375,6 +381,7 @@ class _RecruitCommentState extends State<RecruitComment> {
 
   refreshData() async {
     currentPage = 1;
+    commentList = [];
     loadData();
   }
 
@@ -410,11 +417,12 @@ class _RecruitCommentState extends State<RecruitComment> {
       child: Column(
         children: [
           Container(
+            margin: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(30)),
+            padding: EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
               border:
                   Border(bottom: BorderSide(color: Colors.black, width: 0.05)),
             ),
-            padding: EdgeInsets.symmetric(vertical: 5),
             width: double.infinity,
             child: Text(
               '评论',
@@ -453,39 +461,35 @@ class RecruitCommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
+    return InkWell(
+      highlightColor: Colors.orangeAccent.withOpacity(0.2),
+      splashColor: Colors.orangeAccent.withOpacity(0.4),
+      onTap: () {
+        print("父组件");
+      },
       child: Container(
-          margin: EdgeInsets.symmetric(
-            vertical: 10,
-          ),
           child: Column(
-            children: [
-              CommentDetailWidget(
-                avatar: commentListBean.fromUserAvatar,
-                username: commentListBean.fromUsername,
-                publishTime: commentListBean.publishTime,
-                thumbCount: commentListBean.thumbCount,
-                content: commentListBean.content,
-              ),
-              commentListBean.children.isNotEmpty
-                  ? Container(
-                      width: ScreenUtil().setWidth(550),
-                      margin: EdgeInsets.only(
-                          left: ScreenUtil().setWidth(90),
-                          top: ScreenUtil().setHeight(20)),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(15),
-                          vertical: ScreenUtil().setHeight(10)),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(5)),
-                      child: ChildrenCommentPreviewWidget(
-                          parentComment: commentListBean),
-                    )
-                  : SizedBox()
-            ],
-          )),
+        children: [
+          CommentDetailWidget(
+            avatar: commentListBean.fromUserAvatar,
+            username: commentListBean.fromUsername,
+            publishTime: commentListBean.publishTime,
+            content: commentListBean.content,
+          ),
+          commentListBean.children.isNotEmpty
+              ? Container(
+                  // width: ScreenUtil().setWidth(550),
+                  padding: EdgeInsets.only(
+                    left: ScreenUtil().setWidth(130),
+                    right: ScreenUtil().setWidth(100),
+                    bottom: ScreenUtil().setHeight(10),
+                  ),
+                  child: ChildrenCommentPreviewWidget(
+                      parentComment: commentListBean),
+                )
+              : SizedBox(),
+        ],
+      )),
     );
   }
 }
@@ -508,7 +512,8 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
                 text: item.toUserId == item.fromUserId
                     ? '${item.fromUsername}: '
                     : '${item.fromUsername} ',
-                style: TextStyle(color: Colors.blueAccent),
+                style: TextStyle(
+                    color: Colors.blueAccent, fontSize: ScreenUtil().setSp(25)),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     print("点击了");
@@ -517,9 +522,15 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
               text: item.toUserId == item.fromUserId
                   ? ''
                   : ' 回复 ${item.toUsername}: ',
-              style: TextStyle(color: Colors.black54),
+              style: TextStyle(
+                  color: Colors.black54, fontSize: ScreenUtil().setSp(25)),
             ),
-            TextSpan(text: item.content, style: TextStyle(color: Colors.black))
+            TextSpan(
+                text: item.content,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: ScreenUtil().setSp(25),
+                    letterSpacing: 0.4))
           ]),
         ),
       ),
@@ -534,8 +545,9 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
       return generateChildComment(childrenList[index]);
     });
     if (childrenList.length > 2) {
-      childrenWidget.add(GestureDetector(
+      childrenWidget.add(InkWell(
         onTap: () {
+          print('Ontap有效果');
           showMaterialModalBottomSheet(
               backgroundColor: Colors.grey[100],
               shape: RoundedRectangleBorder(
@@ -547,9 +559,12 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
                   ProviderUtil.getCommentDrawWidget(parentComment));
         },
         child: Container(
+          color: Colors.green,
+          margin: EdgeInsets.only(top: 2),
           child: Text(
             '查看全部${childrenList.length}条评论',
-            style: TextStyle(color: Colors.blueAccent),
+            style: TextStyle(
+                color: Colors.blueAccent, fontSize: ScreenUtil().setSp(25)),
           ),
         ),
       ));
@@ -566,23 +581,21 @@ class CommentDetailWidget extends StatelessWidget {
 
   final int publishTime;
 
-  final int thumbCount;
-
   final String content;
-
-  final List<String> pictureList;
 
   CommentDetailWidget(
       {@required this.avatar,
       @required this.username,
       @required this.publishTime,
-      @required this.thumbCount,
-      @required this.content,
-      this.pictureList = const []});
+      @required this.content});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: ScreenUtil().setWidth(30),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -596,8 +609,8 @@ class CommentDetailWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                    child: Row(
+                Row(
+                  mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
@@ -610,29 +623,14 @@ class CommentDetailWidget extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        children: [
-                          Container(
-                            child: Text(
-                              CalculateUtil.simplifyCount(thumbCount),
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: ScreenUtil().setSp(22)),
-                            ),
-                          ),
-                          Container(
-                            child: Icon(
-                              FontAwesomeIcons.thumbsUp,
-                              color: Colors.black54,
-                              size: ScreenUtil().setSp(30),
-                            ),
-                          )
-                        ],
+                      child: Image.asset(
+                        'assets/png/three_dots.png',
+                        width: ScreenUtil().setWidth(45),
+                        height: ScreenUtil().setWidth(40),
                       ),
                     )
                   ],
-                )),
+                ),
                 Container(
                   child: Text(
                     DateUtil.getTimeString(
