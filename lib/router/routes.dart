@@ -16,6 +16,7 @@ class Routes {
   static String assetView = "/assetView";
   static String togetherDetail = "/togetherDetail";
   static String recruitDetail = "/recruitDetail";
+  static String recruitComment = "/recruitComment";
   static String privateChat = "/privateChat";
 
   static void configureRoutes(FluroRouter router) {

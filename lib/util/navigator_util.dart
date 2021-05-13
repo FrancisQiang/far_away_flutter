@@ -125,4 +125,12 @@ class NavigatorUtil {
     );
   }
 
+  static void toRecruitCommentBottomPage(BuildContext context) {
+    Application.router.navigateTo(
+        context,
+        Routes.recruitComment,
+        transition: TransitionType.materialFullScreenDialog
+    );
+  }
+
 }

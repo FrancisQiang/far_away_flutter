@@ -14,10 +14,12 @@ import 'package:far_away_flutter/custom_zefyr/widgets/editor.dart';
 import 'package:far_away_flutter/custom_zefyr/widgets/mode.dart';
 import 'package:far_away_flutter/custom_zefyr/widgets/scaffold.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
+import 'package:far_away_flutter/page/recurit/comment_input_bottom_page.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
+import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
@@ -51,6 +53,8 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
   List<CommentListBean> commentList = [];
 
   final ScrollController _controller = ScrollController();
+
+  final TextEditingController commentEditController = TextEditingController();
 
   RecruitCommentController recruitCommentController =
       RecruitCommentController();
@@ -243,7 +247,21 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              opaque: false,
+                              pageBuilder: (_, __, ___) {
+                                return CommentInputBottomPage(
+                                  toUserId: widget.recruitDetailInfoBean.userId,
+                                  bizId: widget.recruitDetailInfoBean.id,
+                                  pid: '0',
+                                  controller: commentEditController,
+                                );
+                              },
+                            ),
+                          );
+                        },
                         child: Container(
                           child: Row(
                             children: [

@@ -3,6 +3,7 @@ import 'package:far_away_flutter/page/login/login_choose_page.dart';
 import 'package:far_away_flutter/page/login/phone_login_page.dart';
 import 'package:far_away_flutter/page/photo/asset_view_page.dart';
 import 'package:far_away_flutter/page/photo/media_view_page.dart';
+import 'package:far_away_flutter/page/recurit/comment_input_bottom_page.dart';
 import 'package:far_away_flutter/page/search/search_page.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/param/recruit_param.dart';
@@ -105,6 +106,7 @@ var recruitDetailHandler = Handler(
   return ProviderUtil.getRecruitDetailPage(
       recruitDetailInfoBean: arguments.recruitDetailInfoBean);
 });
+
 
 var privateChatHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
