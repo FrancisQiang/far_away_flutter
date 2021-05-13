@@ -177,6 +177,17 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> recruitThumbChange(
+      {@required String token,
+        @required bool thumb,
+        @required String recruitId}) {
+    return DioFactory.getDioClient().post(
+      ApiProperties.HOST_BASE_URL + "/recruit/thumb",
+      data: {"dynamicId": recruitId, "thumb": thumb},
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
   static Future<dynamic> postComment(
       {@required String token,
       @required String bizId,
@@ -229,6 +240,14 @@ class ApiMethodUtil {
       {@required String token, @required String id}) {
     return DioFactory.getDioClient().post(
       ApiProperties.HOST_BASE_URL + "/together/signup/$id",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
+  static Future<dynamic> recruitSignUp(
+      {@required String token, @required String id}) {
+    return DioFactory.getDioClient().post(
+      ApiProperties.HOST_BASE_URL + "/recruit/signup/$id",
       options: Options(headers: {"Authorization": token}),
     );
   }

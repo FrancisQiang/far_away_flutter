@@ -3,6 +3,7 @@ import 'dart:convert' as convert;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
+import 'package:far_away_flutter/bean/im_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
@@ -16,8 +17,10 @@ import 'package:far_away_flutter/custom_zefyr/widgets/scaffold.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/recurit/comment_input_bottom_page.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
+import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
+import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/gestures.dart';
@@ -26,6 +29,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:notus/notus.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class RecruitDetailPage extends StatefulWidget {
   final RecruitDetailInfoBean recruitDetailInfoBean;
@@ -244,15 +248,18 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
               bottom: 0,
               child: Container(
                 decoration: BoxDecoration(
-                    border: Border(
-                        top: BorderSide(color: Colors.black, width: 0.1))),
+                  border: Border(
+                    top: BorderSide(color: Colors.black, width: 0.1),
+                  ),
+                ),
                 height: ScreenUtil().setHeight(80),
                 width: ScreenUtil().setWidth(750),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    GestureDetector(
-                        onTap: () {
+                    FlatButton(
+                        onPressed: () {
                           Navigator.of(context).push(
                             PageRouteBuilder(
                               opaque: false,
@@ -268,7 +275,10 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                           );
                         },
                         child: Container(
+                          height: ScreenUtil().setHeight(80),
+                          alignment: Alignment.center,
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
                             children: [
                               Container(
                                 child: Image.asset(
@@ -282,14 +292,30 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                             .commentsCount ==
                                         0
                                     ? ''
-                                    : '${widget.recruitDetailInfoBean.commentsCount}'),
+                                    : '  ${widget.recruitDetailInfoBean.commentsCount}'),
                               )
                             ],
                           ),
                         )),
-                    GestureDetector(
-                        onTap: () {},
+                    FlatButton(
+                        onPressed: () async {
+                          await ApiMethodUtil.dynamicThumbChange(
+                              token: ProviderUtil.globalInfoProvider.jwt,
+                              thumb: !widget.recruitDetailInfoBean.thumbed,
+                              dynamicId: widget.recruitDetailInfoBean.id,
+                          );
+                          setState(() {
+                            if (!widget.recruitDetailInfoBean.thumbed) {
+                              widget.recruitDetailInfoBean.thumbCount++;
+                              widget.recruitDetailInfoBean.thumbed = true;
+                            } else {
+                              widget.recruitDetailInfoBean.thumbCount--;
+                              widget.recruitDetailInfoBean.thumbed = false;
+                            }
+                          });
+                        },
                         child: Container(
+                          height: ScreenUtil().setHeight(80),
                           child: Row(
                             children: [
                               Container(
@@ -306,14 +332,64 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                             .recruitDetailInfoBean.thumbCount ==
                                         0
                                     ? ''
-                                    : '${widget.recruitDetailInfoBean.thumbCount}'),
+                                    : '  ${widget.recruitDetailInfoBean.thumbCount}', style: TextStyle(
+                                    color: widget.recruitDetailInfoBean.thumbed ? Color.fromRGBO(255, 122, 0, 1) : Colors.black
+                                ),),
                               )
                             ],
                           ),
                         )),
-                    GestureDetector(
-                        onTap: () {},
+                    FlatButton(
+                        onPressed: () async {
+                          // Response<dynamic> response = await ApiMethodUtil
+                          //     .recruitSignUp(
+                          //     token: ProviderUtil.globalInfoProvider.jwt,
+                          //     id: widget.recruitDetailInfoBean.id,
+                          // );
+                          // if (ResponseBean.fromJson(response.data).isSuccess()) {
+                          //   // 发送结伴消息
+                          //   TextMessage textMessage = TextMessage();
+                          //   MessageContentJson json = MessageContentJson(
+                          //       content: "",
+                          //       type: MessageType.SIGN_UP,
+                          //       extraInfo: convert.jsonEncode(TogetherMessageJson(
+                          //           togetherId: togetherInfoBean.id,
+                          //           username: togetherInfoBean.username,
+                          //           togetherInfo: togetherInfoBean.content,
+                          //           avatar: togetherInfoBean.userAvatar,
+                          //           title: "我想和你结伴同行"
+                          //       ))
+                          //   );
+                          //   textMessage.content = convert.jsonEncode(json);
+                          //   Message msg = await RongIMClient.sendMessage(
+                          //       RCConversationType.Private,
+                          //       togetherInfoBean.userId,
+                          //       textMessage);
+                          //   PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
+                          //   messageWrapper.msgId = msg.messageId;
+                          //   messageWrapper.content = convert.jsonEncode(json);
+                          //   messageWrapper.type = MessageType.TOGETHER;
+                          //   messageWrapper.userId =
+                          //       ProviderUtil.globalInfoProvider.userInfoBean.id;
+                          //   messageWrapper.read = true;
+                          //   if (ProviderUtil.imProvider.messages[togetherInfoBean.userId] == null) {
+                          //     ProviderUtil.imProvider.messages[togetherInfoBean.userId] = [];
+                          //   }
+                          //   ProviderUtil.imProvider.messages[togetherInfoBean.userId].insert(0, messageWrapper);
+                          //   NavigatorUtil.toPrivateChatPage(
+                          //       context,
+                          //       param: PrivateChatParam(
+                          //           username: togetherInfoBean.username,
+                          //           userId: togetherInfoBean.userId,
+                          //           avatar: togetherInfoBean.userAvatar)
+                          //   );
+                          //   togetherInfoBean.signUp = true;
+                          // } else {
+                          //   ToastUtil.showErrorToast("网络异常，请稍后再试");
+                          // }
+                        },
                         child: Container(
+                          height: ScreenUtil().setHeight(80),
                           child: Row(
                             children: [
                               Container(
@@ -335,9 +411,10 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                             ],
                           ),
                         )),
-                    GestureDetector(
-                      onTap: () {},
+                    FlatButton(
+                      onPressed: () {},
                       child: Container(
+                        height: ScreenUtil().setHeight(80),
                         child: Image.asset(
                           'assets/png/share_without_outline.png',
                           width: ScreenUtil().setWidth(45),
@@ -611,7 +688,8 @@ class ChildrenCommentPreviewWidget extends StatelessWidget {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15))),
               context: context,
-              builder: (context) => ProviderUtil.getRecruitCommentDrawWidget(parentComment, bizId, commentEditController));
+              builder: (context) => ProviderUtil.getRecruitCommentDrawWidget(
+                  parentComment, bizId, commentEditController));
         },
         child: Container(
           margin: EdgeInsets.only(top: 2),

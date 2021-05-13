@@ -92,4 +92,6 @@ class MessageType {
 
   static const int TOGETHER = 1;
 
+  static const int SIGN_UP = 2;
+
 }

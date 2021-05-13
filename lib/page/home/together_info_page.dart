@@ -228,7 +228,8 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                           child: Text("分享"),
                         )
                       ],
-                    )),
+                    ),
+                ),
                 FlatButton(
                     onPressed: () {
                       NavigatorUtil.toTogetherDetailPage(context,
