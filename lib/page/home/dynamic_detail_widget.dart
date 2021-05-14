@@ -203,7 +203,7 @@ class DynamicDetailWidget extends StatelessWidget {
                         : LikeCountAnimationType.none,
                     likeBuilder: (bool isLiked) {
                       return Icon(
-                        Icons.favorite,
+                        Icons.favorite_border_outlined,
                         color: isLiked ? Colors.redAccent : Colors.black,
                         size: ScreenUtil().setSp(42),
                       );

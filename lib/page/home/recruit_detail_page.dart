@@ -344,6 +344,11 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                         )),
                     FlatButton(
                         onPressed: () async {
+                          if (ProviderUtil.globalInfoProvider.userInfoBean.id ==
+                              widget.recruitDetailInfoBean.userId) {
+                            ToastUtil.showNoticeToast("您是发布者，不能报名哦！");
+                            return;
+                          }
                           Response<dynamic> response =
                               await ApiMethodUtil.recruitSignUp(
                             token: ProviderUtil.globalInfoProvider.jwt,
@@ -402,7 +407,10 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                     widget.recruitDetailInfoBean.title,
                               ),
                             );
-                            widget.recruitDetailInfoBean.signUp = true;
+                            if (!widget.recruitDetailInfoBean.signUp) {
+                              widget.recruitDetailInfoBean.signUp = true;
+                              widget.recruitDetailInfoBean.signUpCount++;
+                            }
                           } else {
                             ToastUtil.showErrorToast("网络异常，请稍后再试");
                           }
@@ -421,11 +429,16 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                 ),
                               ),
                               Container(
-                                child: Text(widget.recruitDetailInfoBean
-                                            .signUpCount ==
-                                        0
-                                    ? ''
-                                    : '${widget.recruitDetailInfoBean.signUpCount}'),
+                                child: Text(
+                                  widget.recruitDetailInfoBean.signUpCount == 0
+                                      ? ''
+                                      : '${widget.recruitDetailInfoBean.signUpCount}',
+                                  style: TextStyle(
+                                    color: widget.recruitDetailInfoBean.signUp
+                                        ? Color.fromRGBO(255, 122, 0, 1)
+                                        : Colors.black,
+                                  ),
+                                ),
                               )
                             ],
                           ),

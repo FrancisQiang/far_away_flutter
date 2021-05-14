@@ -19,17 +19,9 @@ class MessagePage extends StatelessWidget {
             imProvider.refreshConversationList();
           }
           return Container(
-            child: ListView.separated(
+            child: ListView.builder(
               itemBuilder: (context, index) {
                 return MessageTile(messageBean: imProvider.conversations[index]);
-              },
-              separatorBuilder: (context, index) {
-                return Container(
-                  padding: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(145),
-                      right: ScreenUtil().setWidth(15)),
-                  child: Divider(color: Colors.grey[400]),
-                );
               },
               itemCount: imProvider.conversations.length,
             ),
@@ -51,6 +43,9 @@ class MessageTile extends StatelessWidget {
     String content;
     if (messageContentJson.type == MessageType.DEFAULT) {
       content = messageContentJson.content;
+    } else if (messageContentJson.type == MessageType.RECRUIT_SIGN_UP) {
+      RecruitMessageJson recruitMessageJson = RecruitMessageJson.fromJson(convert.jsonDecode(messageContentJson.extraInfo));
+      content = "我是来自xxx的刘肥雪， 想要报名参加这次义工";
     } else {
       TogetherMessageJson togetherJson = TogetherMessageJson.fromJson(convert.jsonDecode(messageContentJson.extraInfo));
       content = togetherJson.username + "，我想与你结伴同行";
@@ -63,20 +58,28 @@ class MessageTile extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(
             horizontal: ScreenUtil().setWidth(15),
-            vertical: ScreenUtil().setHeight(15)),
+            vertical: ScreenUtil().setHeight(25),
+        ),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              width: 0.1
+            )
+          )
+        ),
         child: Row(children: [
           Container(
             child: ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: messageBean.avatar,
-                  width: ScreenUtil().setWidth(120),
-                  height: ScreenUtil().setWidth(120),
+                  width: ScreenUtil().setWidth(100),
+                  height: ScreenUtil().setWidth(100),
                   fit: BoxFit.cover,
                 )
             ),
           ),
           Container(
-            height: ScreenUtil().setWidth(120),
+            height: ScreenUtil().setWidth(100),
             margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -86,21 +89,23 @@ class MessageTile extends StatelessWidget {
                     child: Row(
                       children: [
                         Container(
-                          width: ScreenUtil().setWidth(480),
+                          width: ScreenUtil().setWidth(500),
                           child: Text(
                             messageBean.username,
                             style: TextStyle(
                                 fontSize: ScreenUtil().setSp(35),
                                 letterSpacing: 0.2,
-                                fontWeight: FontWeight.w400),
+                                fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
                           child: Text('${DateUtil.getSimpleDate(messageBean.sendTime)}',
                               style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(28),
-                                  color: Colors.black54)),
+                                  fontSize: ScreenUtil().setSp(26),
+                                  color: Colors.black38),
+                          ),
                         )
                       ],
                     )),
@@ -113,7 +118,7 @@ class MessageTile extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: ScreenUtil().setSp(30),
-                                color: Colors.black54)),
+                                color: Colors.black38)),
                       ),
                       messageBean.unReadMessageCount == 0 ? Container() :
                       Container(

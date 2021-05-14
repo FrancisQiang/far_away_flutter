@@ -317,13 +317,13 @@ class DynamicPreviewCard extends StatelessWidget {
                     likeBuilder: (bool isLiked) {
                       if (isLiked) {
                         return Icon(
-                          FontAwesomeIcons.solidHeart,
+                          Icons.favorite,
                           color: Colors.redAccent,
                           size: ScreenUtil().setSp(40),
                         );
                       } else {
                         return Icon(
-                          FontAwesomeIcons.heart,
+                          Icons.favorite_border_outlined,
                           color: Colors.black,
                           size: ScreenUtil().setSp(40),
                         );

@@ -43,7 +43,7 @@ class DateUtil {
   }
 
   static String extractTime(DateTime dateTime) {
-    return "${dateTime.hour}:${dateTime.minute}";
+    return "${dateTime.hour}:${dateTime.minute < 10 ? '0' : ''}${dateTime.minute}";
   }
 
   static String extractTimeWithMonthDay(DateTime dateTime) {

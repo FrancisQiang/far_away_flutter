@@ -253,6 +253,10 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                     )),
                 FlatButton(
                     onPressed: () async {
+                      if (ProviderUtil.globalInfoProvider.userInfoBean.id == togetherInfoBean.userId) {
+                        ToastUtil.showNoticeToast("您是发布者，不能报名哦！");
+                        return;
+                      }
                       Response<dynamic> response = await ApiMethodUtil
                           .togetherSignUp(
                           token: ProviderUtil.globalInfoProvider.jwt,
@@ -294,7 +298,10 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                                 userId: togetherInfoBean.userId,
                                 avatar: togetherInfoBean.userAvatar)
                         );
-                        togetherInfoBean.signUp = true;
+                        if (!togetherInfoBean.signUp) {
+                          togetherInfoBean.signUp = true;
+                          togetherInfoBean.signUpCount++;
+                        }
                       } else {
                         ToastUtil.showErrorToast("网络异常，请稍后再试");
                       }
@@ -317,7 +324,7 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                           margin: EdgeInsets.only(left: 5),
                           child: Text(
                             '${togetherInfoBean.signUpCount}', style: TextStyle(
-                              color: togetherInfoBean.signUpCount > 0 ? Color
+                              color: togetherInfoBean.signUp ? Color
                                   .fromRGBO(255, 122, 0, 1) : Colors.black
                           ),),
                         )
