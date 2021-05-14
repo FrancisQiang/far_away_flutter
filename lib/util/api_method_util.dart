@@ -287,4 +287,12 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> followChange(
+      {@required String token, @required String targetUserId}) {
+    return DioFactory.getDioClient().post(
+        ApiProperties.HOST_BASE_URL + "/follow/change/$targetUserId",
+        options: Options(headers: {"Authorization": token}),
+    );
+  }
+
 }

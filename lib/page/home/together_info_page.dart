@@ -165,28 +165,47 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                     )),
                 // 用户名和用户签名
                 Container(
+                  width: ScreenUtil().setWidth(470),
                   margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                          child: Row(
-                            children: [
-                              Container(
-                                child: Text(
-                                  togetherInfoBean.username,
-                                  style: TextStyleTheme.h3,
-                                ),
-                              ),
-                            ],
-                          )),
+                        child: Text(
+                          togetherInfoBean.username,
+                          style: TextStyleTheme.h3,
+                        ),
+                      ),
                       Container(
                         child: Text(togetherInfoBean.signature,
                             style: TextStyleTheme.subH5),
                       )
                     ],
                   ),
-                )
+                ),
+                Container(
+                  height: ScreenUtil().setHeight(40),
+                  width: ScreenUtil().setWidth(110),
+                  child: FlatButton(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    onPressed: () {},
+                    color: Colors.orangeAccent,
+                    child: Text(
+                      '关 注',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: ScreenUtil().setSp(22),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

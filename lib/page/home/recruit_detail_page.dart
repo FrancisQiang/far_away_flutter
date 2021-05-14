@@ -90,10 +90,8 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
           toolbarHeight: ScreenUtil().setHeight(80),
           elevation: 0,
           backgroundColor: Colors.transparent,
-          leading: RaisedButton(
-            elevation: 0,
-            color: Colors.transparent,
-            onPressed: () => Navigator.pop(context),
+          leading: InkWell(
+            onTap: () => Navigator.pop(context),
             child: Icon(FontAwesomeIcons.angleLeft),
           ),
           actions: [
@@ -349,8 +347,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                             ToastUtil.showNoticeToast("您是发布者，不能报名哦！");
                             return;
                           }
-                          Response<dynamic> response =
-                              await ApiMethodUtil.recruitSignUp(
+                          Response<dynamic> response = await ApiMethodUtil.recruitSignUp(
                             token: ProviderUtil.globalInfoProvider.jwt,
                             id: widget.recruitDetailInfoBean.id,
                           );
