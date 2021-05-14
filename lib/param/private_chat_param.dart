@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 
 class PrivateChatParam {
 
-  PrivateChatParam({@required this.username, this.userId, this.avatar});
+  PrivateChatParam(
+      {this.username,
+      this.userId,
+      this.avatar,
+      this.togetherId,
+      this.recruitId,
+      this.recruitCover,
+      this.recruitTitle});
 
   String username;
 
@@ -10,4 +17,11 @@ class PrivateChatParam {
 
   String avatar;
 
+  String togetherId;
+
+  String recruitId;
+
+  String recruitCover;
+
+  String recruitTitle;
 }

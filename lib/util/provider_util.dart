@@ -35,7 +35,7 @@ class ProviderUtil {
       CommentChosenProvider();
 
   static CommentChosenProvider recruitCommentChosenProvider =
-  CommentChosenProvider();
+      CommentChosenProvider();
 
   static ImProvider imProvider = ImProvider();
 
@@ -74,14 +74,14 @@ class ProviderUtil {
   static MultiProvider getPostRecruitPage() {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<PostRecruitProvider>.value(value: postRecruitProvider),
+        ChangeNotifierProvider<PostRecruitProvider>.value(
+            value: postRecruitProvider),
         ChangeNotifierProvider<GlobalInfoProvider>.value(
             value: globalInfoProvider)
       ],
       child: PostRecruitPage(),
     );
   }
-
 
   static MultiProvider getDynamicDetailPage(
       {bool scrollToComment,
@@ -131,7 +131,8 @@ class ProviderUtil {
       {RecruitDetailInfoBean recruitDetailInfoBean}) {
     recruitCommentChosenProvider.targetBizId = recruitDetailInfoBean.id;
     recruitCommentChosenProvider.targetUserId = recruitDetailInfoBean.userId;
-    recruitCommentChosenProvider.targetUsername = recruitDetailInfoBean.username;
+    recruitCommentChosenProvider.targetUsername =
+        recruitDetailInfoBean.username;
     recruitCommentChosenProvider.pid = null;
     recruitCommentChosenProvider.refresh();
     return MultiProvider(
@@ -172,8 +173,10 @@ class ProviderUtil {
         ));
   }
 
-
-  static MultiProvider getRecruitCommentDrawWidget(CommentListBean commentListBean, String bizId, TextEditingController controller) {
+  static MultiProvider getRecruitCommentDrawWidget(
+      CommentListBean commentListBean,
+      String bizId,
+      TextEditingController controller) {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<CommentChosenProvider>.value(
@@ -186,18 +189,26 @@ class ProviderUtil {
         ));
   }
 
-  static Widget getPrivateChatPage({String username, String userId, String avatar}) {
+  static Widget getPrivateChatPage({
+    String username,
+    String userId,
+    String avatar,
+    String togetherId,
+    String recruitId,
+    String recruitTitle,
+    String recruitCover,
+  }) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<ImProvider>.value(value: imProvider)
-      ],
+      providers: [ChangeNotifierProvider<ImProvider>.value(value: imProvider)],
       child: PrivateChatPage(
         username: username,
         userId: userId,
         avatar: avatar,
+        togetherId: togetherId,
+        recruitId: recruitId,
+        recruitTitle: recruitTitle,
+        recruitCover: recruitCover,
       ),
     );
   }
-
-
 }

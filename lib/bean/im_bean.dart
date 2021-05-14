@@ -86,12 +86,38 @@ class TogetherMessageJson {
   }
 }
 
+class RecruitMessageJson {
+
+  String title;
+  String cover;
+  String avatar;
+  String recruitId;
+
+  RecruitMessageJson({this.title, this.cover, this.avatar, this.recruitId});
+
+  RecruitMessageJson.fromJson(Map<String, dynamic> json) {
+    cover = json['cover'];
+    title = json['title'];
+    recruitId = json['recruitId'];
+    avatar = json['avatar'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['cover'] = this.cover;
+    data['title'] = this.title;
+    data['avatar'] = this.avatar;
+    data['recruitId'] = this.recruitId;
+    return data;
+  }
+}
+
 class MessageType {
 
   static const int DEFAULT = 0;
 
   static const int TOGETHER = 1;
 
-  static const int SIGN_UP = 2;
+  static const int RECRUIT_SIGN_UP = 2;
 
 }

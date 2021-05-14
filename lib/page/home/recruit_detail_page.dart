@@ -300,9 +300,9 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                     FlatButton(
                         onPressed: () async {
                           await ApiMethodUtil.dynamicThumbChange(
-                              token: ProviderUtil.globalInfoProvider.jwt,
-                              thumb: !widget.recruitDetailInfoBean.thumbed,
-                              dynamicId: widget.recruitDetailInfoBean.id,
+                            token: ProviderUtil.globalInfoProvider.jwt,
+                            thumb: !widget.recruitDetailInfoBean.thumbed,
+                            dynamicId: widget.recruitDetailInfoBean.id,
                           );
                           setState(() {
                             if (!widget.recruitDetailInfoBean.thumbed) {
@@ -328,65 +328,84 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                 ),
                               ),
                               Container(
-                                child: Text(widget
-                                            .recruitDetailInfoBean.thumbCount ==
-                                        0
-                                    ? ''
-                                    : '  ${widget.recruitDetailInfoBean.thumbCount}', style: TextStyle(
-                                    color: widget.recruitDetailInfoBean.thumbed ? Color.fromRGBO(255, 122, 0, 1) : Colors.black
-                                ),),
+                                child: Text(
+                                  widget.recruitDetailInfoBean.thumbCount == 0
+                                      ? ''
+                                      : '  ${widget.recruitDetailInfoBean.thumbCount}',
+                                  style: TextStyle(
+                                      color:
+                                          widget.recruitDetailInfoBean.thumbed
+                                              ? Color.fromRGBO(255, 122, 0, 1)
+                                              : Colors.black),
+                                ),
                               )
                             ],
                           ),
                         )),
                     FlatButton(
                         onPressed: () async {
-                          // Response<dynamic> response = await ApiMethodUtil
-                          //     .recruitSignUp(
-                          //     token: ProviderUtil.globalInfoProvider.jwt,
-                          //     id: widget.recruitDetailInfoBean.id,
-                          // );
-                          // if (ResponseBean.fromJson(response.data).isSuccess()) {
-                          //   // 发送结伴消息
-                          //   TextMessage textMessage = TextMessage();
-                          //   MessageContentJson json = MessageContentJson(
-                          //       content: "",
-                          //       type: MessageType.SIGN_UP,
-                          //       extraInfo: convert.jsonEncode(TogetherMessageJson(
-                          //           togetherId: togetherInfoBean.id,
-                          //           username: togetherInfoBean.username,
-                          //           togetherInfo: togetherInfoBean.content,
-                          //           avatar: togetherInfoBean.userAvatar,
-                          //           title: "我想和你结伴同行"
-                          //       ))
-                          //   );
-                          //   textMessage.content = convert.jsonEncode(json);
-                          //   Message msg = await RongIMClient.sendMessage(
-                          //       RCConversationType.Private,
-                          //       togetherInfoBean.userId,
-                          //       textMessage);
-                          //   PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
-                          //   messageWrapper.msgId = msg.messageId;
-                          //   messageWrapper.content = convert.jsonEncode(json);
-                          //   messageWrapper.type = MessageType.TOGETHER;
-                          //   messageWrapper.userId =
-                          //       ProviderUtil.globalInfoProvider.userInfoBean.id;
-                          //   messageWrapper.read = true;
-                          //   if (ProviderUtil.imProvider.messages[togetherInfoBean.userId] == null) {
-                          //     ProviderUtil.imProvider.messages[togetherInfoBean.userId] = [];
-                          //   }
-                          //   ProviderUtil.imProvider.messages[togetherInfoBean.userId].insert(0, messageWrapper);
-                          //   NavigatorUtil.toPrivateChatPage(
-                          //       context,
-                          //       param: PrivateChatParam(
-                          //           username: togetherInfoBean.username,
-                          //           userId: togetherInfoBean.userId,
-                          //           avatar: togetherInfoBean.userAvatar)
-                          //   );
-                          //   togetherInfoBean.signUp = true;
-                          // } else {
-                          //   ToastUtil.showErrorToast("网络异常，请稍后再试");
-                          // }
+                          Response<dynamic> response =
+                              await ApiMethodUtil.recruitSignUp(
+                            token: ProviderUtil.globalInfoProvider.jwt,
+                            id: widget.recruitDetailInfoBean.id,
+                          );
+                          if (ResponseBean.fromJson(response.data)
+                              .isSuccess()) {
+                            // 发送结伴消息
+                            TextMessage textMessage = TextMessage();
+                            MessageContentJson json = MessageContentJson(
+                              content: "",
+                              type: MessageType.RECRUIT_SIGN_UP,
+                              extraInfo: convert.jsonEncode(
+                                RecruitMessageJson(
+                                  cover: widget.recruitDetailInfoBean.cover,
+                                  recruitId: widget.recruitDetailInfoBean.id,
+                                  avatar:
+                                      widget.recruitDetailInfoBean.userAvatar,
+                                  title: widget.recruitDetailInfoBean.title,
+                                ),
+                              ),
+                            );
+                            textMessage.content = convert.jsonEncode(json);
+                            Message msg = await RongIMClient.sendMessage(
+                              RCConversationType.Private,
+                              widget.recruitDetailInfoBean.userId,
+                              textMessage,
+                            );
+                            PrivateMessageWrapper messageWrapper =
+                                PrivateMessageWrapper();
+                            messageWrapper.msgId = msg.messageId;
+                            messageWrapper.content = convert.jsonEncode(json);
+                            messageWrapper.type = MessageType.RECRUIT_SIGN_UP;
+                            messageWrapper.userId =
+                                ProviderUtil.globalInfoProvider.userInfoBean.id;
+                            messageWrapper.read = true;
+                            if (ProviderUtil.imProvider.messages[
+                                    widget.recruitDetailInfoBean.userId] ==
+                                null) {
+                              ProviderUtil.imProvider.messages[
+                                  widget.recruitDetailInfoBean.userId] = [];
+                            }
+                            ProviderUtil.imProvider
+                                .messages[widget.recruitDetailInfoBean.userId]
+                                .insert(0, messageWrapper);
+                            NavigatorUtil.toPrivateChatPage(
+                              context,
+                              param: PrivateChatParam(
+                                username: widget.recruitDetailInfoBean.username,
+                                userId: widget.recruitDetailInfoBean.userId,
+                                avatar: widget.recruitDetailInfoBean.userAvatar,
+                                recruitId: widget.recruitDetailInfoBean.id,
+                                recruitCover:
+                                    widget.recruitDetailInfoBean.cover,
+                                recruitTitle:
+                                    widget.recruitDetailInfoBean.title,
+                              ),
+                            );
+                            widget.recruitDetailInfoBean.signUp = true;
+                          } else {
+                            ToastUtil.showErrorToast("网络异常，请稍后再试");
+                          }
                         },
                         child: Container(
                           height: ScreenUtil().setHeight(80),

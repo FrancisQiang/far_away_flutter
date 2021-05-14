@@ -114,5 +114,6 @@ var privateChatHandler = Handler(
   return ProviderUtil.getPrivateChatPage(
       username: arguments.username,
       userId: arguments.userId,
-      avatar: arguments.avatar);
+      avatar: arguments.avatar,
+  );
 });

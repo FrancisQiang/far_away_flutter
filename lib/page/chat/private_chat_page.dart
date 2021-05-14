@@ -17,7 +17,23 @@ class PrivateChatPage extends StatefulWidget {
 
   final String avatar;
 
-  PrivateChatPage({@required this.username, this.userId, this.avatar});
+  final String togetherId;
+
+  final String recruitId;
+
+  final String recruitTitle;
+
+  final String recruitCover;
+
+  PrivateChatPage({
+    @required this.username,
+    this.userId,
+    this.avatar,
+    this.togetherId,
+    this.recruitId,
+    this.recruitCover,
+    this.recruitTitle,
+  });
 
   @override
   _PrivateChatPageState createState() => _PrivateChatPageState();
@@ -264,6 +280,40 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
             ],
           ),
         );
+      } else if (message.type == MessageType.RECRUIT_SIGN_UP) {
+        RecruitMessageJson recruitMessageJson =
+            RecruitMessageJson.fromJson(convert.jsonDecode(message.extraInfo));
+        return Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(15),
+              vertical: ScreenUtil().setHeight(20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: ScreenUtil().setWidth(550),
+                child: RecruitSignUpCard(
+                  cover: recruitMessageJson.cover,
+                  title: recruitMessageJson.title,
+                  id: recruitMessageJson.recruitId,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: ScreenUtil().setWidth(12),
+                ),
+                child: ClipOval(
+                    child: CachedNetworkImage(
+                  imageUrl: ProviderUtil.globalInfoProvider.userInfoBean.avatar,
+                  width: ScreenUtil().setWidth(85),
+                  height: ScreenUtil().setWidth(85),
+                  fit: BoxFit.cover,
+                )),
+              ),
+            ],
+          ),
+        );
       } else {
         return Container(
           margin: EdgeInsets.symmetric(
@@ -433,6 +483,66 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
               ],
             )));
       },
+    );
+  }
+}
+
+class RecruitSignUpCard extends StatelessWidget {
+  final String cover;
+
+  final String title;
+
+  final String id;
+
+  RecruitSignUpCard({this.cover, this.title, this.id});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        children: [
+          Container(
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              child: CachedNetworkImage(
+                height: ScreenUtil().setHeight(300),
+                width: ScreenUtil().setWidth(550),
+                imageUrl: cover,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(10),
+              vertical: ScreenUtil().setHeight(10)
+            ),
+            child: Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: ScreenUtil().setSp(30),
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: ScreenUtil().setWidth(10),
+                vertical: ScreenUtil().setHeight(10)
+            ),
+            child: Text(
+              '我是来自江苏的刘肥雪，想要报名这次义工。',
+              style: TextStyle(
+                  color: Colors.grey, fontSize: ScreenUtil().setSp(28)),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
