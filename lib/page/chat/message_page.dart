@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:far_away_flutter/bean/im_bean.dart';
+import 'package:far_away_flutter/config/OverScrollBehavior.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
 import 'package:far_away_flutter/util/date_util.dart';
@@ -19,12 +20,15 @@ class MessagePage extends StatelessWidget {
             imProvider.refreshConversationList();
           }
           return Container(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return MessageTile(messageBean: imProvider.conversations[index]);
-              },
-              itemCount: imProvider.conversations.length,
-            ),
+            child: ScrollConfiguration(
+              behavior: OverScrollBehavior(),
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return MessageTile(messageBean: imProvider.conversations[index]);
+                },
+                itemCount: imProvider.conversations.length,
+              ),
+            )
           );
         }
     );
@@ -118,7 +122,8 @@ class MessageTile extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: ScreenUtil().setSp(30),
-                                color: Colors.black38)),
+                                color: Colors.black38),
+                        ),
                       ),
                       messageBean.unReadMessageCount == 0 ? Container() :
                       Container(
