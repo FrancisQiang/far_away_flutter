@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/follow_status.dart';
-import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/MediaPreview.dart';
+import 'package:far_away_flutter/component/animated_follow_button.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
@@ -12,6 +12,7 @@ import 'package:far_away_flutter/component/init_refresh_widget.dart';
 import 'package:far_away_flutter/component/link_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
+import 'package:far_away_flutter/provider/dynamics_provider.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
@@ -23,7 +24,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 
@@ -36,59 +36,19 @@ class DynamicsPage extends StatefulWidget {
 
 class _DynamicsPageState extends State<DynamicsPage>
     with AutomaticKeepAliveClientMixin {
-  int timestamp;
-
   @override
   bool get wantKeepAlive => true;
-
-  List<DynamicDetailBean> dynamicList = [];
-
-  int currentPage = 1;
-
-  _loadDynamicData(String jwt) async {
-    Response<dynamic> data;
-    ResponseBean response;
-    PageBean pageBean;
-    try {
-      data = await ApiMethodUtil.getDynamicList(
-          timestamp: timestamp, currentPage: currentPage, token: jwt);
-      response = ResponseBean.fromJson(data.data);
-      pageBean = PageBean.fromJson(response.data);
-    } catch (ex) {
-      print('error');
-      return;
-    }
-    if (pageBean.list.isEmpty) {
-      Fluttertoast.showToast(
-          msg: "没有数据啦",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.orangeAccent,
-          textColor: Colors.white,
-          fontSize: ScreenUtil().setSp(25));
-      return;
-    }
-    currentPage++;
-    setState(() {
-      for (int i = 0; i < pageBean.list.length; i++) {
-        DynamicDetailBean bean = DynamicDetailBean.fromJson(pageBean.list[i]);
-        dynamicList.add(bean);
-      }
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    timestamp = DateTime.now().millisecondsSinceEpoch;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Consumer<GlobalInfoProvider>(
-        builder: (context, globalInfoProvider, child) {
+    return Consumer2<GlobalInfoProvider, DynamicsProvider>(
+        builder: (context, globalInfoProvider, dynamicsProvider, child) {
       return EasyRefresh(
         header: EasyRefreshWidget.refreshHeader,
         footer: EasyRefreshWidget.refreshFooter,
@@ -96,31 +56,46 @@ class _DynamicsPageState extends State<DynamicsPage>
         firstRefreshWidget: InitRefreshWidget(
           color: Theme.of(context).primaryColor,
         ),
-        emptyWidget: dynamicList.length == 0
+        emptyWidget: dynamicsProvider.dynamicList.length == 0
             ? ListEmptyWidget(
                 width: ScreenUtil().setWidth(380),
                 height: ScreenUtil().setHeight(300),
               )
             : null,
         onRefresh: () async {
-          dynamicList = [];
-          currentPage = 1;
-          timestamp = DateTime.now().millisecondsSinceEpoch;
-          await _loadDynamicData(globalInfoProvider.jwt);
+          dynamicsProvider.dynamicList = [];
+          dynamicsProvider.currentPage = 1;
+          dynamicsProvider.timestamp = DateTime.now().millisecondsSinceEpoch;
+          await dynamicsProvider.loadDynamicData(globalInfoProvider.jwt);
         },
         onLoad: () async {
-          await _loadDynamicData(globalInfoProvider.jwt);
+          await dynamicsProvider.loadDynamicData(globalInfoProvider.jwt);
         },
-        child: Column(
-          children: List.generate(dynamicList.length, (index) {
-            return GestureDetector(
-                onTap: () => NavigatorUtil.toDynamicDetailPage(context,
-                    param: DynamicDetailParam(
-                        avatarHeroTag: 'dynamic_${dynamicList[index].id}',
-                        dynamicDetailBean: dynamicList[index])),
-                child:
-                    DynamicPreviewCard(dynamicDetailBean: dynamicList[index]));
-          }),
+        child: ListView.separated(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () => NavigatorUtil.toDynamicDetailPage(
+                context,
+                param: DynamicDetailParam(
+                  avatarHeroTag:
+                  'dynamic_${dynamicsProvider.dynamicList[index].id}',
+                  dynamicDetailBean: dynamicsProvider.dynamicList[index],
+                ),
+              ),
+              child: DynamicPreviewCard(
+                index: index,
+              ),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return Container(
+              height: 5,
+              color: Colors.blueGrey.withOpacity(0.1),
+            );
+          },
+          itemCount: dynamicsProvider.dynamicList.length,
         ),
       );
     });
@@ -128,17 +103,20 @@ class _DynamicsPageState extends State<DynamicsPage>
 }
 
 class DynamicPreviewCard extends StatelessWidget {
-  final DynamicDetailBean dynamicDetailBean;
+  final int index;
 
-  DynamicPreviewCard({@required this.dynamicDetailBean});
+  DynamicPreviewCard({@required this.index});
 
-  Widget _buildMediaWrap() {
+  Widget _buildMediaWrap(DynamicsProvider dynamicsProvider) {
+    DynamicDetailBean dynamicDetailBean = dynamicsProvider.dynamicList[index];
     return dynamicDetailBean.type == 1 ||
             dynamicDetailBean.mediaList.isEmpty ||
             dynamicDetailBean.mediaList == null
         ? SizedBox()
         : Container(
-            margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+            margin: EdgeInsets.only(
+              top: ScreenUtil().setHeight(10),
+            ),
             child: MediaPreview(
               mediaList: dynamicDetailBean.mediaList,
             ),
@@ -147,257 +125,253 @@ class DynamicPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15), color: Colors.white),
-      padding: EdgeInsets.all(ScreenUtil().setWidth(22)),
-      margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            child: Row(
-              children: [
-                // 头像
-                Container(
-                    width: ScreenUtil().setWidth(90),
-                    child: Hero(
-                      tag: "dynamic_${dynamicDetailBean.id}",
-                      child: ClipOval(
+    return Consumer<DynamicsProvider>(
+        builder: (context, dynamicsProvider, child) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+        ),
+        padding: EdgeInsets.all(ScreenUtil().setWidth(22)),
+        margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  // 头像
+                  Container(
+                      width: ScreenUtil().setWidth(90),
+                      child: Hero(
+                        tag:
+                            "dynamic_${dynamicsProvider.dynamicList[index].id}",
+                        child: ClipOval(
                           child: CachedNetworkImage(
-                              imageUrl: dynamicDetailBean.userAvatar,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => ImageHolder(
-                                    size: ScreenUtil().setSp(40),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                                  ImageErrorWidget(
-                                    size: ScreenUtil().setSp(40),
-                                  ))),
-                    )),
-                // 用户名和用户签名
-                Container(
-                  width: ScreenUtil().setWidth(470),
-                  margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        child: Text(
-                          dynamicDetailBean.username,
-                          style: TextStyleTheme.h3,
+                            imageUrl:
+                                dynamicsProvider.dynamicList[index].userAvatar,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => ImageHolder(
+                              size: ScreenUtil().setSp(40),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                ImageErrorWidget(
+                              size: ScreenUtil().setSp(40),
+                            ),
+                          ),
                         ),
-                      ),
-                      Container(
-                        child: Text(dynamicDetailBean.signature,
-                            style: TextStyleTheme.subH5),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  height: ScreenUtil().setHeight(40),
-                  width: ScreenUtil().setWidth(110),
-                  child: FlatButton(
-                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: dynamicDetailBean.follow ? 0.1 : 0,
-                        color: dynamicDetailBean.follow ? Colors.black54 : Colors.transparent,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
+                      )),
+                  // 用户名和用户签名
+                  Container(
+                    width: ScreenUtil().setWidth(470),
+                    margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: Text(
+                            dynamicsProvider.dynamicList[index].username,
+                            style: TextStyleTheme.h3,
+                          ),
+                        ),
+                        Container(
+                          child: Text(
+                            dynamicsProvider.dynamicList[index].signature,
+                            style: TextStyleTheme.subH5,
+                          ),
+                        )
+                      ],
                     ),
+                  ),
+                  AnimatedFollowButton(
+                    height: ScreenUtil().setHeight(40),
+                    width: ScreenUtil().setWidth(110),
                     onPressed: () async {
                       Response<dynamic> response =
                           await ApiMethodUtil.followChange(
-                              token: ProviderUtil.globalInfoProvider.jwt,
-                              targetUserId: dynamicDetailBean.userId);
-                      print(response.data);
+                        token: ProviderUtil.globalInfoProvider.jwt,
+                        targetUserId:
+                            dynamicsProvider.dynamicList[index].userId,
+                      );
                       ResponseBean responseBean =
                           ResponseBean.fromJson(response.data);
                       FollowStatusBean followStatusBean =
                           FollowStatusBean.fromJson(responseBean.data);
-                      if (followStatusBean.follow) {
-                        print('关注了');
-                      } else {
-                        print('取消关注');
+                      for (DynamicDetailBean item
+                          in dynamicsProvider.dynamicList) {
+                        if (item.userId ==
+                            dynamicsProvider.dynamicList[index].userId) {
+                          item.follow = followStatusBean.follow;
+                        }
                       }
+                      return followStatusBean.follow;
                     },
-                    color: dynamicDetailBean.follow
-                        ? Colors.transparent
-                        : Colors.orangeAccent,
-                    child: Text(
-                      dynamicDetailBean.follow ? '已 关 注' : '关 注',
-                      style: TextStyle(
-                        color: dynamicDetailBean.follow
-                            ? Colors.black
-                            : Colors.black54,
-                        fontSize: ScreenUtil().setSp(22),
-                        fontWeight: FontWeight.bold,
-                      ),
+                    follow: dynamicsProvider.dynamicList[index].follow,
+                  ),
+                ],
+              ),
+            ),
+            // 动态内容
+            Container(
+              margin: EdgeInsets.only(
+                top: ScreenUtil().setHeight(15),
+                right: ScreenUtil().setWidth(20),
+              ),
+              child: Text(dynamicsProvider.dynamicList[index].content,
+                  overflow: TextOverflow.ellipsis, style: TextStyleTheme.body),
+            ),
+            // 媒体资源
+            _buildMediaWrap(dynamicsProvider),
+            dynamicsProvider.dynamicList[index].type == 0
+                ? SizedBox()
+                : Container(
+                    width: ScreenUtil().setWidth(650),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil().setHeight(30)),
+                    child: LinkWidget(
+                      linkURL: dynamicsProvider.dynamicList[index].link,
+                      linkImg: dynamicsProvider.dynamicList[index].linkImage,
+                      linkTitle: dynamicsProvider.dynamicList[index].linkTitle,
+                      imgSideLength: ScreenUtil().setWidth(120),
                     ),
                   ),
+            Container(
+              child: TimeLocationBar(
+                time: DateUtil.getTimeString(
+                    DateTime.fromMillisecondsSinceEpoch(
+                        dynamicsProvider.dynamicList[index].publishTime)),
+                location: dynamicsProvider.dynamicList[index].location,
+                width: ScreenUtil().setWidth(750),
+                margin: EdgeInsets.only(
+                  top: ScreenUtil().setHeight(18),
                 ),
-              ],
+              ),
             ),
-          ),
-          // 动态内容
-          Container(
-            margin: EdgeInsets.only(
-              top: ScreenUtil().setHeight(15),
-              right: ScreenUtil().setWidth(20),
-            ),
-            child: Text(dynamicDetailBean.content,
-                overflow: TextOverflow.ellipsis, style: TextStyleTheme.body),
-          ),
-          // 媒体资源
-          _buildMediaWrap(),
-          dynamicDetailBean.type == 0
-              ? SizedBox()
-              : Container(
-                  width: ScreenUtil().setWidth(650),
-                  padding: EdgeInsets.symmetric(
-                      vertical: ScreenUtil().setHeight(30)),
-                  child: LinkWidget(
-                    linkURL: dynamicDetailBean.link,
-                    linkImg: dynamicDetailBean.linkImage,
-                    linkTitle: dynamicDetailBean.linkTitle,
-                    imgSideLength: ScreenUtil().setWidth(120),
-                  ),
-                ),
-          Container(
-            child: TimeLocationBar(
-              time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
-                  dynamicDetailBean.publishTime)),
-              location: dynamicDetailBean.location,
-              width: ScreenUtil().setWidth(750),
+            Container(
+              height: ScreenUtil().setHeight(45),
               margin: EdgeInsets.only(
                 top: ScreenUtil().setHeight(18),
               ),
-            ),
-          ),
-          Container(
-            height: ScreenUtil().setHeight(45),
-            margin: EdgeInsets.only(
-              top: ScreenUtil().setHeight(18),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FlatButton(
-                    onPressed: () {},
-                    padding: EdgeInsets.zero,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/png/share_rect.png',
-                          width: ScreenUtil().setWidth(45),
-                          height: ScreenUtil().setWidth(40),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Text(
-                            "分享",
-                          ),
-                        )
-                      ],
-                    )),
-                FlatButton(
-                  onPressed: () {
-                    NavigatorUtil.toDynamicDetailPage(
-                      context,
-                      param: DynamicDetailParam(
-                          scrollToComment: true,
-                          dynamicDetailBean: dynamicDetailBean),
-                    );
-                  },
-                  padding: EdgeInsets.zero,
-                  child: Container(
-                      alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FlatButton(
+                      onPressed: () {},
+                      padding: EdgeInsets.zero,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/png/comment.png',
+                            'assets/png/share_rect.png',
                             width: ScreenUtil().setWidth(45),
                             height: ScreenUtil().setWidth(40),
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 5),
                             child: Text(
-                              CalculateUtil.simplifyCount(
-                                  dynamicDetailBean.commentsCount),
+                              "分享",
                             ),
                           )
                         ],
                       )),
-                ),
-                FlatButton(
-                  onPressed: () {},
-                  padding: EdgeInsets.zero,
-                  child: LikeButton(
-                    size: ScreenUtil().setSp(40),
-                    onTap: (bool isLiked) async {
-                      await ApiMethodUtil.dynamicThumbChange(
+                  FlatButton(
+                    onPressed: () {
+                      NavigatorUtil.toDynamicDetailPage(
+                        context,
+                        param: DynamicDetailParam(
+                            scrollToComment: true,
+                            dynamicDetailBean:
+                                dynamicsProvider.dynamicList[index]),
+                      );
+                    },
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/png/comment.png',
+                              width: ScreenUtil().setWidth(45),
+                              height: ScreenUtil().setWidth(40),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                CalculateUtil.simplifyCount(dynamicsProvider
+                                    .dynamicList[index].commentsCount),
+                              ),
+                            )
+                          ],
+                        )),
+                  ),
+                  FlatButton(
+                    onPressed: () {},
+                    padding: EdgeInsets.zero,
+                    child: LikeButton(
+                      size: ScreenUtil().setSp(40),
+                      onTap: (bool isLiked) async {
+                        await ApiMethodUtil.dynamicThumbChange(
                           token: ProviderUtil.globalInfoProvider.jwt,
                           thumb: !isLiked,
-                          dynamicId: dynamicDetailBean.id);
-                      if (!isLiked) {
-                        dynamicDetailBean.thumbCount++;
-                        dynamicDetailBean.thumbed = true;
-                      } else {
-                        dynamicDetailBean.thumbCount--;
-                        dynamicDetailBean.thumbed = false;
-                      }
-                      return !isLiked;
-                    },
-                    isLiked: dynamicDetailBean.thumbed,
-                    circleColor: CircleColor(
-                        start: Colors.orangeAccent, end: Colors.orange),
-                    bubblesColor: BubblesColor(
-                      dotPrimaryColor: Colors.orangeAccent,
-                      dotSecondaryColor: Colors.orange,
+                          dynamicId: dynamicsProvider.dynamicList[index].id,
+                        );
+                        if (!isLiked) {
+                          dynamicsProvider.dynamicList[index].thumbCount++;
+                          dynamicsProvider.dynamicList[index].thumbed = true;
+                        } else {
+                          dynamicsProvider.dynamicList[index].thumbCount--;
+                          dynamicsProvider.dynamicList[index].thumbed = false;
+                        }
+                        return !isLiked;
+                      },
+                      isLiked: dynamicsProvider.dynamicList[index].thumbed,
+                      circleColor: CircleColor(
+                          start: Colors.orangeAccent, end: Colors.orange),
+                      bubblesColor: BubblesColor(
+                        dotPrimaryColor: Colors.orangeAccent,
+                        dotSecondaryColor: Colors.orange,
+                      ),
+                      likeBuilder: (bool isLiked) {
+                        if (isLiked) {
+                          return Icon(
+                            Icons.favorite,
+                            color: Colors.redAccent,
+                            size: ScreenUtil().setSp(40),
+                          );
+                        } else {
+                          return Icon(
+                            Icons.favorite_border_outlined,
+                            color: Colors.black,
+                            size: ScreenUtil().setSp(40),
+                          );
+                        }
+                      },
+                      likeCount: dynamicsProvider.dynamicList[index].thumbCount,
+                      likeCountPadding: EdgeInsets.only(left: 5),
+                      likeCountAnimationType:
+                          dynamicsProvider.dynamicList[index].thumbCount < 1000
+                              ? LikeCountAnimationType.part
+                              : LikeCountAnimationType.none,
+                      countBuilder: (int count, bool isLiked, String text) {
+                        Color color = isLiked ? Colors.redAccent : Colors.black;
+                        Widget result;
+                        return Container(
+                          child: Text(
+                            count >= 1000
+                                ? CalculateUtil.simplifyCount(count)
+                                : text,
+                            style: TextStyle(color: color),
+                          ),
+                        );
+                        return result;
+                      },
                     ),
-                    likeBuilder: (bool isLiked) {
-                      if (isLiked) {
-                        return Icon(
-                          Icons.favorite,
-                          color: Colors.redAccent,
-                          size: ScreenUtil().setSp(40),
-                        );
-                      } else {
-                        return Icon(
-                          Icons.favorite_border_outlined,
-                          color: Colors.black,
-                          size: ScreenUtil().setSp(40),
-                        );
-                      }
-                    },
-                    likeCount: dynamicDetailBean.thumbCount,
-                    likeCountPadding: EdgeInsets.only(left: 5),
-                    likeCountAnimationType: dynamicDetailBean.thumbCount < 1000
-                        ? LikeCountAnimationType.part
-                        : LikeCountAnimationType.none,
-                    countBuilder: (int count, bool isLiked, String text) {
-                      Color color = isLiked ? Colors.redAccent : Colors.black;
-                      Widget result;
-                      return Container(
-                        child: Text(
-                          count >= 1000
-                              ? CalculateUtil.simplifyCount(count)
-                              : text,
-                          style: TextStyle(color: color),
-                        ),
-                      );
-                      return result;
-                    },
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 }

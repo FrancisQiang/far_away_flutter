@@ -3,6 +3,7 @@ import 'package:far_away_flutter/page/home/aid_education_page.dart';
 import 'package:far_away_flutter/page/home/dynamics_page.dart';
 import 'package:far_away_flutter/page/home/search_text_field.dart';
 import 'package:far_away_flutter/page/home/together_info_page.dart';
+import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         brightness: Brightness.light,
         elevation: 0,
         leading: InkWell(
@@ -78,13 +79,14 @@ class _HomePageState extends State<HomePage>
             controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorWeight: 2.5,
-            tabs: _tabs),
+            tabs: _tabs,
+        ),
       ),
       body: TabBarView(
           controller: _tabController,
           physics: BouncingScrollPhysics(),
           children: [
-            DynamicsPage(),
+            ProviderUtil.getDynamicsPage(),
             TogetherInfoPage(),
             RecruitInfoPage(),
             AidEducationPage(),
