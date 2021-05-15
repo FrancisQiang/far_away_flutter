@@ -8,6 +8,7 @@ import 'package:far_away_flutter/page/home/dynamic_detail_page.dart';
 import 'package:far_away_flutter/page/home/dynamics_page.dart';
 import 'package:far_away_flutter/page/home/recruit_detail_page.dart';
 import 'package:far_away_flutter/page/home/together_detail_page.dart';
+import 'package:far_away_flutter/page/home/together_info_page.dart';
 import 'package:far_away_flutter/page/main/main_page.dart';
 import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
@@ -104,6 +105,9 @@ class ProviderUtil {
         ChangeNotifierProvider<DynamicsProvider>.value(
             value: dynamicsProvider,
         ),
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+          value: globalInfoProvider,
+        ),
       ],
       child: DynamicDetailPage(
         scrollToComment: scrollToComment,
@@ -126,6 +130,8 @@ class ProviderUtil {
       providers: [
         ChangeNotifierProvider<CommentChosenProvider>.value(
             value: togetherCommentChosenProvider),
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider),
       ],
       child: TogetherDetailPage(
         scrollToComment: scrollToComment,
@@ -223,11 +229,24 @@ class ProviderUtil {
   static MultiProvider getDynamicsPage() {
     return MultiProvider(
         providers: [
+          ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider),
           ChangeNotifierProvider<DynamicsProvider>.value(value: dynamicsProvider),
         ],
         child: DynamicsPage()
     );
   }
+
+  static MultiProvider getTogetherPage() {
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider),
+        ],
+        child: TogetherInfoPage()
+    );
+  }
+
+
+
 
 
 }

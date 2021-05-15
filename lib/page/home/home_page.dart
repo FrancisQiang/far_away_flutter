@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage>
           physics: BouncingScrollPhysics(),
           children: [
             ProviderUtil.getDynamicsPage(),
-            TogetherInfoPage(),
+            ProviderUtil.getTogetherPage(),
             RecruitInfoPage(),
             AidEducationPage(),
           ]),

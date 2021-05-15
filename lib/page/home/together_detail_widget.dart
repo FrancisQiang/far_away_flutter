@@ -1,10 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:far_away_flutter/bean/follow_status.dart';
+import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
+import 'package:far_away_flutter/component/animated_follow_button.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
+import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
@@ -12,6 +16,7 @@ import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
+import 'package:provider/provider.dart';
 
 class TogetherDetailWidget extends StatelessWidget {
   final String avatarHeroTag;
@@ -70,28 +75,35 @@ class TogetherDetailWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  height: ScreenUtil().setHeight(40),
-                  width: ScreenUtil().setWidth(110),
-                  child: FlatButton(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 5,
-                        vertical: 2
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    onPressed: () {},
-                    color: Colors.orangeAccent,
-                    child: Text(
-                      '关 注',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: ScreenUtil().setSp(22),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                Consumer<GlobalInfoProvider>(
+                  builder: (context, globalInfoProvider, child) {
+                    return AnimatedFollowButton(
+                      height: ScreenUtil().setHeight(40),
+                      width: ScreenUtil().setWidth(110),
+                      onPressed: () async {
+                        Response<dynamic> response =
+                        await ApiMethodUtil.followChange(
+                          token: ProviderUtil.globalInfoProvider.jwt,
+                          targetUserId: togetherInfoBean.userId,
+                        );
+                        ResponseBean responseBean =
+                        ResponseBean.fromJson(response.data);
+                        FollowStatusBean followStatusBean =
+                        FollowStatusBean.fromJson(responseBean.data);
+                        if(followStatusBean.follow) {
+                          FollowUserInfo followUserInfo = FollowUserInfo();
+                          followUserInfo.userId = togetherInfoBean.userId;
+                          followUserInfo.username = togetherInfoBean.username;
+                          followUserInfo.userAvatar = togetherInfoBean.userAvatar;
+                          globalInfoProvider.followUserMap[togetherInfoBean.userId] = followUserInfo;
+                        } else {
+                          globalInfoProvider.followUserMap.remove(togetherInfoBean.userId);
+                        }
+                        globalInfoProvider.refresh();
+                      },
+                      follow: globalInfoProvider.followUserMap.containsKey(togetherInfoBean.userId),
+                    );
+                  },
                 ),
               ],
             ),

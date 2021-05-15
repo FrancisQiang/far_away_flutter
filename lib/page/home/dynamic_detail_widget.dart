@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/follow_status.dart';
+import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/animated_follow_button.dart';
@@ -10,6 +11,7 @@ import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/link_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
 import 'package:far_away_flutter/provider/dynamics_provider.dart';
+import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
@@ -32,8 +34,8 @@ class DynamicDetailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DynamicsProvider>(
-      builder: (context, dynamicsProvider, child) {
+    return Consumer2<DynamicsProvider, GlobalInfoProvider>(
+      builder: (context, dynamicsProvider, globalInfoProvider, child) {
         return Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10), color: Colors.white),
@@ -94,16 +96,24 @@ class DynamicDetailWidget extends StatelessWidget {
                         ResponseBean.fromJson(response.data);
                         FollowStatusBean followStatusBean =
                         FollowStatusBean.fromJson(responseBean.data);
-                        for (DynamicDetailBean item
-                        in dynamicsProvider.dynamicList) {
-                          if (item.userId == dynamicDetailBean.userId) {
-                            item.follow = followStatusBean.follow;
-                          }
+                        if(followStatusBean.follow) {
+                          FollowUserInfo followUserInfo = FollowUserInfo();
+                          followUserInfo.userId = dynamicDetailBean.userId;
+                          followUserInfo.username = dynamicDetailBean.username;
+                          followUserInfo.userAvatar = dynamicDetailBean.userAvatar;
+                          globalInfoProvider.followUserMap[dynamicDetailBean.userId] = followUserInfo;
+                        } else {
+                          globalInfoProvider.followUserMap.remove(dynamicDetailBean.userId);
                         }
-                        dynamicDetailBean.follow = followStatusBean.follow;
-                        dynamicsProvider.refresh();
+                        // for (int i = 0; i < dynamicsProvider.dynamicList.length; i++) {
+                        //   if (dynamicsProvider.dynamicList[i].userId == dynamicDetailBean.userId) {
+                        //     dynamicsProvider.dynamicList[i].follow = followStatusBean.follow;
+                        //   }
+                        // }
+                        globalInfoProvider.refresh();
+                        // dynamicsProvider.refresh();
                       },
-                      follow: dynamicDetailBean.follow,
+                      follow: globalInfoProvider.followUserMap.containsKey(dynamicDetailBean.userId),
                     ),
                   ],
                 ),

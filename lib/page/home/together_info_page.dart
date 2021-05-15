@@ -2,10 +2,13 @@ import 'dart:convert' as convert;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:far_away_flutter/bean/follow_status.dart';
+import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
 import 'package:far_away_flutter/bean/im_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
+import 'package:far_away_flutter/component/animated_follow_button.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
@@ -134,226 +137,233 @@ class TogetherInfoPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15), color: Colors.white),
-      padding: EdgeInsets.all(ScreenUtil().setWidth(22)),
-      margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            child: Row(
-              children: [
-                // 头像
-                Container(
-                    width: ScreenUtil().setWidth(90),
-                    child: Hero(
-                      tag: "together_${togetherInfoBean.id}",
-                      child: ClipOval(
-                          child: CachedNetworkImage(
-                              imageUrl: togetherInfoBean.userAvatar,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  ImageHolder(
-                                    size: ScreenUtil().setSp(40),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                                  ImageErrorWidget(
-                                    size: ScreenUtil().setSp(40),
-                                  ))),
-                    )),
-                // 用户名和用户签名
-                Container(
-                  width: ScreenUtil().setWidth(470),
-                  margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        child: Text(
-                          togetherInfoBean.username,
-                          style: TextStyleTheme.h3,
-                        ),
-                      ),
-                      Container(
-                        child: Text(togetherInfoBean.signature,
-                            style: TextStyleTheme.subH5),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  height: ScreenUtil().setHeight(40),
-                  width: ScreenUtil().setWidth(110),
-                  child: FlatButton(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 5,
-                        vertical: 2
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    onPressed: () {},
-                    color: Colors.orangeAccent,
-                    child: Text(
-                      '关 注',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: ScreenUtil().setSp(22),
-                        fontWeight: FontWeight.bold,
+    return Consumer<GlobalInfoProvider>(
+      builder: (context, globalInfoProvider, child) {
+        return Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15), color: Colors.white),
+          padding: EdgeInsets.all(ScreenUtil().setWidth(22)),
+          margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: Row(
+                  children: [
+                    // 头像
+                    Container(
+                        width: ScreenUtil().setWidth(90),
+                        child: Hero(
+                          tag: "together_${togetherInfoBean.id}",
+                          child: ClipOval(
+                              child: CachedNetworkImage(
+                                  imageUrl: togetherInfoBean.userAvatar,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      ImageHolder(
+                                        size: ScreenUtil().setSp(40),
+                                      ),
+                                  errorWidget: (context, url, error) =>
+                                      ImageErrorWidget(
+                                        size: ScreenUtil().setSp(40),
+                                      ))),
+                        )),
+                    // 用户名和用户签名
+                    Container(
+                      width: ScreenUtil().setWidth(470),
+                      margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Text(
+                              togetherInfoBean.username,
+                              style: TextStyleTheme.h3,
+                            ),
+                          ),
+                          Container(
+                            child: Text(togetherInfoBean.signature,
+                                style: TextStyleTheme.subH5),
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              top: ScreenUtil().setHeight(20),
-              right: ScreenUtil().setWidth(20),
-            ),
-            child: Text(togetherInfoBean.content,
-                maxLines: 50,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyleTheme.body),
-          ),
-          TimeLocationBar(
-            time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
-                togetherInfoBean.publishTime)),
-            location: togetherInfoBean.location,
-            width: ScreenUtil().setWidth(750),
-            margin: EdgeInsets.only(top: ScreenUtil().setHeight(18)),
-          ),
-          Container(
-            height: ScreenUtil().setHeight(50),
-            margin: EdgeInsets.only(top: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FlatButton(
-                    onPressed: () {},
-                    padding: EdgeInsets.zero,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/png/share_rect.png',
-                          width: ScreenUtil().setWidth(45),
-                          height: ScreenUtil().setWidth(40),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Text("分享"),
-                        )
-                      ],
-                    ),
-                ),
-                FlatButton(
-                    onPressed: () {
-                      NavigatorUtil.toTogetherDetailPage(context,
-                          param: TogetherDetailParam(
-                              scrollToComment: true,
-                              togetherInfoBean: togetherInfoBean));
-                    },
-                    padding: EdgeInsets.zero,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/png/comment.png',
-                          width: ScreenUtil().setWidth(45),
-                          height: ScreenUtil().setWidth(40),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Text('${togetherInfoBean.commentsCount}'),
-                        )
-                      ],
-                    )),
-                FlatButton(
-                    onPressed: () async {
-                      if (ProviderUtil.globalInfoProvider.userInfoBean.id == togetherInfoBean.userId) {
-                        ToastUtil.showNoticeToast("您是发布者，不能报名哦！");
-                        return;
-                      }
-                      Response<dynamic> response = await ApiMethodUtil
-                          .togetherSignUp(
+                    AnimatedFollowButton(
+                      height: ScreenUtil().setHeight(40),
+                      width: ScreenUtil().setWidth(110),
+                      onPressed: () async {
+                        Response<dynamic> response =
+                        await ApiMethodUtil.followChange(
                           token: ProviderUtil.globalInfoProvider.jwt,
-                          id: togetherInfoBean.id);
-                      if (ResponseBean.fromJson(response.data).isSuccess()) {
-                        // 发送结伴消息
-                        TextMessage textMessage = TextMessage();
-                        MessageContentJson json = MessageContentJson(
-                            content: "",
-                            type: MessageType.TOGETHER,
-                            extraInfo: convert.jsonEncode(TogetherMessageJson(
-                              togetherId: togetherInfoBean.id,
-                              username: togetherInfoBean.username,
-                              togetherInfo: togetherInfoBean.content,
-                              avatar: togetherInfoBean.userAvatar,
-                              title: "我想和你结伴同行"
-                            ))
+                          targetUserId: togetherInfoBean.userId,
                         );
-                        textMessage.content = convert.jsonEncode(json);
-                        Message msg = await RongIMClient.sendMessage(
-                            RCConversationType.Private,
-                            togetherInfoBean.userId,
-                            textMessage);
-                        PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
-                        messageWrapper.msgId = msg.messageId;
-                        messageWrapper.content = convert.jsonEncode(json);
-                        messageWrapper.type = MessageType.TOGETHER;
-                        messageWrapper.userId =
-                            ProviderUtil.globalInfoProvider.userInfoBean.id;
-                        messageWrapper.read = true;
-                        if (ProviderUtil.imProvider.messages[togetherInfoBean.userId] == null) {
-                          ProviderUtil.imProvider.messages[togetherInfoBean.userId] = [];
+                        ResponseBean responseBean =
+                        ResponseBean.fromJson(response.data);
+                        FollowStatusBean followStatusBean =
+                        FollowStatusBean.fromJson(responseBean.data);
+                        if(followStatusBean.follow) {
+                          FollowUserInfo followUserInfo = FollowUserInfo();
+                          followUserInfo.userId = togetherInfoBean.userId;
+                          followUserInfo.username = togetherInfoBean.username;
+                          followUserInfo.userAvatar = togetherInfoBean.userAvatar;
+                          globalInfoProvider.followUserMap[togetherInfoBean.userId] = followUserInfo;
+                        } else {
+                          globalInfoProvider.followUserMap.remove(togetherInfoBean.userId);
                         }
-                        ProviderUtil.imProvider.messages[togetherInfoBean.userId].insert(0, messageWrapper);
-                        NavigatorUtil.toPrivateChatPage(
-                            context,
-                            param: PrivateChatParam(
-                                username: togetherInfoBean.username,
-                                userId: togetherInfoBean.userId,
-                                avatar: togetherInfoBean.userAvatar)
-                        );
-                        if (!togetherInfoBean.signUp) {
-                          togetherInfoBean.signUp = true;
-                          togetherInfoBean.signUpCount++;
-                        }
-                      } else {
-                        ToastUtil.showErrorToast("网络异常，请稍后再试");
-                      }
-                    },
-                    padding: EdgeInsets.zero,
-                    child: Row(
-                      children: [
-                        togetherInfoBean.signUp
-                            ? Image.asset(
-                          'assets/png/handed.png',
-                          width: ScreenUtil().setWidth(45),
-                          height: ScreenUtil().setWidth(40),
-                        )
-                            : Image.asset(
-                          'assets/png/hands.png',
-                          width: ScreenUtil().setWidth(45),
-                          height: ScreenUtil().setWidth(40),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Text(
-                            '${togetherInfoBean.signUpCount}', style: TextStyle(
-                              color: togetherInfoBean.signUp ? Color
-                                  .fromRGBO(255, 122, 0, 1) : Colors.black
-                          ),),
-                        )
-                      ],
-                    )),
-              ],
-            ),
-          )
-        ],
-      ),
+                        globalInfoProvider.refresh();
+                      },
+                      follow: globalInfoProvider.followUserMap.containsKey(togetherInfoBean.userId),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  top: ScreenUtil().setHeight(20),
+                  right: ScreenUtil().setWidth(20),
+                ),
+                child: Text(togetherInfoBean.content,
+                    maxLines: 50,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyleTheme.body),
+              ),
+              TimeLocationBar(
+                time: DateUtil.getTimeString(DateTime.fromMillisecondsSinceEpoch(
+                    togetherInfoBean.publishTime)),
+                location: togetherInfoBean.location,
+                width: ScreenUtil().setWidth(750),
+                margin: EdgeInsets.only(top: ScreenUtil().setHeight(18)),
+              ),
+              Container(
+                height: ScreenUtil().setHeight(50),
+                margin: EdgeInsets.only(top: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    FlatButton(
+                      onPressed: () {},
+                      padding: EdgeInsets.zero,
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/png/share_rect.png',
+                            width: ScreenUtil().setWidth(45),
+                            height: ScreenUtil().setWidth(40),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 5),
+                            child: Text("分享"),
+                          )
+                        ],
+                      ),
+                    ),
+                    FlatButton(
+                        onPressed: () {
+                          NavigatorUtil.toTogetherDetailPage(context,
+                              param: TogetherDetailParam(
+                                  scrollToComment: true,
+                                  togetherInfoBean: togetherInfoBean));
+                        },
+                        padding: EdgeInsets.zero,
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/png/comment.png',
+                              width: ScreenUtil().setWidth(45),
+                              height: ScreenUtil().setWidth(40),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text('${togetherInfoBean.commentsCount}'),
+                            )
+                          ],
+                        )),
+                    FlatButton(
+                        onPressed: () async {
+                          if (ProviderUtil.globalInfoProvider.userInfoBean.id == togetherInfoBean.userId) {
+                            ToastUtil.showNoticeToast("您是发布者，不能报名哦！");
+                            return;
+                          }
+                          Response<dynamic> response = await ApiMethodUtil
+                              .togetherSignUp(
+                              token: ProviderUtil.globalInfoProvider.jwt,
+                              id: togetherInfoBean.id);
+                          if (ResponseBean.fromJson(response.data).isSuccess()) {
+                            // 发送结伴消息
+                            TextMessage textMessage = TextMessage();
+                            MessageContentJson json = MessageContentJson(
+                                content: "",
+                                type: MessageType.TOGETHER,
+                                extraInfo: convert.jsonEncode(TogetherMessageJson(
+                                    togetherId: togetherInfoBean.id,
+                                    username: togetherInfoBean.username,
+                                    togetherInfo: togetherInfoBean.content,
+                                    avatar: togetherInfoBean.userAvatar,
+                                    title: "我想和你结伴同行"
+                                ))
+                            );
+                            textMessage.content = convert.jsonEncode(json);
+                            Message msg = await RongIMClient.sendMessage(
+                                RCConversationType.Private,
+                                togetherInfoBean.userId,
+                                textMessage);
+                            PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
+                            messageWrapper.msgId = msg.messageId;
+                            messageWrapper.content = convert.jsonEncode(json);
+                            messageWrapper.type = MessageType.TOGETHER;
+                            messageWrapper.userId =
+                                ProviderUtil.globalInfoProvider.userInfoBean.id;
+                            messageWrapper.read = true;
+                            if (ProviderUtil.imProvider.messages[togetherInfoBean.userId] == null) {
+                              ProviderUtil.imProvider.messages[togetherInfoBean.userId] = [];
+                            }
+                            ProviderUtil.imProvider.messages[togetherInfoBean.userId].insert(0, messageWrapper);
+                            NavigatorUtil.toPrivateChatPage(
+                                context,
+                                param: PrivateChatParam(
+                                    username: togetherInfoBean.username,
+                                    userId: togetherInfoBean.userId,
+                                    avatar: togetherInfoBean.userAvatar)
+                            );
+                            if (!togetherInfoBean.signUp) {
+                              togetherInfoBean.signUp = true;
+                              togetherInfoBean.signUpCount++;
+                            }
+                          } else {
+                            ToastUtil.showErrorToast("网络异常，请稍后再试");
+                          }
+                        },
+                        padding: EdgeInsets.zero,
+                        child: Row(
+                          children: [
+                            togetherInfoBean.signUp
+                                ? Image.asset(
+                              'assets/png/handed.png',
+                              width: ScreenUtil().setWidth(45),
+                              height: ScreenUtil().setWidth(40),
+                            )
+                                : Image.asset(
+                              'assets/png/hands.png',
+                              width: ScreenUtil().setWidth(45),
+                              height: ScreenUtil().setWidth(40),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                '${togetherInfoBean.signUpCount}', style: TextStyle(
+                                  color: togetherInfoBean.signUp ? Color
+                                      .fromRGBO(255, 122, 0, 1) : Colors.black
+                              ),),
+                            )
+                          ],
+                        )),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

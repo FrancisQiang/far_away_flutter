@@ -295,4 +295,12 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> getFollowList(
+      {@required String token}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/follow/follow_list",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
 }

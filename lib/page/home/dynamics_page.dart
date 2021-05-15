@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/follow_status.dart';
+import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/animated_follow_button.dart';
@@ -116,8 +117,8 @@ class DynamicPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DynamicsProvider>(
-        builder: (context, dynamicsProvider, child) {
+    return Consumer2<DynamicsProvider, GlobalInfoProvider>(
+        builder: (context, dynamicsProvider, globalInfoProvider, child) {
       DynamicDetailBean dynamicDetailBean = dynamicsProvider.dynamicList[index];
       return Container(
         decoration: BoxDecoration(
@@ -185,14 +186,24 @@ class DynamicPreviewCard extends StatelessWidget {
                           ResponseBean.fromJson(response.data);
                       FollowStatusBean followStatusBean =
                           FollowStatusBean.fromJson(responseBean.data);
-                      for (int i = 0; i < dynamicsProvider.dynamicList.length; i++) {
-                        if (dynamicsProvider.dynamicList[i].userId == dynamicDetailBean.userId) {
-                          dynamicsProvider.dynamicList[i].follow = followStatusBean.follow;
-                        }
+                      if(followStatusBean.follow) {
+                        FollowUserInfo followUserInfo = FollowUserInfo();
+                        followUserInfo.userId = dynamicDetailBean.userId;
+                        followUserInfo.username = dynamicDetailBean.username;
+                        followUserInfo.userAvatar = dynamicDetailBean.userAvatar;
+                        globalInfoProvider.followUserMap[dynamicDetailBean.userId] = followUserInfo;
+                      } else {
+                        globalInfoProvider.followUserMap.remove(dynamicDetailBean.userId);
                       }
-                      dynamicsProvider.refresh();
+                      // for (int i = 0; i < dynamicsProvider.dynamicList.length; i++) {
+                      //   if (dynamicsProvider.dynamicList[i].userId == dynamicDetailBean.userId) {
+                      //     dynamicsProvider.dynamicList[i].follow = followStatusBean.follow;
+                      //   }
+                      // }
+                      globalInfoProvider.refresh();
+                      // dynamicsProvider.refresh();
                     },
-                    follow: dynamicsProvider.dynamicList[index].follow,
+                    follow: globalInfoProvider.followUserMap.containsKey(dynamicDetailBean.userId),
                   ),
                 ],
               ),

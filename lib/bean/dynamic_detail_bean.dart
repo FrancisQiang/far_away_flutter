@@ -18,7 +18,6 @@ class DynamicDetailBean {
   double longitude;
   double latitude;
   int publishTime;
-  bool follow;
 
   DynamicDetailBean({
     this.id,
@@ -40,7 +39,6 @@ class DynamicDetailBean {
     this.longitude,
     this.latitude,
     this.publishTime,
-    this.follow,
   });
 
   DynamicDetailBean.fromJson(Map<String, dynamic> json) {
@@ -68,7 +66,6 @@ class DynamicDetailBean {
     longitude = json['longitude'];
     latitude = json['latitude'];
     publishTime = json['publishTime'];
-    follow = json['follow'];
   }
 
   Map<String, dynamic> toJson() {
@@ -94,7 +91,6 @@ class DynamicDetailBean {
     data['longitude'] = this.longitude;
     data['latitude'] = this.latitude;
     data['publishTime'] = this.publishTime;
-    data['follow'] = this.follow;
     return data;
   }
 }

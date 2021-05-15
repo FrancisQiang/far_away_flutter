@@ -125,7 +125,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                             EdgeInsets.only(top: ScreenUtil().setHeight(20)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             // 用户名
                             Container(
@@ -135,10 +135,11 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                                     : widget.globalInfoProvider.userInfoBean
                                         .userName,
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: ScreenUtil().setSp(35),
-                                    letterSpacing: 0.8,
-                                    fontWeight: FontWeight.w600),
+                                  color: Colors.white,
+                                  fontSize: ScreenUtil().setSp(35),
+                                  letterSpacing: 0.8,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                             // 性别
@@ -154,22 +155,48 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: widget.globalInfoProvider
-                                          .userInfoBean.gender ==
-                                          1
+                                                  .userInfoBean.gender ==
+                                              1
                                           ? Colors.blueAccent
                                           : Colors.pinkAccent,
                                     ),
                                     child: Icon(
-                                      widget.globalInfoProvider.userInfoBean
-                                                  .gender ==
-                                              1
-                                          ? FontAwesomeIcons.mars
-                                          : FontAwesomeIcons.venus,
-                                      size: ScreenUtil().setSp(28),
-                                      color: Colors.white
-                                    ),
+                                        widget.globalInfoProvider.userInfoBean
+                                                    .gender ==
+                                                1
+                                            ? FontAwesomeIcons.mars
+                                            : FontAwesomeIcons.venus,
+                                        size: ScreenUtil().setSp(28),
+                                        color: Colors.white),
                                   )
                                 : Container(),
+                            Container(
+                              margin: EdgeInsets.only(
+                                left: ScreenUtil().setWidth(15)
+                              ),
+                              height: ScreenUtil().setHeight(35),
+                              width: ScreenUtil().setWidth(80),
+                              child: FlatButton(
+                                padding: EdgeInsets.zero,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(
+                                    color: Colors.orange,
+                                    width: 0.5
+                                  )
+                                ),
+                                onPressed: () {},
+                                color: Colors.orangeAccent.withOpacity(0.4),
+                                child: Text(
+                                  '关 注',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         )),
                     // 签名

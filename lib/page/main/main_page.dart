@@ -42,6 +42,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         try {
           // token暂存在内存中
           ProviderUtil.globalInfoProvider.jwt = value;
+          // 获取关注列表
+          await ProviderUtil.globalInfoProvider.refreshFollowList();
           print(ProviderUtil.globalInfoProvider.jwt);
           Response<dynamic> userInfoResponse = await ApiMethodUtil.getUserInfo(token: value);
           ResponseBean response = ResponseBean.fromJson(userInfoResponse.data);
