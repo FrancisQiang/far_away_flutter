@@ -101,6 +101,9 @@ class ProviderUtil {
       providers: [
         ChangeNotifierProvider<CommentChosenProvider>.value(
             value: dynamicCommentChosenProvider),
+        ChangeNotifierProvider<DynamicsProvider>.value(
+            value: dynamicsProvider,
+        ),
       ],
       child: DynamicDetailPage(
         scrollToComment: scrollToComment,

@@ -1,80 +1,54 @@
 import 'package:flutter/material.dart';
 
-class AnimatedFollowButton extends StatefulWidget {
-
+class AnimatedFollowButton extends StatelessWidget {
   final double height;
 
   final double width;
 
   final bool follow;
 
-  final Future<bool> Function() onPressed;
+  final Function() onPressed;
 
-  AnimatedFollowButton({
-    @required this.height,
-    @required this.width,
-    @required this.follow,
-    @required this.onPressed
-  });
-
-  @override
-  _AnimatedFollowButtonState createState() => _AnimatedFollowButtonState();
-}
-
-class _AnimatedFollowButtonState extends State<AnimatedFollowButton>
-    with TickerProviderStateMixin {
-
-  bool follow;
-
-  @override
-  void initState() {
-    super.initState();
-    follow = widget.follow;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  AnimatedFollowButton(
+      {@required this.height,
+      @required this.width,
+      @required this.follow,
+      @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
         duration: Duration(
-          milliseconds: 150,
+          milliseconds: 300,
         ),
-        reverseDuration: Duration(milliseconds: 150),
+        reverseDuration: Duration(
+          milliseconds: 300,
+        ),
         transitionBuilder: (child, Animation<double> animation) {
           return FadeTransition(
             opacity: animation,
             child: child,
           );
         },
-        child: follow ? FollowedButton(
-          width: widget.width,
-          height: widget.height,
-          onPressed: () async {
-            bool follow = await widget.onPressed();
-            setState(() {
-              this.follow = follow;
-            });
-          },
-        ): FollowButton(
-          width: widget.width,
-          height: widget.height,
-          onPressed: () async {
-            bool follow = await widget.onPressed();
-            setState(() {
-              this.follow = follow;
-            });
-          },
-        )
-    );
+        child: follow
+            ? FollowedButton(
+                width: width,
+                height: height,
+                onPressed: () async {
+                  await onPressed();
+                },
+              )
+            : FollowButton(
+                width: width,
+                height: height,
+                onPressed: () async {
+                  await onPressed();
+                },
+              ));
   }
 }
 
 class FollowedButton extends StatelessWidget {
-
   final double width;
 
   final double height;
@@ -113,7 +87,6 @@ class FollowedButton extends StatelessWidget {
 }
 
 class FollowButton extends StatelessWidget {
-
   final double width;
 
   final double height;
@@ -128,7 +101,7 @@ class FollowButton extends StatelessWidget {
       height: height,
       width: width,
       child: FlatButton(
-        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+        padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),

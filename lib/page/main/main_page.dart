@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
-import 'package:far_away_flutter/component/my_icons.dart';
 import 'package:far_away_flutter/page/chat/chat_page.dart';
 import 'package:far_away_flutter/page/home/home_page.dart';
 import 'package:far_away_flutter/page/post/post_choose_widget.dart';

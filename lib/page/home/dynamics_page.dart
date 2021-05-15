@@ -56,17 +56,8 @@ class _DynamicsPageState extends State<DynamicsPage>
         firstRefreshWidget: InitRefreshWidget(
           color: Theme.of(context).primaryColor,
         ),
-        emptyWidget: dynamicsProvider.dynamicList.length == 0
-            ? ListEmptyWidget(
-                width: ScreenUtil().setWidth(380),
-                height: ScreenUtil().setHeight(300),
-              )
-            : null,
         onRefresh: () async {
-          dynamicsProvider.dynamicList = [];
-          dynamicsProvider.currentPage = 1;
-          dynamicsProvider.timestamp = DateTime.now().millisecondsSinceEpoch;
-          await dynamicsProvider.loadDynamicData(globalInfoProvider.jwt);
+          dynamicsProvider.onRefresh(globalInfoProvider.jwt);
         },
         onLoad: () async {
           await dynamicsProvider.loadDynamicData(globalInfoProvider.jwt);
@@ -80,7 +71,7 @@ class _DynamicsPageState extends State<DynamicsPage>
                 context,
                 param: DynamicDetailParam(
                   avatarHeroTag:
-                  'dynamic_${dynamicsProvider.dynamicList[index].id}',
+                      'dynamic_${dynamicsProvider.dynamicList[index].id}',
                   dynamicDetailBean: dynamicsProvider.dynamicList[index],
                 ),
               ),
@@ -127,6 +118,7 @@ class DynamicPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DynamicsProvider>(
         builder: (context, dynamicsProvider, child) {
+      DynamicDetailBean dynamicDetailBean = dynamicsProvider.dynamicList[index];
       return Container(
         decoration: BoxDecoration(
           color: Colors.transparent,
@@ -143,12 +135,10 @@ class DynamicPreviewCard extends StatelessWidget {
                   Container(
                       width: ScreenUtil().setWidth(90),
                       child: Hero(
-                        tag:
-                            "dynamic_${dynamicsProvider.dynamicList[index].id}",
+                        tag: "dynamic_${dynamicDetailBean.id}",
                         child: ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl:
-                                dynamicsProvider.dynamicList[index].userAvatar,
+                            imageUrl: dynamicDetailBean.userAvatar,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => ImageHolder(
                               size: ScreenUtil().setSp(40),
@@ -169,13 +159,13 @@ class DynamicPreviewCard extends StatelessWidget {
                       children: [
                         Container(
                           child: Text(
-                            dynamicsProvider.dynamicList[index].username,
+                            dynamicDetailBean.username,
                             style: TextStyleTheme.h3,
                           ),
                         ),
                         Container(
                           child: Text(
-                            dynamicsProvider.dynamicList[index].signature,
+                            dynamicDetailBean.signature,
                             style: TextStyleTheme.subH5,
                           ),
                         )
@@ -189,21 +179,18 @@ class DynamicPreviewCard extends StatelessWidget {
                       Response<dynamic> response =
                           await ApiMethodUtil.followChange(
                         token: ProviderUtil.globalInfoProvider.jwt,
-                        targetUserId:
-                            dynamicsProvider.dynamicList[index].userId,
+                        targetUserId: dynamicDetailBean.userId,
                       );
                       ResponseBean responseBean =
                           ResponseBean.fromJson(response.data);
                       FollowStatusBean followStatusBean =
                           FollowStatusBean.fromJson(responseBean.data);
-                      for (DynamicDetailBean item
-                          in dynamicsProvider.dynamicList) {
-                        if (item.userId ==
-                            dynamicsProvider.dynamicList[index].userId) {
-                          item.follow = followStatusBean.follow;
+                      for (int i = 0; i < dynamicsProvider.dynamicList.length; i++) {
+                        if (dynamicsProvider.dynamicList[i].userId == dynamicDetailBean.userId) {
+                          dynamicsProvider.dynamicList[i].follow = followStatusBean.follow;
                         }
                       }
-                      return followStatusBean.follow;
+                      dynamicsProvider.refresh();
                     },
                     follow: dynamicsProvider.dynamicList[index].follow,
                   ),
@@ -216,30 +203,34 @@ class DynamicPreviewCard extends StatelessWidget {
                 top: ScreenUtil().setHeight(15),
                 right: ScreenUtil().setWidth(20),
               ),
-              child: Text(dynamicsProvider.dynamicList[index].content,
-                  overflow: TextOverflow.ellipsis, style: TextStyleTheme.body),
+              child: Text(
+                dynamicDetailBean.content,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyleTheme.body,
+              ),
             ),
             // 媒体资源
             _buildMediaWrap(dynamicsProvider),
-            dynamicsProvider.dynamicList[index].type == 0
+            dynamicDetailBean.type == 0
                 ? SizedBox()
                 : Container(
                     width: ScreenUtil().setWidth(650),
                     padding: EdgeInsets.symmetric(
                         vertical: ScreenUtil().setHeight(30)),
                     child: LinkWidget(
-                      linkURL: dynamicsProvider.dynamicList[index].link,
-                      linkImg: dynamicsProvider.dynamicList[index].linkImage,
-                      linkTitle: dynamicsProvider.dynamicList[index].linkTitle,
+                      linkURL: dynamicDetailBean.link,
+                      linkImg: dynamicDetailBean.linkImage,
+                      linkTitle: dynamicDetailBean.linkTitle,
                       imgSideLength: ScreenUtil().setWidth(120),
                     ),
                   ),
             Container(
               child: TimeLocationBar(
                 time: DateUtil.getTimeString(
-                    DateTime.fromMillisecondsSinceEpoch(
-                        dynamicsProvider.dynamicList[index].publishTime)),
-                location: dynamicsProvider.dynamicList[index].location,
+                  DateTime.fromMillisecondsSinceEpoch(
+                      dynamicDetailBean.publishTime),
+                ),
+                location: dynamicDetailBean.location,
                 width: ScreenUtil().setWidth(750),
                 margin: EdgeInsets.only(
                   top: ScreenUtil().setHeight(18),
@@ -277,9 +268,9 @@ class DynamicPreviewCard extends StatelessWidget {
                       NavigatorUtil.toDynamicDetailPage(
                         context,
                         param: DynamicDetailParam(
-                            scrollToComment: true,
-                            dynamicDetailBean:
-                                dynamicsProvider.dynamicList[index]),
+                          scrollToComment: true,
+                          dynamicDetailBean: dynamicDetailBean,
+                        ),
                       );
                     },
                     padding: EdgeInsets.zero,
@@ -296,8 +287,7 @@ class DynamicPreviewCard extends StatelessWidget {
                             Container(
                               margin: EdgeInsets.only(left: 5),
                               child: Text(
-                                CalculateUtil.simplifyCount(dynamicsProvider
-                                    .dynamicList[index].commentsCount),
+                                CalculateUtil.simplifyCount(dynamicDetailBean.commentsCount),
                               ),
                             )
                           ],
@@ -305,25 +295,26 @@ class DynamicPreviewCard extends StatelessWidget {
                   ),
                   FlatButton(
                     onPressed: () {},
-                    padding: EdgeInsets.zero,
                     child: LikeButton(
                       size: ScreenUtil().setSp(40),
                       onTap: (bool isLiked) async {
                         await ApiMethodUtil.dynamicThumbChange(
                           token: ProviderUtil.globalInfoProvider.jwt,
                           thumb: !isLiked,
-                          dynamicId: dynamicsProvider.dynamicList[index].id,
+                          dynamicId: dynamicDetailBean.id,
                         );
                         if (!isLiked) {
-                          dynamicsProvider.dynamicList[index].thumbCount++;
-                          dynamicsProvider.dynamicList[index].thumbed = true;
+                          dynamicDetailBean.thumbCount++;
+                          dynamicDetailBean.thumbed = true;
+                          dynamicsProvider.refresh();
                         } else {
-                          dynamicsProvider.dynamicList[index].thumbCount--;
-                          dynamicsProvider.dynamicList[index].thumbed = false;
+                          dynamicDetailBean.thumbCount--;
+                          dynamicDetailBean.thumbed = false;
+                          dynamicsProvider.refresh();
                         }
                         return !isLiked;
                       },
-                      isLiked: dynamicsProvider.dynamicList[index].thumbed,
+                      isLiked: dynamicDetailBean.thumbed,
                       circleColor: CircleColor(
                           start: Colors.orangeAccent, end: Colors.orange),
                       bubblesColor: BubblesColor(
@@ -345,10 +336,10 @@ class DynamicPreviewCard extends StatelessWidget {
                           );
                         }
                       },
-                      likeCount: dynamicsProvider.dynamicList[index].thumbCount,
+                      likeCount: dynamicDetailBean.thumbCount,
                       likeCountPadding: EdgeInsets.only(left: 5),
                       likeCountAnimationType:
-                          dynamicsProvider.dynamicList[index].thumbCount < 1000
+                      dynamicDetailBean.thumbCount < 1000
                               ? LikeCountAnimationType.part
                               : LikeCountAnimationType.none,
                       countBuilder: (int count, bool isLiked, String text) {

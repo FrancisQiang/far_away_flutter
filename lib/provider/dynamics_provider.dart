@@ -40,5 +40,12 @@ class DynamicsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  onRefresh(jwt) async {
+    dynamicList = [];
+    currentPage = 1;
+    timestamp = DateTime.now().millisecondsSinceEpoch;
+    await loadDynamicData(jwt);
+  }
+
   void refresh() => notifyListeners();
 }
