@@ -152,43 +152,45 @@ class _UserCenterPageState extends State<UserCenterPage>
         return Stack(
           children: [
             NotificationListener(
-                onNotification: (scrollNotification) {
-                  if (scrollNotification is ScrollUpdateNotification &&
-                      scrollNotification.depth == 0) {
-                    _onScroll(scrollNotification.metrics.pixels);
-                  }
-                  return true;
+              onNotification: (scrollNotification) {
+                if (scrollNotification is ScrollUpdateNotification &&
+                    scrollNotification.depth == 0) {
+                  _onScroll(scrollNotification.metrics.pixels);
+                }
+                return true;
+              },
+              child: EasyRefresh(
+                header: EasyRefreshWidget.refreshHeader,
+                onRefresh: () async {
+                  _getUserInfo(globalInfoProvider);
                 },
-                child: EasyRefresh(
-                    header: EasyRefreshWidget.refreshHeader,
-                    onRefresh: () async {
-                      _getUserInfo(globalInfoProvider);
-                    },
-                    child: Container(
-                      color: Colors.grey[200],
-                      child: Column(
-                        children: [
-                          UserInfoWidget(
-                            scrollPixels: _scrollPixels,
-                            textList: _textList,
-                            bubbleOffsetList: _bubbleOffsetList,
-                            bubbleRadians: _calculateBubbleRadians(),
-                            bubbleDiameter: _calculateBubbleDiameter(),
-                            bubbleTextFontSize: _calculateBubbleFontSize(),
-                            globalInfoProvider: globalInfoProvider,
-                          ),
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                UserBaseServiceWidget(),
-                                UserMoreServiceWidget()
-                              ],
-                            ),
-                          )
-                        ],
+                child: Container(
+                  color: Colors.grey[200],
+                  child: Column(
+                    children: [
+                      UserInfoWidget(
+                        scrollPixels: _scrollPixels,
+                        textList: _textList,
+                        bubbleOffsetList: _bubbleOffsetList,
+                        bubbleRadians: _calculateBubbleRadians(),
+                        bubbleDiameter: _calculateBubbleDiameter(),
+                        bubbleTextFontSize: _calculateBubbleFontSize(),
+                        userInfoBean: globalInfoProvider.userInfoBean,
                       ),
-                    ))),
+                      Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            UserBaseServiceWidget(),
+                            UserMoreServiceWidget()
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
             Opacity(
               opacity: appbarOpacity,
               child: Container(

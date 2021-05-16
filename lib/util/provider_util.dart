@@ -15,6 +15,7 @@ import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/post/post_together_page.dart';
 import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
+import 'package:far_away_flutter/page/user/user_info_page.dart';
 import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/provider/dynamics_provider.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
@@ -246,7 +247,16 @@ class ProviderUtil {
   }
 
 
-
+  static Widget getUserInfoPage({
+    @required String userId,
+  }) {
+    return MultiProvider(
+      providers: [ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider)],
+      child: UserInfoPage(
+        userId: userId,
+      ),
+    );
+  }
 
 
 }

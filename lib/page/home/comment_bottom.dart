@@ -27,6 +27,7 @@ class CommentBottom extends StatefulWidget {
 }
 
 class _CommentBottomState extends State<CommentBottom> {
+
   _loadPictures(CommentChosenProvider commentChosenProvider) async {
     List<AssetEntity> resultList;
     try {

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
+import 'package:far_away_flutter/component/measure_size.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'comment_bottom.dart';
 import 'dynamic_detail_component.dart';
 
-class DynamicDetailPage extends StatelessWidget {
+class DynamicDetailPage extends StatefulWidget {
   // 是否滚动到评论页
   final bool scrollToComment;
 
@@ -23,6 +24,13 @@ class DynamicDetailPage extends StatelessWidget {
 
   DynamicDetailPage(
       {this.scrollToComment, this.avatarHeroTag, this.dynamicDetailBean});
+
+  @override
+  _DynamicDetailPageState createState() => _DynamicDetailPageState();
+}
+
+class _DynamicDetailPageState extends State<DynamicDetailPage> {
+  double bottomMargin = ScreenUtil().setHeight(100);
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +51,11 @@ class DynamicDetailPage extends StatelessWidget {
           title: Text(
             '乏味',
             style: TextStyle(
-                fontFamily: AssetProperties.FZ_SIMPLE,
-                fontWeight: FontWeight.bold,
-                fontSize: ScreenUtil().setSp(40),
-                letterSpacing: 3),
+              fontFamily: AssetProperties.FZ_SIMPLE,
+              fontWeight: FontWeight.bold,
+              fontSize: ScreenUtil().setSp(40),
+              letterSpacing: 3,
+            ),
           ),
           actions: [
             InkWell(
@@ -62,12 +71,27 @@ class DynamicDetailPage extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                  child: DynamicDetailComponent(
-                scrollToComment: scrollToComment,
-                avatarHeroTag: avatarHeroTag,
-                dynamicDetailBean: dynamicDetailBean,
-              )),
-              Positioned(left: 0, bottom: 0, child: CommentBottom())
+                margin: EdgeInsets.only(
+                  bottom: bottomMargin,
+                ),
+                child: DynamicDetailComponent(
+                  scrollToComment: widget.scrollToComment,
+                  avatarHeroTag: widget.avatarHeroTag,
+                  dynamicDetailBean: widget.dynamicDetailBean,
+                ),
+              ),
+              Positioned(
+                left: 0,
+                bottom: 0,
+                child: MeasureSize(
+                  child: CommentBottom(),
+                  onChange: (size) {
+                    setState(() {
+                      bottomMargin = size.height;
+                    });
+                  },
+                ),
+              ),
             ],
           ),
         ));

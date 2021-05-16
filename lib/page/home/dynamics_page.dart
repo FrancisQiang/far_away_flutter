@@ -133,7 +133,11 @@ class DynamicPreviewCard extends StatelessWidget {
               child: Row(
                 children: [
                   // 头像
-                  Container(
+                  GestureDetector(
+                    onTap: () {
+                      NavigatorUtil.toUserInfoPage(context, userId: dynamicDetailBean.userId);
+                    },
+                    child: Container(
                       width: ScreenUtil().setWidth(90),
                       child: Hero(
                         tag: "dynamic_${dynamicDetailBean.id}",
@@ -150,7 +154,9 @@ class DynamicPreviewCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                   // 用户名和用户签名
                   Container(
                     width: ScreenUtil().setWidth(470),
@@ -186,14 +192,18 @@ class DynamicPreviewCard extends StatelessWidget {
                           ResponseBean.fromJson(response.data);
                       FollowStatusBean followStatusBean =
                           FollowStatusBean.fromJson(responseBean.data);
-                      if(followStatusBean.follow) {
+                      if (followStatusBean.follow) {
                         FollowUserInfo followUserInfo = FollowUserInfo();
                         followUserInfo.userId = dynamicDetailBean.userId;
                         followUserInfo.username = dynamicDetailBean.username;
-                        followUserInfo.userAvatar = dynamicDetailBean.userAvatar;
-                        globalInfoProvider.followUserMap[dynamicDetailBean.userId] = followUserInfo;
+                        followUserInfo.userAvatar =
+                            dynamicDetailBean.userAvatar;
+                        globalInfoProvider
+                                .followUserMap[dynamicDetailBean.userId] =
+                            followUserInfo;
                       } else {
-                        globalInfoProvider.followUserMap.remove(dynamicDetailBean.userId);
+                        globalInfoProvider.followUserMap
+                            .remove(dynamicDetailBean.userId);
                       }
                       // for (int i = 0; i < dynamicsProvider.dynamicList.length; i++) {
                       //   if (dynamicsProvider.dynamicList[i].userId == dynamicDetailBean.userId) {
@@ -203,7 +213,8 @@ class DynamicPreviewCard extends StatelessWidget {
                       globalInfoProvider.refresh();
                       // dynamicsProvider.refresh();
                     },
-                    follow: globalInfoProvider.followUserMap.containsKey(dynamicDetailBean.userId),
+                    follow: globalInfoProvider.followUserMap
+                        .containsKey(dynamicDetailBean.userId),
                   ),
                 ],
               ),
@@ -298,7 +309,8 @@ class DynamicPreviewCard extends StatelessWidget {
                             Container(
                               margin: EdgeInsets.only(left: 5),
                               child: Text(
-                                CalculateUtil.simplifyCount(dynamicDetailBean.commentsCount),
+                                CalculateUtil.simplifyCount(
+                                    dynamicDetailBean.commentsCount),
                               ),
                             )
                           ],
@@ -350,7 +362,7 @@ class DynamicPreviewCard extends StatelessWidget {
                       likeCount: dynamicDetailBean.thumbCount,
                       likeCountPadding: EdgeInsets.only(left: 5),
                       likeCountAnimationType:
-                      dynamicDetailBean.thumbCount < 1000
+                          dynamicDetailBean.thumbCount < 1000
                               ? LikeCountAnimationType.part
                               : LikeCountAnimationType.none,
                       countBuilder: (int count, bool isLiked, String text) {

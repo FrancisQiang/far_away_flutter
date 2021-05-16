@@ -132,6 +132,12 @@ class ApiMethodUtil {
         options: Options(headers: {"Authorization": token}));
   }
 
+  static Future<dynamic> getUserInfoById({@required String token, @required String userId}) {
+    return DioFactory.getDioClient().get(
+        ApiProperties.HOST_BASE_URL + "/user/info/$userId",
+        options: Options(headers: {"Authorization": token}));
+  }
+
   static Future<dynamic> uploadPicture(
       {@required String token, @required File file, @required filename}) {
     return DioFactory.getDioClient().post(

@@ -133,4 +133,12 @@ class NavigatorUtil {
     );
   }
 
+  static void toUserInfoPage(BuildContext context, {@required String userId}) {
+    Application.router.navigateTo(
+        context,
+        '/userInfo/$userId',
+        transition: TransitionType.inFromRight
+    );
+  }
+
 }

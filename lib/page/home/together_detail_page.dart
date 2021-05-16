@@ -63,13 +63,15 @@ class TogetherDetailPage extends StatelessWidget {
                     scrollToComment: scrollToComment,
                     avatarHeroTag: avatarHeroTag,
                     togetherInfoBean: togetherInfoBean,
-                  )),
+                  ),
+              ),
               Positioned(
                   left: 0,
                   bottom: 0,
                   child: TextCommentBottom(
                     bizType: 10,
-                  ))
+                  ),
+              )
             ],
           ),
         ));

@@ -107,13 +107,20 @@ var recruitDetailHandler = Handler(
       recruitDetailInfoBean: arguments.recruitDetailInfoBean);
 });
 
-
 var privateChatHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   PrivateChatParam arguments = context.settings.arguments as PrivateChatParam;
   return ProviderUtil.getPrivateChatPage(
-      username: arguments.username,
-      userId: arguments.userId,
-      avatar: arguments.avatar,
+    username: arguments.username,
+    userId: arguments.userId,
+    avatar: arguments.avatar,
+  );
+});
+
+var userInfoHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  String userId = params["userId"][0];
+  return ProviderUtil.getUserInfoPage(
+    userId: userId,
   );
 });

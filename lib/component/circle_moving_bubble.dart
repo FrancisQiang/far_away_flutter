@@ -55,6 +55,13 @@ class _CircleMovingBubbleState extends State<CircleMovingBubble>
 
   Animation<double> _bubbleMovingAnimation;
 
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();

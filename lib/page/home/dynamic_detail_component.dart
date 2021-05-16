@@ -192,10 +192,6 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                             }),
                           ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: ScreenUtil().setHeight(100),
-                  )
                 ],
               ),
             )
