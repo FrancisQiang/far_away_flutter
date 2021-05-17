@@ -54,7 +54,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin<ChatP
             controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorWeight: 2.5,
-            tabs: _tabs),
+            tabs: _tabs
+        ),
       ),
       body: TabBarView(
           controller: _tabController,
