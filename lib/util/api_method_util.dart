@@ -309,4 +309,12 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> getDynamicsByUserId(
+      {@required String token, @required String userId}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/dynamic/list/$userId",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
 }

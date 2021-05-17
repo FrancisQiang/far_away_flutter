@@ -92,6 +92,7 @@ dependencies:
   # 城市选择器
   city_pickers: ^0.2.0
   notus: ^0.1.5
+  extended_nested_scroll_view: ^1.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
