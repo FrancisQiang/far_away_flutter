@@ -191,28 +191,6 @@ class CommentDetailWidget extends StatelessWidget {
                                 letterSpacing: 0.4),
                           ),
                         ),
-                        Container(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            children: [
-                              Container(
-                                child: Text(
-                                  CalculateUtil.simplifyCount(thumbCount),
-                                  style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: ScreenUtil().setSp(22)),
-                                ),
-                              ),
-                              Container(
-                                child: Icon(
-                                  FontAwesomeIcons.thumbsUp,
-                                  color: Colors.black54,
-                                  size: ScreenUtil().setSp(30),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
                       ],
                     )
                 ),
