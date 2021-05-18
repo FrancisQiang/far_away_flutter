@@ -9,11 +9,23 @@ class AnimatedFollowButton extends StatelessWidget {
 
   final Function() onPressed;
 
+  final Widget followedChild;
+
+  final Widget followChild;
+
+  final Color followedBackColor;
+
+  final Color followBackColor;
+
   AnimatedFollowButton(
       {@required this.height,
       @required this.width,
       @required this.follow,
-      @required this.onPressed});
+      @required this.onPressed,
+      this.followedChild,
+      this.followChild,
+      this.followBackColor,
+      this.followedBackColor});
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +49,8 @@ class AnimatedFollowButton extends StatelessWidget {
                 onPressed: () async {
                   await onPressed();
                 },
+                child: followedChild,
+                backColor: followedBackColor,
               )
             : FollowButton(
                 width: width,
@@ -44,6 +58,8 @@ class AnimatedFollowButton extends StatelessWidget {
                 onPressed: () async {
                   await onPressed();
                 },
+                child: followChild,
+                backColor: followBackColor,
               ));
   }
 }
@@ -55,7 +71,12 @@ class FollowedButton extends StatelessWidget {
 
   final VoidCallback onPressed;
 
-  FollowedButton({this.width, this.height, this.onPressed});
+  final Widget child;
+
+  final Color backColor;
+
+  FollowedButton(
+      {this.width, this.height, this.onPressed, this.child, this.backColor});
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +93,17 @@ class FollowedButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         onPressed: onPressed,
-        color: Colors.transparent,
-        child: Text(
-          '已 关 注',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        color: backColor == null ? Colors.transparent : backColor,
+        child: child == null
+            ? Text(
+                '已 关 注',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : child,
       ),
     );
   }
@@ -93,7 +116,12 @@ class FollowButton extends StatelessWidget {
 
   final VoidCallback onPressed;
 
-  FollowButton({this.width, this.height, this.onPressed});
+  final Widget child;
+
+  final Color backColor;
+
+  FollowButton(
+      {this.width, this.height, this.onPressed, this.child, this.backColor});
 
   @override
   Widget build(BuildContext context) {
@@ -106,15 +134,17 @@ class FollowButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         onPressed: onPressed,
-        color: Colors.orangeAccent,
-        child: Text(
-          '关 注',
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        color: backColor == null ? Colors.orangeAccent : backColor,
+        child: child == null
+            ? Text(
+                '关 注',
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : child,
       ),
     );
   }

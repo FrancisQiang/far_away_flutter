@@ -17,21 +17,25 @@ class UserBaseServiceWidget extends StatelessWidget {
             title: '我的点赞',
             boxColor: Colors.deepOrangeAccent,
             iconData: FontAwesomeIcons.heartbeat,
+            onPressed: () {},
           ),
           UserBaseServiceItem(
             title: '我的收藏',
             boxColor: Colors.orangeAccent,
             iconData: FontAwesomeIcons.star,
+            onPressed: () {},
           ),
           UserBaseServiceItem(
             title: '我的发布',
             boxColor: Colors.greenAccent,
             iconData: FontAwesomeIcons.fileAlt,
+            onPressed: () {},
           ),
           UserBaseServiceItem(
             title: '我的评论',
             boxColor: Colors.blueAccent,
             iconData: FontAwesomeIcons.solidComments,
+            onPressed: () {},
           ),
         ],
       ),
@@ -40,39 +44,47 @@ class UserBaseServiceWidget extends StatelessWidget {
 }
 
 class UserBaseServiceItem extends StatelessWidget {
-
   final Color boxColor;
 
   final IconData iconData;
 
   final String title;
 
-  UserBaseServiceItem({@required this.boxColor, @required this.iconData, @required this.title});
+  final Function onPressed;
+
+  UserBaseServiceItem(
+      {@required this.boxColor,
+      @required this.iconData,
+      @required this.title,
+      this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: LinearGradient(
-                colors: [
+          GestureDetector(
+            onTap: () {
+              onPressed();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(colors: [
                   boxColor.withOpacity(0.7),
                   boxColor.withOpacity(0.8),
                   boxColor.withOpacity(0.9),
                   boxColor.withOpacity(1.0),
-                ]
+                ]),
+                color: boxColor,
               ),
-              color: boxColor,
-            ),
-            height: ScreenUtil().setWidth(100),
-            width: ScreenUtil().setWidth(100),
-            child: Icon(
-              iconData,
-              color: Colors.white,
-              size: ScreenUtil().setSp(50),
+              height: ScreenUtil().setWidth(100),
+              width: ScreenUtil().setWidth(100),
+              child: Icon(
+                iconData,
+                color: Colors.white,
+                size: ScreenUtil().setSp(50),
+              ),
             ),
           ),
           Container(

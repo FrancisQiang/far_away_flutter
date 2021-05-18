@@ -23,6 +23,7 @@ import 'package:far_away_flutter/config/OverScrollBehavior.dart';
 import 'package:far_away_flutter/page/home/together_info_page.dart';
 import 'package:far_away_flutter/page/user/user_info_widget.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
+import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/param/recruit_param.dart';
 import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
@@ -244,25 +245,19 @@ class _UserInfoPageState extends State<UserInfoPage>
                                   ),
                                   action: IconButton(
                                     icon: Icon(
-                                      Icons.more_horiz,
+                                      Icons.send,
                                       color: Colors.white,
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      NavigatorUtil.toPrivateChatPage(context,
+                                          param: PrivateChatParam(
+                                              username: userInfoBean.userName,
+                                              userId: userInfoBean.id,
+                                              avatar: userInfoBean.avatar));
+                                    },
                                   ),
                                   title: AnimatedSwitcher(
                                     duration: Duration(milliseconds: 100),
-                                    transitionBuilder: (child, animation) {
-                                      return RelativePositionedTransition(
-                                        size: Size(0.0, 0.0),
-                                        rect: RectTween(
-                                                begin: Rect.fromLTRB(
-                                                    0.0, 10.0, 0.0, 0.0),
-                                                end: Rect.fromLTRB(
-                                                    0.0, 0.0, 0.0, 0.0))
-                                            .animate(animation),
-                                        child: child,
-                                      );
-                                    },
                                     child: overScroll >= maxExtentHeight - 100
                                         ? Container(
                                             child: Row(
@@ -439,34 +434,117 @@ class _UserInfoPageState extends State<UserInfoPage>
                                                     ),
                                                   ),
                                                 )
-                                              : Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: ScreenUtil()
-                                                          .setHeight(15)),
-                                                  width: ScreenUtil()
-                                                      .setWidth(150),
-                                                  height: ScreenUtil()
-                                                      .setHeight(40),
-                                                  child: FlatButton(
-                                                    onPressed: () {},
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                    color: Colors.yellow
-                                                        .withOpacity(0.6),
-                                                    child: Text(
-                                                      '关 注',
-                                                      style: TextStyle(
-                                                        fontSize: ScreenUtil()
-                                                            .setWidth(25),
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                              : Consumer<GlobalInfoProvider>(
+                                                  builder: (context,
+                                                      globalInfoProvider,
+                                                      child) {
+                                                    return Container(
+                                                      margin: EdgeInsets.only(
+                                                          top: ScreenUtil()
+                                                              .setHeight(15)),
+                                                      child:
+                                                          AnimatedFollowButton(
+                                                        height: ScreenUtil()
+                                                            .setHeight(40),
+                                                        width: ScreenUtil()
+                                                            .setWidth(150),
+                                                        followChild: Text(
+                                                          '关注',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              letterSpacing:
+                                                                  1,
+                                                              fontSize:
+                                                                  ScreenUtil()
+                                                                      .setSp(
+                                                                          22),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        followBackColor:
+                                                            Colors.orange,
+                                                        followedChild: Text(
+                                                          '已关注',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              letterSpacing:
+                                                                  1,
+                                                              fontSize:
+                                                                  ScreenUtil()
+                                                                      .setSp(
+                                                                          22),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        followedBackColor:
+                                                            Colors.orange,
+                                                        onPressed: () async {
+                                                          Response<dynamic>
+                                                              response =
+                                                              await ApiMethodUtil
+                                                                  .followChange(
+                                                            token: ProviderUtil
+                                                                .globalInfoProvider
+                                                                .jwt,
+                                                            targetUserId:
+                                                                userInfoBean.id,
+                                                          );
+                                                          ResponseBean
+                                                              responseBean =
+                                                              ResponseBean
+                                                                  .fromJson(
+                                                                      response
+                                                                          .data);
+                                                          FollowStatusBean
+                                                              followStatusBean =
+                                                              FollowStatusBean
+                                                                  .fromJson(
+                                                                      responseBean
+                                                                          .data);
+                                                          if (followStatusBean
+                                                              .follow) {
+                                                            FollowUserInfo
+                                                                followUserInfo =
+                                                                FollowUserInfo();
+                                                            followUserInfo
+                                                                    .userId =
+                                                                userInfoBean.id;
+                                                            followUserInfo
+                                                                    .username =
+                                                                userInfoBean
+                                                                    .userName;
+                                                            followUserInfo
+                                                                    .userAvatar =
+                                                                userInfoBean
+                                                                    .avatar;
+                                                            globalInfoProvider
+                                                                        .followUserMap[
+                                                                    userInfoBean
+                                                                        .id] =
+                                                                followUserInfo;
+                                                          } else {
+                                                            globalInfoProvider
+                                                                .followUserMap
+                                                                .remove(
+                                                                    userInfoBean
+                                                                        .id);
+                                                          }
+                                                          globalInfoProvider
+                                                              .refresh();
+                                                        },
+                                                        follow:
+                                                            globalInfoProvider
+                                                                .followUserMap
+                                                                .containsKey(
+                                                                    userInfoBean
+                                                                        .id),
                                                       ),
-                                                    ),
-                                                  ),
+                                                    );
+                                                  },
                                                 ),
                                           Container(
                                             margin: EdgeInsets.only(
@@ -688,7 +766,8 @@ class _UserInfoPageState extends State<UserInfoPage>
                                     crossAxisSpacing: ScreenUtil().setWidth(20),
                                     mainAxisSpacing: ScreenUtil().setHeight(15),
                                     itemCount: recruitList.length,
-                                    itemBuilder: (BuildContext context, int index) {
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
                                       return GestureDetector(
                                         onTap: () {},
                                         child: Card(
@@ -697,46 +776,69 @@ class _UserInfoPageState extends State<UserInfoPage>
                                           child: PhysicalModel(
                                               color: Colors.transparent,
                                               clipBehavior: Clip.antiAlias,
-                                              borderRadius: BorderRadius.circular(5),
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
                                               child: InkWell(
                                                 onTap: () {
-                                                  NavigatorUtil.toRecruitDetailPage(context,
+                                                  NavigatorUtil.toRecruitDetailPage(
+                                                      context,
                                                       param: RecruitDetailPageParam(
                                                           recruitDetailInfoBean:
-                                                          recruitList[index]));
+                                                              recruitList[
+                                                                  index]));
                                                 },
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: <Widget>[
                                                     Stack(
                                                       children: [
-                                                        Image.network(recruitList[index].cover),
+                                                        Image.network(
+                                                            recruitList[index]
+                                                                .cover),
                                                         Positioned(
-                                                          left: ScreenUtil().setWidth(8),
-                                                          bottom: ScreenUtil().setHeight(8),
+                                                          left: ScreenUtil()
+                                                              .setWidth(8),
+                                                          bottom: ScreenUtil()
+                                                              .setHeight(8),
                                                           child: Container(
                                                             padding: EdgeInsets.symmetric(
-                                                                horizontal: ScreenUtil().setWidth(5)),
-                                                            decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.circular(20),
-                                                              color: Colors.black38,
+                                                                horizontal:
+                                                                    ScreenUtil()
+                                                                        .setWidth(
+                                                                            5)),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                              color: Colors
+                                                                  .black38,
                                                             ),
                                                             child: Row(
                                                               children: [
                                                                 Container(
                                                                   child: Icon(
-                                                                    Icons.location_on,
-                                                                    color: Colors.white70,
-                                                                    size: ScreenUtil().setSp(20),
+                                                                    Icons
+                                                                        .location_on,
+                                                                    color: Colors
+                                                                        .white70,
+                                                                    size: ScreenUtil()
+                                                                        .setSp(
+                                                                            20),
                                                                   ),
                                                                 ),
                                                                 Container(
                                                                   child: Text(
-                                                                    recruitList[index].location,
+                                                                    recruitList[
+                                                                            index]
+                                                                        .location,
                                                                     style: TextStyle(
-                                                                        color: Colors.white70,
+                                                                        color: Colors
+                                                                            .white70,
                                                                         fontSize:
-                                                                        ScreenUtil().setSp(20)),
+                                                                            ScreenUtil().setSp(20)),
                                                                   ),
                                                                 )
                                                               ],
@@ -744,28 +846,38 @@ class _UserInfoPageState extends State<UserInfoPage>
                                                           ),
                                                         ),
                                                         Positioned(
-                                                          right: ScreenUtil().setWidth(8),
-                                                          bottom: ScreenUtil().setHeight(8),
+                                                          right: ScreenUtil()
+                                                              .setWidth(8),
+                                                          bottom: ScreenUtil()
+                                                              .setHeight(8),
                                                           child: Container(
                                                             child: Row(
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.start,
+                                                                  CrossAxisAlignment
+                                                                      .start,
                                                               children: [
                                                                 Container(
                                                                   child: Icon(
-                                                                    FontAwesomeIcons.heart,
-                                                                    color: Colors.white70,
-                                                                    size: ScreenUtil().setSp(24),
+                                                                    FontAwesomeIcons
+                                                                        .heart,
+                                                                    color: Colors
+                                                                        .white70,
+                                                                    size: ScreenUtil()
+                                                                        .setSp(
+                                                                            24),
                                                                   ),
                                                                 ),
                                                                 Container(
                                                                   child: Text(
                                                                     ' ${recruitList[index].thumbCount}',
                                                                     style: TextStyle(
-                                                                        color: Colors.white70,
+                                                                        color: Colors
+                                                                            .white70,
                                                                         fontSize:
-                                                                        ScreenUtil().setSp(24),
-                                                                        fontWeight: FontWeight.bold),
+                                                                            ScreenUtil().setSp(
+                                                                                24),
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
                                                                   ),
                                                                 )
                                                               ],
@@ -775,32 +887,52 @@ class _UserInfoPageState extends State<UserInfoPage>
                                                       ],
                                                     ),
                                                     Container(
-                                                      padding:
-                                                      EdgeInsets.all(ScreenUtil().setWidth(15)),
+                                                      padding: EdgeInsets.all(
+                                                          ScreenUtil()
+                                                              .setWidth(15)),
                                                       child: Row(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           Container(
-                                                            width: ScreenUtil().setWidth(38),
-                                                            height: ScreenUtil().setWidth(38),
+                                                            width: ScreenUtil()
+                                                                .setWidth(38),
+                                                            height: ScreenUtil()
+                                                                .setWidth(38),
                                                             child: CircleAvatar(
-                                                              backgroundImage: NetworkImage(
-                                                                  recruitList[index].userAvatar),
+                                                              backgroundImage:
+                                                                  NetworkImage(
+                                                                      recruitList[
+                                                                              index]
+                                                                          .userAvatar),
                                                             ),
                                                           ),
                                                           Expanded(
                                                             child: Container(
                                                               margin: EdgeInsets.only(
-                                                                  left: ScreenUtil().setWidth(8)),
+                                                                  left: ScreenUtil()
+                                                                      .setWidth(
+                                                                          8)),
                                                               child: Text(
-                                                                recruitList[index].title,
+                                                                recruitList[
+                                                                        index]
+                                                                    .title,
                                                                 maxLines: 2,
-                                                                overflow: TextOverflow.ellipsis,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                                 style: TextStyle(
-                                                                    fontSize: ScreenUtil().setSp(25),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    letterSpacing: 0.4,
-                                                                    color: Colors.black87),
+                                                                    fontSize: ScreenUtil()
+                                                                        .setSp(
+                                                                            25),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    letterSpacing:
+                                                                        0.4,
+                                                                    color: Colors
+                                                                        .black87),
                                                               ),
                                                             ),
                                                           )
@@ -813,7 +945,8 @@ class _UserInfoPageState extends State<UserInfoPage>
                                         ),
                                       );
                                     },
-                                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                                    staggeredTileBuilder: (int index) =>
+                                        StaggeredTile.fit(1),
                                   ),
                                 ),
                               ],
