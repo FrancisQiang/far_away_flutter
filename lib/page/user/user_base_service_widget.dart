@@ -1,3 +1,4 @@
+import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
@@ -17,7 +18,9 @@ class UserBaseServiceWidget extends StatelessWidget {
             title: '我的点赞',
             boxColor: Colors.deepOrangeAccent,
             iconData: FontAwesomeIcons.heartbeat,
-            onPressed: () {},
+            onPressed: () {
+              NavigatorUtil.toMyThumbsPage(context);
+            },
           ),
           UserBaseServiceItem(
             title: '我的收藏',

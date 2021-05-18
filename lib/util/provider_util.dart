@@ -2,6 +2,7 @@ import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
+import 'package:far_away_flutter/page/bs/my_thumbs.dart';
 import 'package:far_away_flutter/page/chat/private_chat_page.dart';
 import 'package:far_away_flutter/page/home/comment_draw_widget.dart';
 import 'package:far_away_flutter/page/home/dynamic_detail_page.dart';
@@ -257,6 +258,15 @@ class ProviderUtil {
       ),
     );
   }
+
+
+  static Widget getMyThumbsPage() {
+    return MultiProvider(
+      providers: [ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider)],
+      child: MyThumbsPage(),
+    );
+  }
+
 
 
 }

@@ -124,3 +124,10 @@ var userInfoHandler = Handler(
     userId: userId,
   );
 });
+
+var myThumbsHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      return ProviderUtil.getMyThumbsPage();
+    });
+
+

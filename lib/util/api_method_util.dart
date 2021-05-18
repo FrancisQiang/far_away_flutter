@@ -333,4 +333,12 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> getMyThumbs(
+      {@required String token}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/user_service/thumbs",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
 }

@@ -141,4 +141,12 @@ class NavigatorUtil {
     );
   }
 
+  static void toMyThumbsPage(BuildContext context) {
+    Application.router.navigateTo(
+        context,
+        Routes.myThumbs,
+        transition: TransitionType.inFromRight
+    );
+  }
+
 }
