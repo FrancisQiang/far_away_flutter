@@ -78,7 +78,10 @@ class DynamicDetailWidget extends StatelessWidget {
                           ),
                           Container(
                             child: Text(dynamicDetailBean.signature,
-                                style: TextStyleTheme.subH5),
+                                style: TextStyleTheme.subH5,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           )
                         ],
                       ),

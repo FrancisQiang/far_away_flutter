@@ -173,7 +173,9 @@ class DynamicPreviewCard extends StatelessWidget {
                         Container(
                           child: Text(
                             dynamicDetailBean.signature,
+                            maxLines: 1,
                             style: TextStyleTheme.subH5,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         )
                       ],

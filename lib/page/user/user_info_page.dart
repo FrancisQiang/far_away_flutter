@@ -6,7 +6,9 @@ import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/follow_status.dart';
 import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
 import 'package:far_away_flutter/bean/list_bean.dart';
+import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
+import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/animated_follow_button.dart';
@@ -18,8 +20,11 @@ import 'package:far_away_flutter/component/init_refresh_widget.dart';
 import 'package:far_away_flutter/component/link_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
+import 'package:far_away_flutter/page/home/together_info_page.dart';
 import 'package:far_away_flutter/page/user/user_info_widget.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
+import 'package:far_away_flutter/param/recruit_param.dart';
+import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
@@ -34,6 +39,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:like_button/like_button.dart';
@@ -64,6 +70,10 @@ class _UserInfoPageState extends State<UserInfoPage>
   UserInfoBean userInfoBean;
 
   List<DynamicDetailBean> dynamics = [];
+
+  List<TogetherInfoBean> togetherInfoList = [];
+
+  List<RecruitDetailInfoBean> recruitList = [];
 
   bool loaded = false;
 
@@ -99,20 +109,43 @@ class _UserInfoPageState extends State<UserInfoPage>
   initData() async {
     await _getUserInfo();
     await _getDynamics();
+    await _getTogetherInfoList();
+    await _getRecruitInfoList();
     setState(() {
       loaded = true;
     });
+  }
+
+  _getTogetherInfoList() async {
+    togetherInfoList = [];
+    Response response = await ApiMethodUtil.getTogetherInfoByUserId(
+        token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
+    ResponseBean responseBean = ResponseBean.fromJson(response.data);
+    ListBean listBean = ListBean.fromJson(responseBean.data);
+    for (var element in listBean.listData) {
+      togetherInfoList.add(TogetherInfoBean.fromJson(element));
+    }
   }
 
   _getDynamics() async {
     dynamics = [];
     Response response = await ApiMethodUtil.getDynamicsByUserId(
         token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
-    print(response.data);
     ResponseBean responseBean = ResponseBean.fromJson(response.data);
     ListBean listBean = ListBean.fromJson(responseBean.data);
     for (var element in listBean.listData) {
       dynamics.add(DynamicDetailBean.fromJson(element));
+    }
+  }
+
+  _getRecruitInfoList() async {
+    recruitList = [];
+    Response response = await ApiMethodUtil.getRecruitInfoListByUserId(
+        token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
+    ResponseBean responseBean = ResponseBean.fromJson(response.data);
+    ListBean listBean = ListBean.fromJson(responseBean.data);
+    for (var element in listBean.listData) {
+      recruitList.add(RecruitDetailInfoBean.fromJson(element));
     }
   }
 
@@ -192,899 +225,610 @@ class _UserInfoPageState extends State<UserInfoPage>
                       onRefresh: () async {
                         await initData();
                       },
-                      // notificationPredicate: (ScrollNotification scrollNotification) {
-                      //   if(scrollNotification is OverscrollNotification) {
-                      //     setState(() {
-                      //       overScroll = (scrollNotification.overscroll) * 50;
-                      //     });
-                      //   }
-                      //   return true;
-                      // },
                       child: extended.NestedScrollView(
-                        innerScrollPositionKeyBuilder: () {
-                          return Key('Tab${_tabController.index}');
-                        },
-                        headerSliverBuilder: (context, innerBoxIsScrolled) {
-                          return [
-                            SliverPersistentHeader(
-                              pinned: true,
-                              floating: true,
-                              delegate: SliverCustomHeaderDelegate(
-                                leading: IconButton(
-                                  icon: Icon(
-                                    Icons.arrow_back_ios_outlined,
-                                    color: Colors.white,
+                          innerScrollPositionKeyBuilder: () {
+                            return Key('Tab${_tabController.index}');
+                          },
+                          headerSliverBuilder: (context, innerBoxIsScrolled) {
+                            return [
+                              SliverPersistentHeader(
+                                pinned: true,
+                                floating: true,
+                                delegate: SliverCustomHeaderDelegate(
+                                  leading: IconButton(
+                                    icon: Icon(
+                                      Icons.arrow_back_ios_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () => Navigator.pop(context),
                                   ),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                action: IconButton(
-                                  icon: Icon(
-                                    Icons.more_horiz,
-                                    color: Colors.white,
+                                  action: IconButton(
+                                    icon: Icon(
+                                      Icons.more_horiz,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {},
                                   ),
-                                  onPressed: () {},
-                                ),
-                                title: AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 100),
-                                  transitionBuilder: (child, animation) {
-                                    return RelativePositionedTransition(
-                                      size: Size(0.0, 0.0),
-                                      rect: RectTween(
-                                              begin: Rect.fromLTRB(
-                                                  0.0, 10.0, 0.0, 0.0),
-                                              end: Rect.fromLTRB(
-                                                  0.0, 0.0, 0.0, 0.0))
-                                          .animate(animation),
-                                      child: child,
-                                    );
-                                  },
-                                  child: overScroll >= maxExtentHeight - 100
-                                      ? Container(
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                  child: ClipOval(
-                                                child: Image.network(
-                                                  userInfoBean.avatar,
-                                                  fit: BoxFit.cover,
-                                                  width: 40,
-                                                  height: 40,
-                                                ),
-                                              )),
-                                              Expanded(
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: ScreenUtil()
-                                                          .setWidth(15)),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Container(
-                                                        child: Text(
-                                                          userInfoBean.userName,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 15),
+                                  title: AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 100),
+                                    transitionBuilder: (child, animation) {
+                                      return RelativePositionedTransition(
+                                        size: Size(0.0, 0.0),
+                                        rect: RectTween(
+                                                begin: Rect.fromLTRB(
+                                                    0.0, 10.0, 0.0, 0.0),
+                                                end: Rect.fromLTRB(
+                                                    0.0, 0.0, 0.0, 0.0))
+                                            .animate(animation),
+                                        child: child,
+                                      );
+                                    },
+                                    child: overScroll >= maxExtentHeight - 100
+                                        ? Container(
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                    child: ClipOval(
+                                                  child: Image.network(
+                                                    userInfoBean.avatar,
+                                                    fit: BoxFit.cover,
+                                                    width: 40,
+                                                    height: 40,
+                                                  ),
+                                                )),
+                                                Expanded(
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: ScreenUtil()
+                                                            .setWidth(15)),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Container(
+                                                          child: Text(
+                                                            userInfoBean
+                                                                .userName,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 15),
+                                                          ),
                                                         ),
-                                                      ),
-                                                      Container(
-                                                        child: Text(
-                                                          userInfoBean
-                                                              .signature,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 10),
-                                                        ),
-                                                      )
-                                                    ],
+                                                        Container(
+                                                          child: Text(
+                                                            userInfoBean
+                                                                .signature,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 10),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Container(
-                                                width:
-                                                    ScreenUtil().setWidth(120),
-                                                height: 26,
-                                                child: FlatButton(
-                                                  onPressed: () {},
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15)),
-                                                  color: Colors.yellow,
-                                                  child: Text(
-                                                    '关注',
-                                                    style: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        letterSpacing: 0.5,
-                                                        fontSize: 12),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      : SizedBox(),
-                                ),
-                                expandedBackgroundWidget: Opacity(
-                                  opacity: overScroll >= maxExtentHeight - 100
-                                      ? 0.0
-                                      : 1,
-                                  child: Container(
-                                    height: ScreenUtil().setHeight(350),
-                                    padding: EdgeInsets.only(
-                                        bottom: ScreenUtil().setHeight(5)),
-                                    width: ScreenUtil().setWidth(750),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: ScreenUtil().setWidth(180),
-                                          height: ScreenUtil().setWidth(180),
-                                          decoration: BoxDecoration(
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.black,
-                                                  blurRadius: 10)
-                                            ],
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(ScreenUtil()
-                                                    .setWidth(110))),
-                                            border: Border.all(
-                                              width: 1.5,
-                                              style: BorderStyle.solid,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          child: ClipOval(
-                                            child: CachedNetworkImage(
-                                              imageUrl: userInfoBean == null
-                                                  ? ''
-                                                  : userInfoBean.avatar,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        ProviderUtil.globalInfoProvider
-                                                    .userInfoBean.id ==
-                                                userInfoBean.id
-                                            ? Container(
-                                                margin: EdgeInsets.only(
-                                                    top: ScreenUtil()
-                                                        .setHeight(15)),
-                                                width:
-                                                    ScreenUtil().setWidth(150),
-                                                height:
-                                                    ScreenUtil().setHeight(40),
-                                                child: FlatButton(
-                                                  onPressed: () {},
-                                                  padding: EdgeInsets.zero,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  color: Colors.yellow
-                                                      .withOpacity(0.6),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.edit,
-                                                        color: Colors.black87,
-                                                        size: ScreenUtil()
-                                                            .setSp(20),
-                                                      ),
-                                                      Text(
-                                                        ' 编辑资料',
-                                                        style: TextStyle(
+                                                Container(
+                                                  width: ScreenUtil()
+                                                      .setWidth(120),
+                                                  height: 26,
+                                                  child: FlatButton(
+                                                    onPressed: () {},
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15)),
+                                                    color: Colors.yellow,
+                                                    child: Text(
+                                                      '关注',
+                                                      style: TextStyle(
                                                           color: Colors.black87,
-                                                          letterSpacing: 0.4,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: ScreenUtil()
-                                                              .setWidth(20),
+                                                          letterSpacing: 0.5,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                  ),
+                                  expandedBackgroundWidget: Opacity(
+                                    opacity: overScroll >= maxExtentHeight - 100
+                                        ? 0.0
+                                        : 1,
+                                    child: Container(
+                                      height: ScreenUtil().setHeight(350),
+                                      padding: EdgeInsets.only(
+                                          bottom: ScreenUtil().setHeight(5)),
+                                      width: ScreenUtil().setWidth(750),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: ScreenUtil().setWidth(180),
+                                            height: ScreenUtil().setWidth(180),
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.black,
+                                                    blurRadius: 10)
+                                              ],
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(ScreenUtil()
+                                                      .setWidth(110))),
+                                              border: Border.all(
+                                                width: 1.5,
+                                                style: BorderStyle.solid,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            child: ClipOval(
+                                              child: CachedNetworkImage(
+                                                imageUrl: userInfoBean == null
+                                                    ? ''
+                                                    : userInfoBean.avatar,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          ProviderUtil.globalInfoProvider
+                                                      .userInfoBean.id ==
+                                                  userInfoBean.id
+                                              ? Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: ScreenUtil()
+                                                          .setHeight(15)),
+                                                  width: ScreenUtil()
+                                                      .setWidth(150),
+                                                  height: ScreenUtil()
+                                                      .setHeight(40),
+                                                  child: FlatButton(
+                                                    onPressed: () {},
+                                                    padding: EdgeInsets.zero,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                    color: Colors.yellow
+                                                        .withOpacity(0.6),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.edit,
+                                                          color: Colors.black87,
+                                                          size: ScreenUtil()
+                                                              .setSp(20),
                                                         ),
+                                                        Text(
+                                                          ' 编辑资料',
+                                                          style: TextStyle(
+                                                            color:
+                                                                Colors.black87,
+                                                            letterSpacing: 0.4,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize:
+                                                                ScreenUtil()
+                                                                    .setWidth(
+                                                                        20),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: ScreenUtil()
+                                                          .setHeight(15)),
+                                                  width: ScreenUtil()
+                                                      .setWidth(150),
+                                                  height: ScreenUtil()
+                                                      .setHeight(40),
+                                                  child: FlatButton(
+                                                    onPressed: () {},
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                    color: Colors.yellow
+                                                        .withOpacity(0.6),
+                                                    child: Text(
+                                                      '关 注',
+                                                      style: TextStyle(
+                                                        fontSize: ScreenUtil()
+                                                            .setWidth(25),
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
-                                              )
-                                            : Container(
-                                                margin: EdgeInsets.only(
-                                                    top: ScreenUtil()
-                                                        .setHeight(15)),
-                                                width:
-                                                    ScreenUtil().setWidth(150),
-                                                height:
-                                                    ScreenUtil().setHeight(40),
-                                                child: FlatButton(
-                                                  onPressed: () {},
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  color: Colors.yellow
-                                                      .withOpacity(0.6),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                top: ScreenUtil().setHeight(8)),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                // 用户名
+                                                Container(
                                                   child: Text(
-                                                    '关 注',
+                                                    userInfoBean == null
+                                                        ? ''
+                                                        : userInfoBean.userName,
                                                     style: TextStyle(
+                                                      color: Colors.white,
                                                       fontSize: ScreenUtil()
-                                                          .setWidth(25),
+                                                          .setSp(32),
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: ScreenUtil().setHeight(8)),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              // 用户名
-                                              Container(
-                                                child: Text(
-                                                  userInfoBean == null
-                                                      ? ''
-                                                      : userInfoBean.userName,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        ScreenUtil().setSp(32),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              // 性别
-                                              userInfoBean != null &&
-                                                      userInfoBean.gender != 0
-                                                  ? Container(
-                                                      margin: EdgeInsets.only(
-                                                          left: ScreenUtil()
-                                                              .setWidth(8)),
-                                                      child: Image.asset(
-                                                        'assets/png/${userInfoBean.gender == 1 ? 'male' : 'female'}.png',
-                                                        height: ScreenUtil()
-                                                            .setWidth(32),
-                                                        width: ScreenUtil()
-                                                            .setWidth(32),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                            ],
-                                          ),
-                                        ),
-                                        // 签名
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: ScreenUtil().setHeight(5)),
-                                          width: ScreenUtil().setWidth(500),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            userInfoBean == null
-                                                ? ''
-                                                : userInfoBean.signature,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: ScreenUtil().setSp(22),
-                                              letterSpacing: 0.2,
+                                                // 性别
+                                                userInfoBean != null &&
+                                                        userInfoBean.gender != 0
+                                                    ? Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: ScreenUtil()
+                                                                .setWidth(8)),
+                                                        child: Image.asset(
+                                                          'assets/png/${userInfoBean.gender == 1 ? 'male' : 'female'}.png',
+                                                          height: ScreenUtil()
+                                                              .setWidth(32),
+                                                          width: ScreenUtil()
+                                                              .setWidth(32),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                              ],
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: ScreenUtil().setHeight(20)),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              UserActiveInfoWidget(
-                                                title: "获赞",
-                                                value: userInfoBean == null
-                                                    ? ''
-                                                    : userInfoBean.thumbCount
-                                                        .toString(),
+                                          // 签名
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                top: ScreenUtil().setHeight(5)),
+                                            width: ScreenUtil().setWidth(500),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              userInfoBean == null
+                                                  ? ''
+                                                  : userInfoBean.signature,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize:
+                                                    ScreenUtil().setSp(22),
+                                                letterSpacing: 0.2,
                                               ),
-                                              UserActiveInfoWidget(
-                                                title: "关注",
-                                                value: userInfoBean == null
-                                                    ? ''
-                                                    : userInfoBean.followCount
-                                                        .toString(),
-                                              ),
-                                              UserActiveInfoWidget(
-                                                title: "粉丝",
-                                                value: userInfoBean == null
-                                                    ? ''
-                                                    : userInfoBean.fansCount
-                                                        .toString(),
-                                              ),
-                                            ],
+                                            ),
                                           ),
-                                        )
-                                      ],
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                top:
+                                                    ScreenUtil().setHeight(20)),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                UserActiveInfoWidget(
+                                                  title: "获赞",
+                                                  value: userInfoBean == null
+                                                      ? ''
+                                                      : userInfoBean.thumbCount
+                                                          .toString(),
+                                                ),
+                                                UserActiveInfoWidget(
+                                                  title: "关注",
+                                                  value: userInfoBean == null
+                                                      ? ''
+                                                      : userInfoBean.followCount
+                                                          .toString(),
+                                                ),
+                                                UserActiveInfoWidget(
+                                                  title: "粉丝",
+                                                  value: userInfoBean == null
+                                                      ? ''
+                                                      : userInfoBean.fansCount
+                                                          .toString(),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                collapsedHeight: 50,
-                                expandedHeight: overScroll < 0
-                                    ? maxExtentHeight - overScroll
-                                    : maxExtentHeight,
-                                paddingTop: MediaQuery.of(context).padding.top,
-                                coverImgUrl: userInfoBean.cover,
-                                loading: CircleHeader(
-                                  _headerNotifier,
-                                ),
-                              ),
-                            ),
-                            SliverPersistentHeader(
-                              pinned: true,
-                              delegate: SliverCustomBottomDelegate(
-                                height: 40,
-                                tabBar: TabBar(
-                                  controller: _tabController,
-                                  indicatorColor: Colors.orange,
-                                  indicatorSize: TabBarIndicatorSize.label,
-                                  indicatorWeight: 3,
-                                  unselectedLabelColor: Colors.black54,
-                                  labelStyle: TextStyle(
-                                      fontSize: ScreenUtil().setSp(28),
-                                      letterSpacing: 1,
-                                      fontWeight: FontWeight.bold),
-                                  tabs: [
-                                    Container(
-                                      child: Text(
-                                        '动态',
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Text(
-                                        '结伴',
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Text(
-                                        '招聘',
-                                      ),
-                                    ),
-                                  ],
+                                  collapsedHeight: 50,
+                                  expandedHeight: overScroll < 0
+                                      ? maxExtentHeight - overScroll
+                                      : maxExtentHeight,
+                                  paddingTop:
+                                      MediaQuery.of(context).padding.top,
+                                  coverImgUrl: userInfoBean.cover,
+                                  loading: CircleHeader(
+                                    _headerNotifier,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ];
-                        },
-                        body: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            ScrollConfiguration(
-                              behavior: OverScrollBehavior(),
-                              child: extended
-                                  .NestedScrollViewInnerScrollPositionKeyWidget(
-                                Key('Tab0'),
-                                ListView.separated(
-                                  itemBuilder: (context, index) {
-                                    return InkWell(
-                                      onTap: () =>
-                                          NavigatorUtil.toDynamicDetailPage(
-                                        context,
-                                        param: DynamicDetailParam(
-                                          avatarHeroTag:
-                                              'dynamic_${dynamics[index].id}',
-                                          dynamicDetailBean: dynamics[index],
+                              SliverPersistentHeader(
+                                pinned: true,
+                                delegate: SliverCustomBottomDelegate(
+                                  height: 40,
+                                  tabBar: TabBar(
+                                    controller: _tabController,
+                                    indicatorColor: Colors.orange,
+                                    indicatorSize: TabBarIndicatorSize.label,
+                                    indicatorWeight: 3,
+                                    unselectedLabelColor: Colors.black54,
+                                    labelStyle: TextStyle(
+                                        fontSize: ScreenUtil().setSp(28),
+                                        letterSpacing: 1,
+                                        fontWeight: FontWeight.bold),
+                                    tabs: [
+                                      Container(
+                                        child: Text(
+                                          '动态',
                                         ),
                                       ),
-                                      child: DynamicPreviewCard(
-                                        dynamicDetailBean: dynamics[index],
+                                      Container(
+                                        child: Text(
+                                          '结伴',
+                                        ),
                                       ),
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return Container(
-                                      height: 5,
-                                      color: Colors.blueGrey.withOpacity(0.1),
-                                    );
-                                  },
-                                  itemCount: dynamics.length,
+                                      Container(
+                                        child: Text(
+                                          '招聘',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
+                            ];
+                          },
+                          body: ScrollConfiguration(
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                                extended
+                                    .NestedScrollViewInnerScrollPositionKeyWidget(
+                                  Key('Tab0'),
+                                  ListView.separated(
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () =>
+                                            NavigatorUtil.toDynamicDetailPage(
+                                          context,
+                                          param: DynamicDetailParam(
+                                            avatarHeroTag:
+                                                'dynamic_${dynamics[index].id}',
+                                            dynamicDetailBean: dynamics[index],
+                                          ),
+                                        ),
+                                        child: DynamicPreviewCard(
+                                          dynamicDetailBean: dynamics[index],
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return Container(
+                                        height: 5,
+                                        color: Colors.blueGrey.withOpacity(0.1),
+                                      );
+                                    },
+                                    itemCount: dynamics.length,
+                                  ),
+                                ),
+                                extended
+                                    .NestedScrollViewInnerScrollPositionKeyWidget(
+                                  Key('Tab1'),
+                                  ListView.separated(
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () =>
+                                            NavigatorUtil.toTogetherDetailPage(
+                                          context,
+                                          param: TogetherDetailParam(
+                                            avatarHeroTag:
+                                                'together_${togetherInfoList[index].id}',
+                                            togetherInfoBean:
+                                                togetherInfoList[index],
+                                          ),
+                                        ),
+                                        child: TogetherInfoPreviewCard(
+                                          togetherInfoBean:
+                                              togetherInfoList[index],
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return Container(
+                                        height: 5,
+                                        color: Colors.blueGrey.withOpacity(0.1),
+                                      );
+                                    },
+                                    itemCount: togetherInfoList.length,
+                                  ),
+                                ),
+                                extended
+                                    .NestedScrollViewInnerScrollPositionKeyWidget(
+                                  Key('Tab2'),
+                                  StaggeredGridView.countBuilder(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: ScreenUtil().setWidth(20),
+                                    mainAxisSpacing: ScreenUtil().setHeight(15),
+                                    itemCount: recruitList.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return GestureDetector(
+                                        onTap: () {},
+                                        child: Card(
+                                          color: Colors.transparent,
+                                          elevation: 0,
+                                          child: PhysicalModel(
+                                              color: Colors.transparent,
+                                              clipBehavior: Clip.antiAlias,
+                                              borderRadius: BorderRadius.circular(5),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  NavigatorUtil.toRecruitDetailPage(context,
+                                                      param: RecruitDetailPageParam(
+                                                          recruitDetailInfoBean:
+                                                          recruitList[index]));
+                                                },
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Stack(
+                                                      children: [
+                                                        Image.network(recruitList[index].cover),
+                                                        Positioned(
+                                                          left: ScreenUtil().setWidth(8),
+                                                          bottom: ScreenUtil().setHeight(8),
+                                                          child: Container(
+                                                            padding: EdgeInsets.symmetric(
+                                                                horizontal: ScreenUtil().setWidth(5)),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(20),
+                                                              color: Colors.black38,
+                                                            ),
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  child: Icon(
+                                                                    Icons.location_on,
+                                                                    color: Colors.white70,
+                                                                    size: ScreenUtil().setSp(20),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  child: Text(
+                                                                    recruitList[index].location,
+                                                                    style: TextStyle(
+                                                                        color: Colors.white70,
+                                                                        fontSize:
+                                                                        ScreenUtil().setSp(20)),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Positioned(
+                                                          right: ScreenUtil().setWidth(8),
+                                                          bottom: ScreenUtil().setHeight(8),
+                                                          child: Container(
+                                                            child: Row(
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                              children: [
+                                                                Container(
+                                                                  child: Icon(
+                                                                    FontAwesomeIcons.heart,
+                                                                    color: Colors.white70,
+                                                                    size: ScreenUtil().setSp(24),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  child: Text(
+                                                                    ' ${recruitList[index].thumbCount}',
+                                                                    style: TextStyle(
+                                                                        color: Colors.white70,
+                                                                        fontSize:
+                                                                        ScreenUtil().setSp(24),
+                                                                        fontWeight: FontWeight.bold),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Container(
+                                                      padding:
+                                                      EdgeInsets.all(ScreenUtil().setWidth(15)),
+                                                      child: Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Container(
+                                                            width: ScreenUtil().setWidth(38),
+                                                            height: ScreenUtil().setWidth(38),
+                                                            child: CircleAvatar(
+                                                              backgroundImage: NetworkImage(
+                                                                  recruitList[index].userAvatar),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            child: Container(
+                                                              margin: EdgeInsets.only(
+                                                                  left: ScreenUtil().setWidth(8)),
+                                                              child: Text(
+                                                                recruitList[index].title,
+                                                                maxLines: 2,
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: TextStyle(
+                                                                    fontSize: ScreenUtil().setSp(25),
+                                                                    fontWeight: FontWeight.bold,
+                                                                    letterSpacing: 0.4,
+                                                                    color: Colors.black87),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
+                                        ),
+                                      );
+                                    },
+                                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                                  ),
+                                ),
+                              ],
                             ),
-                            extended
-                                .NestedScrollViewInnerScrollPositionKeyWidget(
-                              Key('Tab1'),
-                              ListView.separated(
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () =>
-                                        NavigatorUtil.toDynamicDetailPage(
-                                      context,
-                                      param: DynamicDetailParam(
-                                        avatarHeroTag:
-                                            'dynamic_${dynamics[index].id}',
-                                        dynamicDetailBean: dynamics[index],
-                                      ),
-                                    ),
-                                    child: DynamicPreviewCard(
-                                      dynamicDetailBean: dynamics[index],
-                                    ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Container(
-                                    height: 5,
-                                    color: Colors.blueGrey.withOpacity(0.1),
-                                  );
-                                },
-                                itemCount: dynamics.length,
-                              ),
-                            ),
-                            extended
-                                .NestedScrollViewInnerScrollPositionKeyWidget(
-                              Key('Tab2'),
-                              ListView.separated(
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () =>
-                                        NavigatorUtil.toDynamicDetailPage(
-                                      context,
-                                      param: DynamicDetailParam(
-                                        avatarHeroTag:
-                                            'dynamic_${dynamics[index].id}',
-                                        dynamicDetailBean: dynamics[index],
-                                      ),
-                                    ),
-                                    child: DynamicPreviewCard(
-                                      dynamicDetailBean: dynamics[index],
-                                    ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Container(
-                                    height: 5,
-                                    color: Colors.blueGrey.withOpacity(0.1),
-                                  );
-                                },
-                                itemCount: dynamics.length,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                            behavior: OverScrollBehavior(),
+                          )),
                     ),
-                    // child: EasyRefresh.custom(
-                    //   header: LinkHeader(
-                    //     _headerNotifier,
-                    //     extent: 70.0,
-                    //     triggerDistance: 70.0,
-                    //     completeDuration: Duration(milliseconds: 500),
-                    //   ),
-                    //   onRefresh: () async {
-                    //     await initData();
-                    //   },
-                    //   slivers: <Widget>[
-                    //     SliverPersistentHeader(
-                    //       pinned: true,
-                    //       floating: true,
-                    //       delegate: SliverCustomHeaderDelegate(
-                    //         leading: IconButton(
-                    //           icon: Icon(
-                    //             Icons.arrow_back_ios_outlined,
-                    //             color: Colors.white,
-                    //           ),
-                    //           onPressed: () => Navigator.pop(context),
-                    //         ),
-                    //         action: IconButton(
-                    //           icon: Icon(
-                    //             Icons.more_horiz,
-                    //             color: Colors.white,
-                    //           ),
-                    //           onPressed: () {},
-                    //         ),
-                    //         title: AnimatedSwitcher(
-                    //           duration: Duration(milliseconds: 100),
-                    //           transitionBuilder: (child, animation) {
-                    //             return RelativePositionedTransition(
-                    //               size: Size(0.0, 0.0),
-                    //               rect: RectTween(
-                    //                   begin: Rect.fromLTRB(
-                    //                       0.0, 10.0, 0.0, 0.0),
-                    //                   end:
-                    //                   Rect.fromLTRB(0.0, 0.0, 0.0, 0.0))
-                    //                   .animate(animation),
-                    //               child: child,
-                    //             );
-                    //           },
-                    //           child: overScroll >= maxExtentHeight - 100
-                    //               ? Container(
-                    //             child: Row(
-                    //               crossAxisAlignment:
-                    //               CrossAxisAlignment.center,
-                    //               children: [
-                    //                 Container(
-                    //                     child: ClipOval(
-                    //                       child: Image.network(
-                    //                         userInfoBean.avatar,
-                    //                         fit: BoxFit.cover,
-                    //                         width: 40,
-                    //                         height: 40,
-                    //                       ),
-                    //                     )),
-                    //                 Expanded(
-                    //                   child: Container(
-                    //                     margin: EdgeInsets.only(
-                    //                         left: ScreenUtil()
-                    //                             .setWidth(15)),
-                    //                     child: Column(
-                    //                       crossAxisAlignment:
-                    //                       CrossAxisAlignment.start,
-                    //                       mainAxisAlignment:
-                    //                       MainAxisAlignment.center,
-                    //                       children: [
-                    //                         Container(
-                    //                           child: Text(
-                    //                             userInfoBean.userName,
-                    //                             style: TextStyle(
-                    //                                 color: Colors.white,
-                    //                                 fontSize: 15),
-                    //                           ),
-                    //                         ),
-                    //                         Container(
-                    //                           child: Text(
-                    //                             userInfoBean.signature,
-                    //                             overflow:
-                    //                             TextOverflow.ellipsis,
-                    //                             maxLines: 1,
-                    //                             style: TextStyle(
-                    //                                 color: Colors.white,
-                    //                                 fontSize: 10),
-                    //                           ),
-                    //                         )
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //                 Container(
-                    //                   width: ScreenUtil().setWidth(120),
-                    //                   height: 26,
-                    //                   child: FlatButton(
-                    //                     onPressed: () {},
-                    //                     shape: RoundedRectangleBorder(
-                    //                         borderRadius:
-                    //                         BorderRadius.circular(
-                    //                             15)),
-                    //                     color: Colors.yellow,
-                    //                     child: Text(
-                    //                       '关注',
-                    //                       style: TextStyle(
-                    //                           color: Colors.black87,
-                    //                           fontWeight: FontWeight.bold,
-                    //                           letterSpacing: 0.5,
-                    //                           fontSize: 12),
-                    //                     ),
-                    //                   ),
-                    //                 )
-                    //               ],
-                    //             ),
-                    //           )
-                    //               : SizedBox(),
-                    //         ),
-                    //         expandedBackgroundWidget: Opacity(
-                    //           opacity:
-                    //           overScroll >= maxExtentHeight - 100 ? 0.0 : 1,
-                    //           child: Container(
-                    //             height: ScreenUtil().setHeight(350),
-                    //             padding: EdgeInsets.only(
-                    //                 bottom: ScreenUtil().setHeight(5)),
-                    //             width: ScreenUtil().setWidth(750),
-                    //             child: Column(
-                    //               crossAxisAlignment: CrossAxisAlignment.center,
-                    //               children: [
-                    //                 Container(
-                    //                   width: ScreenUtil().setWidth(180),
-                    //                   height: ScreenUtil().setWidth(180),
-                    //                   decoration: BoxDecoration(
-                    //                     boxShadow: [
-                    //                       BoxShadow(
-                    //                           color: Colors.black,
-                    //                           blurRadius: 10)
-                    //                     ],
-                    //                     borderRadius: BorderRadius.all(
-                    //                         Radius.circular(
-                    //                             ScreenUtil().setWidth(110))),
-                    //                     border: Border.all(
-                    //                       width: 1.5,
-                    //                       style: BorderStyle.solid,
-                    //                       color: Colors.white,
-                    //                     ),
-                    //                   ),
-                    //                   child: ClipOval(
-                    //                     child: CachedNetworkImage(
-                    //                       imageUrl: userInfoBean == null
-                    //                           ? ''
-                    //                           : userInfoBean.avatar,
-                    //                       fit: BoxFit.cover,
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //                 ProviderUtil.globalInfoProvider.userInfoBean
-                    //                     .id ==
-                    //                     userInfoBean.id
-                    //                     ? Container(
-                    //                   margin: EdgeInsets.only(
-                    //                       top:
-                    //                       ScreenUtil().setHeight(15)),
-                    //                   width: ScreenUtil().setWidth(150),
-                    //                   height: ScreenUtil().setHeight(40),
-                    //                   child: FlatButton(
-                    //                     onPressed: () {},
-                    //                     padding: EdgeInsets.zero,
-                    //                     shape: RoundedRectangleBorder(
-                    //                         borderRadius:
-                    //                         BorderRadius.circular(
-                    //                             10)),
-                    //                     color: Colors.yellow
-                    //                         .withOpacity(0.6),
-                    //                     child: Row(
-                    //                       mainAxisAlignment:
-                    //                       MainAxisAlignment.center,
-                    //                       children: [
-                    //                         Icon(
-                    //                           Icons.edit,
-                    //                           color: Colors.black87,
-                    //                           size:
-                    //                           ScreenUtil().setSp(20),
-                    //                         ),
-                    //                         Text(
-                    //                           ' 编辑资料',
-                    //                           style: TextStyle(
-                    //                             color: Colors.black87,
-                    //                             letterSpacing: 0.4,
-                    //                             fontWeight:
-                    //                             FontWeight.bold,
-                    //                             fontSize: ScreenUtil()
-                    //                                 .setWidth(20),
-                    //                           ),
-                    //                         ),
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 )
-                    //                     : Container(
-                    //                   margin: EdgeInsets.only(
-                    //                       top:
-                    //                       ScreenUtil().setHeight(15)),
-                    //                   width: ScreenUtil().setWidth(150),
-                    //                   height: ScreenUtil().setHeight(40),
-                    //                   child: FlatButton(
-                    //                     onPressed: () {},
-                    //                     shape: RoundedRectangleBorder(
-                    //                         borderRadius:
-                    //                         BorderRadius.circular(
-                    //                             10)),
-                    //                     color: Colors.yellow
-                    //                         .withOpacity(0.6),
-                    //                     child: Text(
-                    //                       '关 注',
-                    //                       style: TextStyle(
-                    //                         fontSize:
-                    //                         ScreenUtil().setWidth(25),
-                    //                         fontWeight: FontWeight.bold,
-                    //                       ),
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //                 Container(
-                    //                   margin: EdgeInsets.only(
-                    //                       top: ScreenUtil().setHeight(8)),
-                    //                   child: Row(
-                    //                     mainAxisAlignment:
-                    //                     MainAxisAlignment.center,
-                    //                     crossAxisAlignment:
-                    //                     CrossAxisAlignment.center,
-                    //                     children: [
-                    //                       // 用户名
-                    //                       Container(
-                    //                         child: Text(
-                    //                           userInfoBean == null
-                    //                               ? ''
-                    //                               : userInfoBean.userName,
-                    //                           style: TextStyle(
-                    //                             color: Colors.white,
-                    //                             fontSize:
-                    //                             ScreenUtil().setSp(32),
-                    //                             fontWeight: FontWeight.bold,
-                    //                           ),
-                    //                         ),
-                    //                       ),
-                    //                       // 性别
-                    //                       userInfoBean != null &&
-                    //                           userInfoBean.gender != 0
-                    //                           ? Container(
-                    //                         margin: EdgeInsets.only(
-                    //                             left: ScreenUtil()
-                    //                                 .setWidth(8)),
-                    //                         child: Image.asset(
-                    //                           'assets/png/${userInfoBean.gender == 1 ? 'male' : 'female'}.png',
-                    //                           height: ScreenUtil()
-                    //                               .setWidth(32),
-                    //                           width: ScreenUtil()
-                    //                               .setWidth(32),
-                    //                           fit: BoxFit.cover,
-                    //                         ),
-                    //                       )
-                    //                           : Container(),
-                    //                     ],
-                    //                   ),
-                    //                 ),
-                    //                 // 签名
-                    //                 Container(
-                    //                   margin: EdgeInsets.only(
-                    //                       top: ScreenUtil().setHeight(5)),
-                    //                   width: ScreenUtil().setWidth(500),
-                    //                   alignment: Alignment.center,
-                    //                   child: Text(
-                    //                     userInfoBean == null
-                    //                         ? ''
-                    //                         : userInfoBean.signature,
-                    //                     maxLines: 1,
-                    //                     overflow: TextOverflow.ellipsis,
-                    //                     style: TextStyle(
-                    //                       color: Colors.white,
-                    //                       fontSize: ScreenUtil().setSp(22),
-                    //                       letterSpacing: 0.2,
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //                 Container(
-                    //                   margin: EdgeInsets.only(
-                    //                       top: ScreenUtil().setHeight(20)),
-                    //                   child: Row(
-                    //                     mainAxisAlignment:
-                    //                     MainAxisAlignment.spaceEvenly,
-                    //                     children: [
-                    //                       UserActiveInfoWidget(
-                    //                         title: "获赞",
-                    //                         value: userInfoBean == null
-                    //                             ? ''
-                    //                             : userInfoBean.thumbCount
-                    //                             .toString(),
-                    //                       ),
-                    //                       UserActiveInfoWidget(
-                    //                         title: "关注",
-                    //                         value: userInfoBean == null
-                    //                             ? ''
-                    //                             : userInfoBean.followCount
-                    //                             .toString(),
-                    //                       ),
-                    //                       UserActiveInfoWidget(
-                    //                         title: "粉丝",
-                    //                         value: userInfoBean == null
-                    //                             ? ''
-                    //                             : userInfoBean.fansCount
-                    //                             .toString(),
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 )
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    //         collapsedHeight: 50,
-                    //         expandedHeight: overScroll < 0
-                    //             ? maxExtentHeight - overScroll
-                    //             : maxExtentHeight,
-                    //         paddingTop: MediaQuery.of(context).padding.top,
-                    //         coverImgUrl: userInfoBean.cover,
-                    //         loading: CircleHeader(
-                    //           _headerNotifier,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     SliverPersistentHeader(
-                    //       pinned: true,
-                    //       delegate: SliverCustomBottomDelegate(
-                    //         height: 40,
-                    //         tabBar: TabBar(
-                    //           controller: _tabController,
-                    //           indicatorColor: Colors.orange,
-                    //           indicatorSize: TabBarIndicatorSize.label,
-                    //           indicatorWeight: 3,
-                    //           unselectedLabelColor: Colors.black54,
-                    //           labelStyle: TextStyle(
-                    //               fontSize: ScreenUtil().setSp(28),
-                    //               letterSpacing: 1,
-                    //               fontWeight: FontWeight.bold),
-                    //           tabs: [
-                    //             Container(
-                    //               child: Text(
-                    //                 '动态',
-                    //               ),
-                    //             ),
-                    //             Container(
-                    //               child: Text(
-                    //                 '结伴',
-                    //               ),
-                    //             ),
-                    //             Container(
-                    //               child: Text(
-                    //                 '招聘',
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     SliverFillRemaining(
-                    //       child: TabBarView(
-                    //         controller: _tabController,
-                    //         children: [
-                    //           extended
-                    //               .NestedScrollViewInnerScrollPositionKeyWidget(
-                    //             Key('Tab0'),
-                    //             ListView.separated(
-                    //               controller: scrollController,
-                    //               itemBuilder: (context, index) {
-                    //                 return InkWell(
-                    //                   onTap: () =>
-                    //                       NavigatorUtil.toDynamicDetailPage(
-                    //                         context,
-                    //                         param: DynamicDetailParam(
-                    //                           avatarHeroTag:
-                    //                           'dynamic_${dynamics[index].id}',
-                    //                           dynamicDetailBean: dynamics[index],
-                    //                         ),
-                    //                       ),
-                    //                   child: DynamicPreviewCard(
-                    //                     dynamicDetailBean: dynamics[index],
-                    //                   ),
-                    //                 );
-                    //               },
-                    //               separatorBuilder: (context, index) {
-                    //                 return Container(
-                    //                   height: 5,
-                    //                   color: Colors.blueGrey.withOpacity(0.1),
-                    //                 );
-                    //               },
-                    //               itemCount: dynamics.length,
-                    //             ),
-                    //           ),
-                    //           Container(),
-                    //           Container(),
-                    //         ],
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
                     onNotification: (ScrollUpdateNotification notification) {
                       // 监听滑动
                       setState(() {
                         if ((notification.metrics.axisDirection ==
-                                AxisDirection.down ||
-                            notification.metrics.axisDirection ==
-                                AxisDirection.up) && notification.depth == 0)
+                                    AxisDirection.down ||
+                                notification.metrics.axisDirection ==
+                                    AxisDirection.up) &&
+                            notification.depth == 0)
                           overScroll = notification.metrics.pixels;
                       });
                       return false;
@@ -1116,8 +860,7 @@ class _UserInfoPageState extends State<UserInfoPage>
               )
             : InitRefreshWidget(
                 color: Theme.of(context).primaryColor,
-              )
-    );
+              ));
   }
 }
 

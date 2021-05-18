@@ -317,4 +317,20 @@ class ApiMethodUtil {
     );
   }
 
+  static Future<dynamic> getTogetherInfoByUserId(
+      {@required String token, @required String userId}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/together/list/$userId",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
+  static Future<dynamic> getRecruitInfoListByUserId(
+      {@required String token, @required String userId}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/recruit/list/$userId",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
 }

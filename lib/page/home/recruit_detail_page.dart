@@ -185,7 +185,10 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                                 .signature,
                                             style: TextStyle(
                                                 fontSize:
-                                                    ScreenUtil().setSp(20)),
+                                                    ScreenUtil().setSp(20),
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         )
                                       ],

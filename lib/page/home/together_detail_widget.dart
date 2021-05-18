@@ -70,7 +70,10 @@ class TogetherDetailWidget extends StatelessWidget {
                       ),
                       Container(
                         child: Text(togetherInfoBean.signature,
-                            style: TextStyleTheme.subH5),
+                            style: TextStyleTheme.subH5,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       )
                     ],
                   ),
