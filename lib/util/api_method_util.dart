@@ -5,6 +5,7 @@ import 'package:far_away_flutter/bean/dynamic_post_bean.dart';
 import 'package:far_away_flutter/bean/recruit_post_bean.dart';
 import 'package:far_away_flutter/bean/together_post_bean.dart';
 import 'package:far_away_flutter/bean/user_id_list_bean.dart';
+import 'package:far_away_flutter/bean/user_info_edit_bean.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
@@ -132,7 +133,8 @@ class ApiMethodUtil {
         options: Options(headers: {"Authorization": token}));
   }
 
-  static Future<dynamic> getUserInfoById({@required String token, @required String userId}) {
+  static Future<dynamic> getUserInfoById(
+      {@required String token, @required String userId}) {
     return DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/user/info/$userId",
         options: Options(headers: {"Authorization": token}));
@@ -185,8 +187,8 @@ class ApiMethodUtil {
 
   static Future<dynamic> recruitThumbChange(
       {@required String token,
-        @required bool thumb,
-        @required String recruitId}) {
+      @required bool thumb,
+      @required String recruitId}) {
     return DioFactory.getDioClient().post(
       ApiProperties.HOST_BASE_URL + "/recruit/thumb",
       data: {"dynamicId": recruitId, "thumb": thumb},
@@ -262,8 +264,7 @@ class ApiMethodUtil {
       {@required List<String> userIds}) {
     return DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/user/getSimpleUserInfo",
-        data: UserIdListBean(userIdList: userIds).toJson()
-    );
+        data: UserIdListBean(userIdList: userIds).toJson());
   }
 
   static Future<dynamic> postRecruit(
@@ -271,14 +272,13 @@ class ApiMethodUtil {
     return DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/recruit",
         options: Options(headers: {"Authorization": token}),
-        data: recruitPostBean.toJson()
-    );
+        data: recruitPostBean.toJson());
   }
 
   static Future<dynamic> getRecruitInfoList(
       {@required int timestamp,
-        @required int currentPage,
-        @required String token}) {
+      @required int currentPage,
+      @required String token}) {
     return DioFactory.getDioClient().get(
       ApiProperties.HOST_BASE_URL + "/recruit/list/$timestamp/$currentPage",
       options: Options(headers: {"Authorization": token}),
@@ -296,13 +296,12 @@ class ApiMethodUtil {
   static Future<dynamic> followChange(
       {@required String token, @required String targetUserId}) {
     return DioFactory.getDioClient().post(
-        ApiProperties.HOST_BASE_URL + "/follow/change/$targetUserId",
-        options: Options(headers: {"Authorization": token}),
+      ApiProperties.HOST_BASE_URL + "/follow/change/$targetUserId",
+      options: Options(headers: {"Authorization": token}),
     );
   }
 
-  static Future<dynamic> getFollowList(
-      {@required String token}) {
+  static Future<dynamic> getFollowList({@required String token}) {
     return DioFactory.getDioClient().get(
       ApiProperties.HOST_BASE_URL + "/follow/follow_list",
       options: Options(headers: {"Authorization": token}),
@@ -333,12 +332,47 @@ class ApiMethodUtil {
     );
   }
 
-  static Future<dynamic> getMyThumbs(
-      {@required String token}) {
+  static Future<dynamic> getMyThumbs({@required String token}) {
     return DioFactory.getDioClient().get(
       ApiProperties.HOST_BASE_URL + "/user_service/thumbs",
       options: Options(headers: {"Authorization": token}),
     );
   }
 
+  static Future<dynamic> editUserInfo({
+    @required String token,
+    @required String userId,
+    String userName,
+    String location,
+    String school,
+    String major,
+    String industry,
+    int emotionState,
+    int birthday,
+    String constellation,
+    String signature,
+    String avatar,
+    String cover,
+    int gender
+  }) {
+    UserInfoEditBean userInfoEditBean = UserInfoEditBean();
+    userInfoEditBean.userName = userName;
+    userInfoEditBean.signature = signature;
+    userInfoEditBean.location = location;
+    userInfoEditBean.school = school;
+    userInfoEditBean.major = major;
+    userInfoEditBean.industry = industry;
+    userInfoEditBean.emotionState = emotionState;
+    userInfoEditBean.birthday = birthday;
+    userInfoEditBean.constellation = constellation;
+    userInfoEditBean.avatar = avatar;
+    userInfoEditBean.cover = cover;
+    userInfoEditBean.gender = gender;
+
+    return DioFactory.getDioClient().post(
+        ApiProperties.HOST_BASE_URL + "/user_info/edit_info",
+        options: Options(headers: {"Authorization": token}),
+        data: userInfoEditBean.toJson(),
+    );
+  }
 }

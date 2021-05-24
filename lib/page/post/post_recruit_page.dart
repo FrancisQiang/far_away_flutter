@@ -30,25 +30,27 @@ import 'package:city_pickers/city_pickers.dart';
 import 'package:quill_delta/quill_delta.dart';
 
 class PostRecruitPage extends StatelessWidget {
-
   postRecruitInfo(BuildContext context, PostRecruitProvider provider) async {
     print('title: ${provider.titleController.text}');
-    print('content: ${convert.jsonEncode(provider.markdownController.document.toJson())}');
+    print(
+        'content: ${convert.jsonEncode(provider.markdownController.document.toJson())}');
     print('cover: ${provider.cover}');
     print('location: ${provider.locationDetail}');
     RecruitPostBean recruitPostBean = RecruitPostBean(
         title: provider.titleController.text,
-        content: convert.jsonEncode(provider.markdownController.document.toJson()),
+        content:
+            convert.jsonEncode(provider.markdownController.document.toJson()),
         cover: provider.cover,
-        location: provider.locationDetail
-    );
+        location: provider.locationDetail);
     Navigator.pop(context);
     ToastUtil.showNoticeToast("发布中请稍后");
     provider.titleController.clear();
     provider.locationDetail = null;
     provider.cover = null;
     provider.refresh();
-    Response postResponse = await ApiMethodUtil.postRecruit(token: ProviderUtil.globalInfoProvider.jwt, recruitPostBean: recruitPostBean);
+    Response postResponse = await ApiMethodUtil.postRecruit(
+        token: ProviderUtil.globalInfoProvider.jwt,
+        recruitPostBean: recruitPostBean);
     ResponseBean postResponseBean = ResponseBean.fromJson(postResponse.data);
     if (postResponseBean.isSuccess()) {
       ToastUtil.showSuccessToast("发布成功");
@@ -60,137 +62,146 @@ class PostRecruitPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          toolbarHeight: ScreenUtil().setHeight(80),
-          brightness: Brightness.light,
-          leading: RaisedButton(
-              elevation: 0,
-              color: Colors.white,
-              onPressed: () => Navigator.pop(context),
-              child: Icon(FontAwesomeIcons.angleLeft)),
-          title: Text(
-            '招义工',
-            style: TextStyle(
-                fontSize: ScreenUtil().setSp(35),
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5),
-          ),
-          actions: [
-            Consumer<PostRecruitProvider>(
-              builder: (context, postRecruitProvider, child) {
-                return Container(
-                  margin: EdgeInsets.only(
-                    top: 2,
-                    bottom: 2,
-                    right: ScreenUtil().setWidth(15),
-                  ),
-                  width: ScreenUtil().setWidth(160),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  child: RaisedButton(
-                    disabledColor: Colors.orangeAccent[100],
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    color: Colors.orangeAccent,
-                    child: Text(
-                      '发布',
-                      style: TextStyle(
-                          fontSize: ScreenUtil().setSp(22),
-                          fontWeight: FontWeight.w600,
-                          color: postRecruitProvider.postEnable()
-                              ? Colors.black
-                              : Colors.black38,
-                          letterSpacing: 2),
-                    ),
-                    onPressed: postRecruitProvider.postEnable() ? () {
-                      postRecruitInfo(context, postRecruitProvider);
-                    } : null,
-                  ),
-                );
-              },
-            )
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        toolbarHeight: ScreenUtil().setHeight(80),
+        brightness: Brightness.light,
+        leading: RaisedButton(
+            elevation: 0,
+            color: Colors.white,
+            onPressed: () => Navigator.pop(context),
+            child: Icon(FontAwesomeIcons.angleLeft)),
+        title: Text(
+          '招义工',
+          style: TextStyle(
+              fontSize: ScreenUtil().setSp(35),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5),
         ),
-        body: ScrollConfiguration(
-            behavior: OverScrollBehavior(),
-            child: AbsorbPointer(
-              absorbing: false,
-              child: Container(
-                child: ZefyrScaffold(
-                  child: Consumer<PostRecruitProvider>(
-                    builder: (context, postRecruitProvider, child) {
-                      return ZefyrEditor(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(30),
-                          vertical: ScreenUtil().setHeight(20),
-                        ),
-                        controller: postRecruitProvider.markdownController,
-                        focusNode: postRecruitProvider.markdownFocusNode,
-                        imageDelegate: MarkdownImageDelegate(),
-                        toolbarDelegate: MarkdownToolbarDelegate(),
-                        customAboveWidget: Container(
-                            child: Column(
-                              children: [
-                                Consumer<PostRecruitProvider>(
-                                  builder: (context, postRecruitProvider, child) {
-                                    return TextField(
-                                      minLines: 1,
-                                      maxLines: 2,
-                                      keyboardType: TextInputType.multiline,
-                                      controller: postRecruitProvider.titleController,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: ScreenUtil().setSp(35),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      decoration: InputDecoration(
-                                        hintText: '请输入一个完整的标题',
-                                        hintStyle: TextStyle(
-                                          color: Colors.black12,
-                                          fontSize: ScreenUtil().setSp(35),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.black12, width: 1.5)),
-                                        focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.black12, width: 1.5)),
-                                        border: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.black12, width: 1.5)),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Consumer<PostRecruitProvider>(
-                                  builder: (context, postRecruitProvider, child) {
-                                    if (postRecruitProvider.cover == null) {
-                                      return Container();
-                                    }
-                                    return Container(
-                                        margin: EdgeInsets.only(top: 20),
-                                        alignment: Alignment.center,
-                                        child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(10),
-                                            child: Container(
-                                              child: CachedNetworkImage(
-                                                height: ScreenUtil().setHeight(250),
-                                                width: double.infinity,
-                                                imageUrl: postRecruitProvider.cover,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )));
-                                  },
-                                ),
-                              ],
-                            )),
-                      );
-                    },
-                  ),
+        actions: [
+          Consumer<PostRecruitProvider>(
+            builder: (context, postRecruitProvider, child) {
+              return Container(
+                margin: EdgeInsets.only(
+                  top: 2,
+                  bottom: 2,
+                  right: ScreenUtil().setWidth(15),
                 ),
+                width: ScreenUtil().setWidth(160),
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                child: RaisedButton(
+                  disabledColor: Colors.orangeAccent[100],
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  color: Colors.orangeAccent,
+                  child: Text(
+                    '发布',
+                    style: TextStyle(
+                        fontSize: ScreenUtil().setSp(22),
+                        fontWeight: FontWeight.w600,
+                        color: postRecruitProvider.postEnable()
+                            ? Colors.black
+                            : Colors.black38,
+                        letterSpacing: 2),
+                  ),
+                  onPressed: postRecruitProvider.postEnable()
+                      ? () {
+                          postRecruitInfo(context, postRecruitProvider);
+                        }
+                      : null,
+                ),
+              );
+            },
+          )
+        ],
+      ),
+      body: ScrollConfiguration(
+        behavior: OverScrollBehavior(),
+        child: AbsorbPointer(
+          absorbing: false,
+          child: Container(
+            child: ZefyrScaffold(
+              child: Consumer<PostRecruitProvider>(
+                builder: (context, postRecruitProvider, child) {
+                  return ZefyrEditor(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ScreenUtil().setWidth(30),
+                      vertical: ScreenUtil().setHeight(20),
+                    ),
+                    controller: postRecruitProvider.markdownController,
+                    focusNode: postRecruitProvider.markdownFocusNode,
+                    imageDelegate: MarkdownImageDelegate(),
+                    toolbarDelegate: MarkdownToolbarDelegate(),
+                    customAboveWidget: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setWidth(30),
+                      ),
+                        child: Column(
+                      children: [
+                        Consumer<PostRecruitProvider>(
+                          builder: (context, postRecruitProvider, child) {
+                            return TextField(
+                              minLines: 1,
+                              maxLines: 2,
+                              keyboardType: TextInputType.multiline,
+                              controller: postRecruitProvider.titleController,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: ScreenUtil().setSp(35),
+                                fontWeight: FontWeight.bold,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: '请输入一个完整的标题',
+                                hintStyle: TextStyle(
+                                  color: Colors.black12,
+                                  fontSize: ScreenUtil().setSp(35),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black12, width: 1.5)),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black12, width: 1.5)),
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black12, width: 1.5)),
+                              ),
+                            );
+                          },
+                        ),
+                        Consumer<PostRecruitProvider>(
+                          builder: (context, postRecruitProvider, child) {
+                            if (postRecruitProvider.cover == null) {
+                              return Container();
+                            }
+                            return Container(
+                              margin: EdgeInsets.only(top: 20),
+                              alignment: Alignment.center,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  child: CachedNetworkImage(
+                                    height: ScreenUtil().setHeight(250),
+                                    width: double.infinity,
+                                    imageUrl: postRecruitProvider.cover,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    )),
+                  );
+                },
               ),
-            )));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -256,25 +267,22 @@ class _MarkdownImageState extends State<MarkdownImage> {
   Widget build(BuildContext context) {
     if (scale != null) {
       return Container(
-        constraints: BoxConstraints(
-            maxWidth: ScreenUtil().setWidth(720),
-            maxHeight: ScreenUtil().setWidth(720) * scale),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: CachedNetworkImage(
-            imageUrl: widget.imageUrl,
-            fit: BoxFit.contain,
-          ),
-        )
-      );
+          constraints: BoxConstraints(
+              maxWidth: ScreenUtil().setWidth(720),
+              maxHeight: ScreenUtil().setWidth(720) * scale),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: CachedNetworkImage(
+              imageUrl: widget.imageUrl,
+              fit: BoxFit.contain,
+            ),
+          ));
     } else {
       return Container(
         constraints: BoxConstraints(
             maxWidth: ScreenUtil().setWidth(720),
             maxHeight: ScreenUtil().setWidth(720) * 9 / 16),
-        child: Center(
-            child: ImageHolder()
-        ),
+        child: Center(child: ImageHolder()),
       );
     }
   }
@@ -283,8 +291,8 @@ class _MarkdownImageState extends State<MarkdownImage> {
 class MarkdownToolbarDelegate implements ZefyrToolbarDelegate {
   static const kDefaultButtonIcons = {
     ZefyrToolbarAction.galleryImage: Icons.photo,
-    ZefyrToolbarAction.coverImage: Icons.photo_outlined,
-    ZefyrToolbarAction.location: Icons.location_on,
+    ZefyrToolbarAction.coverImage: Icons.add_photo_alternate,
+    ZefyrToolbarAction.location: Icons.add_location_alt,
     ZefyrToolbarAction.hideKeyboard: Icons.keyboard_hide,
   };
 
@@ -302,7 +310,8 @@ class MarkdownToolbarDelegate implements ZefyrToolbarDelegate {
                 ? "321171"
                 : ProviderUtil.postRecruitProvider.locationCode,
           );
-          ProviderUtil.postRecruitProvider.locationDetail = result.provinceName + "·" + result.cityName;
+          ProviderUtil.postRecruitProvider.locationDetail =
+              result.provinceName + "·" + result.cityName;
           ProviderUtil.postRecruitProvider.locationCode = result.areaId;
           ProviderUtil.postRecruitProvider.refresh();
         };

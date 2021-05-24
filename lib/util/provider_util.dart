@@ -15,6 +15,7 @@ import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/post/post_together_page.dart';
+import 'package:far_away_flutter/page/profile/profile_edit_page.dart';
 import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
 import 'package:far_away_flutter/page/user/user_info_page.dart';
 import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
@@ -266,6 +267,14 @@ class ProviderUtil {
       child: MyThumbsPage(),
     );
   }
+
+  static Widget getProfileEditPage() {
+    return MultiProvider(
+      providers: [ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider)],
+      child: ProfileEditPage(),
+    );
+  }
+
 
 
 

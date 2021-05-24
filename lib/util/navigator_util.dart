@@ -149,4 +149,12 @@ class NavigatorUtil {
     );
   }
 
+  static void toProfileEditPage(BuildContext context) {
+    Application.router.navigateTo(
+        context,
+        Routes.profileEdit,
+        transition: TransitionType.inFromRight
+    );
+  }
+
 }

@@ -127,7 +127,10 @@ var userInfoHandler = Handler(
 
 var myThumbsHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      return ProviderUtil.getMyThumbsPage();
-    });
+  return ProviderUtil.getMyThumbsPage();
+});
 
-
+var profileEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getProfileEditPage();
+});

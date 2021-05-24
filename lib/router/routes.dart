@@ -20,6 +20,7 @@ class Routes {
   static String privateChat = "/privateChat";
   static String userInfo = "/userInfo/:userId";
   static String myThumbs = "/myThumbs";
+  static String profileEdit = "/profileEdit";
 
   static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(
@@ -44,5 +45,6 @@ class Routes {
     router.define(privateChat, handler: privateChatHandler);
     router.define(userInfo, handler: userInfoHandler);
     router.define(myThumbs, handler: myThumbsHandler);
+    router.define(profileEdit, handler: profileEditHandler);
   }
 }

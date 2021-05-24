@@ -41,20 +41,20 @@ class _AnimatedLoginButtonState extends State<AnimatedLoginButton>
 
   Animation _buttonLengthAnimation;
 
-  @override
-  void initState() {
-    super.initState();
-    widget?.controller?._setState(this);
-    _animationController =
-        AnimationController(vsync: this, duration: widget.duration);
-    _buttonLengthAnimation = Tween<double>(
-        begin: widget.originLength, end: widget.criticalLength)
-        .animate(
-        CurvedAnimation(parent: _animationController, curve: widget.curve))
-      ..addListener(() {
-        setState(() {});
-      });
-  }
+@override
+void initState() {
+  super.initState();
+  widget?.controller?._setState(this);
+  _animationController =
+      AnimationController(vsync: this, duration: widget.duration);
+  _buttonLengthAnimation = Tween<double>(
+      begin: widget.originLength, end: widget.criticalLength)
+      .animate(
+      CurvedAnimation(parent: _animationController, curve: widget.curve))
+    ..addListener(() {
+      setState(() {});
+    });
+}
 
   @override
   void dispose() {

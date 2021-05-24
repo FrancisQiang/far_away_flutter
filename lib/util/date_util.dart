@@ -1,7 +1,6 @@
 import 'package:date_format/date_format.dart';
 
 class DateUtil {
-
   static String getTimeString(DateTime dateTime) {
     DateTime currentDate = DateTime.now();
     String result = '';
@@ -56,7 +55,8 @@ class DateUtil {
 
   static String getBirthdayLabel(DateTime dateTime) {
     var yearString = dateTime.year.toString();
-    return yearString[yearString.length - 3] + (int.parse(yearString[yearString.length - 1]) >= 5 ? "5后" : "0后");
+    return yearString[yearString.length - 3] +
+        (int.parse(yearString[yearString.length - 1]) >= 5 ? "5后" : "0后");
   }
 
   static String getFormatTime(int timestamp) {
@@ -84,18 +84,88 @@ class DateUtil {
   }
 
   static String getSimpleDate(int timestamp) {
-    print('time: $timestamp');
     DateTime now = DateTime.now();
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     // 如果是今天
-    if (dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day) {
+    if (dateTime.year == now.year &&
+        dateTime.month == now.month &&
+        dateTime.day == now.day) {
       return '${dateTime.hour}:${dateTime.minute}';
     }
     if (dateTime.year == now.year) {
       return '${dateTime.month}-${dateTime.day}';
     } else {
-      return '${dateTime.year.toString().substring(3,4)}-${dateTime.month}-${dateTime.day}';
+      return '${dateTime.year.toString().substring(3, 4)}-${dateTime.month}-${dateTime.day}';
     }
   }
 
+  static String getConstellation(int timestamp) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    int month = dateTime.month;
+    int day = dateTime.day;
+    switch (month) {
+      case 1:
+        if (day < 21) {
+          return "魔羯座";
+        }
+        return "水瓶座";
+      case 2:
+        if (day < 20) {
+          return "水瓶座";
+        }
+        return "双鱼座";
+      case 3:
+        if (day < 21) {
+          return "双鱼座";
+        }
+        return "白羊座";
+      case 4:
+        if (day < 21) {
+          return "白羊座";
+        }
+        return "金牛座";
+      case 5:
+        if (day < 22) {
+          return "金牛座";
+        }
+        return "双子座";
+      case 6:
+        if (day < 22) {
+          return "双子座";
+        }
+        return "巨蟹座";
+      case 7:
+        if (day < 24) {
+          return "巨蟹座";
+        }
+        return "狮子座";
+      case 8:
+        if (day < 24) {
+          return "狮子座";
+        }
+        return "处女座";
+      case 9:
+        if (day < 24) {
+          return "处女座";
+        }
+        return "天秤座";
+      case 10:
+        if (day < 24) {
+          return "天秤座";
+        }
+        return "天蝎座";
+      case 11:
+        if (day < 23) {
+          return "天蝎座";
+        }
+        return "射手座";
+      case 12:
+        if (day < 23) {
+          return "射手座";
+        }
+        return "摩羯座";
+      default:
+        return "";
+    }
+  }
 }
