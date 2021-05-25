@@ -15,7 +15,11 @@ import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/post/post_together_page.dart';
+import 'package:far_away_flutter/page/profile/emotion_edit_page.dart';
+import 'package:far_away_flutter/page/profile/gender_edit_page.dart';
 import 'package:far_away_flutter/page/profile/profile_edit_page.dart';
+import 'package:far_away_flutter/page/profile/signature_edit_page.dart';
+import 'package:far_away_flutter/page/profile/username_edit_page.dart';
 import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
 import 'package:far_away_flutter/page/user/user_info_page.dart';
 import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
@@ -28,7 +32,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 class ProviderUtil {
-
   static GlobalInfoProvider globalInfoProvider = GlobalInfoProvider();
 
   static DynamicsProvider dynamicsProvider = DynamicsProvider();
@@ -106,7 +109,7 @@ class ProviderUtil {
         ChangeNotifierProvider<CommentChosenProvider>.value(
             value: dynamicCommentChosenProvider),
         ChangeNotifierProvider<DynamicsProvider>.value(
-            value: dynamicsProvider,
+          value: dynamicsProvider,
         ),
         ChangeNotifierProvider<GlobalInfoProvider>.value(
           value: globalInfoProvider,
@@ -230,52 +233,100 @@ class ProviderUtil {
   }
 
   static MultiProvider getDynamicsPage() {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider),
-          ChangeNotifierProvider<DynamicsProvider>.value(value: dynamicsProvider),
-        ],
-        child: DynamicsPage()
-    );
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<GlobalInfoProvider>.value(
+          value: globalInfoProvider),
+      ChangeNotifierProvider<DynamicsProvider>.value(value: dynamicsProvider),
+    ], child: DynamicsPage());
   }
 
   static MultiProvider getTogetherPage() {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider),
-        ],
-        child: TogetherInfoPage()
-    );
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<GlobalInfoProvider>.value(
+          value: globalInfoProvider),
+    ], child: TogetherInfoPage());
   }
-
 
   static Widget getUserInfoPage({
     @required String userId,
   }) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider)],
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
       child: UserInfoPage(
         userId: userId,
       ),
     );
   }
 
-
   static Widget getMyThumbsPage() {
     return MultiProvider(
-      providers: [ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider)],
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
       child: MyThumbsPage(),
     );
   }
 
   static Widget getProfileEditPage() {
     return MultiProvider(
-      providers: [ChangeNotifierProvider<GlobalInfoProvider>.value(value: globalInfoProvider)],
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
       child: ProfileEditPage(),
     );
   }
 
+  static Widget getUsernameEditPage({@required String username}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: UsernameEditPage(
+        username: username,
+      ),
+    );
+  }
 
+  static Widget getSignatureEditPage({@required String signature}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: SignatureEditPage(
+        signature: signature,
+      ),
+    );
+  }
 
+  static Widget getGenderEditPage({@required int gender}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: GenderEditPage(
+        gender: gender,
+      ),
+    );
+  }
+
+  static Widget getEmotionEditPage({@required int emotionStatus}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: EmotionEditPage(
+        emotionStatus: emotionStatus,
+      ),
+    );
+  }
 
 }

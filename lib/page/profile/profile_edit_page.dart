@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:far_away_flutter/constant/profile.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/date_util.dart';
+import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
 
 class ProfileEditPage extends StatefulWidget {
   @override
@@ -13,45 +14,10 @@ class ProfileEditPage extends StatefulWidget {
 }
 
 class _ProfileEditPageState extends State<ProfileEditPage> {
-
-
   double coverHeight = ScreenUtil().setHeight(250);
-
-  String parseGender(int gender) {
-    switch (gender) {
-      case 0:
-        return "保密";
-      case 1:
-        return "男";
-      case 2:
-        return "女";
-      default:
-        return "";
-    }
-  }
 
   String parseBirthday(int birthday) {
     return "${DateUtil.getFormatDate(birthday)} ${DateUtil.getConstellation(birthday)}";
-  }
-
-
-  String parseEmotionStatus(int emotionStatus) {
-    switch (emotionStatus) {
-      case 0:
-        return "保密";
-      case 1:
-        return "母胎solo";
-      case 2:
-        return "等TA出现";
-      case 3:
-        return "自由可撩";
-      case 4:
-        return "恋爱中";
-      case 5:
-        return "一言难尽";
-      default:
-        return "";
-    }
   }
 
   @override
@@ -74,7 +40,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       ),
       body: Consumer<GlobalInfoProvider>(
         builder: (context, globalInfoProvider, child) {
-          return Column(
+          return ListView(
+            physics: BouncingScrollPhysics(),
             children: [
               Stack(
                 children: [
@@ -106,8 +73,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             child: CachedNetworkImage(
                               width: ScreenUtil().setWidth(120),
                               height: ScreenUtil().setWidth(120),
-                              imageUrl:
-                              globalInfoProvider.userInfoBean.avatar,
+                              imageUrl: globalInfoProvider.userInfoBean.avatar,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -117,8 +83,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     right: 10,
                     bottom: 8,
                     child: Container(
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                       decoration: BoxDecoration(
                         color: Colors.black26,
                         borderRadius: BorderRadius.circular(5),
@@ -154,7 +119,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 title: '昵称',
                 info: globalInfoProvider.userInfoBean.userName,
                 extraInfo: '2-15个字符，30天内限修改一次',
-                onPressed: () {},
+                onPressed: () {
+                  NavigatorUtil.toUsernameEditPage(context, username: globalInfoProvider.userInfoBean.userName);
+                },
               ),
               Divider(
                 height: 1.2,
@@ -164,7 +131,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 title: '签名',
                 info: globalInfoProvider.userInfoBean.signature,
                 hintInfo: '介绍一下你自己',
-                onPressed: () {},
+                onPressed: () {
+                  NavigatorUtil.toSignatureEditPage(
+                    context,
+                    signature: globalInfoProvider.userInfoBean.signature,
+                  );
+                },
               ),
               Divider(
                 height: 5,
@@ -172,8 +144,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               ProfileEditItem(
                 title: '性别',
-                info: parseGender(globalInfoProvider.userInfoBean.gender),
-                onPressed: () {},
+                info: GenderConst.descriptionMap[globalInfoProvider.userInfoBean.gender],
+                onPressed: () {
+                  NavigatorUtil.toGenderEditPage(
+                    context,
+                    gender: globalInfoProvider.userInfoBean.gender,
+                  );
+                },
               ),
               Divider(
                 height: 1.2,
@@ -181,9 +158,14 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               ProfileEditItem(
                 title: '情感',
-                info: parseGender(globalInfoProvider.userInfoBean.gender),
+                info: EmotionStatusConst.descriptionMap[globalInfoProvider.userInfoBean.emotionState],
                 hintInfo: "你的情感状态",
-                onPressed: () {},
+                onPressed: () {
+                  NavigatorUtil.toEmotionEditPage(
+                    context,
+                    emotionStatus: globalInfoProvider.userInfoBean.emotionState,
+                  );
+                },
               ),
               Divider(
                 height: 1.2,
@@ -263,7 +245,9 @@ class ProfileEditItem extends StatelessWidget {
         highlightColor: Color.fromRGBO(240, 243, 245, 1),
         padding: EdgeInsets.zero,
         color: Colors.white,
-        onPressed: () {},
+        onPressed: () {
+          onPressed();
+        },
         child: Container(
           alignment: Alignment.center,
           padding: EdgeInsets.symmetric(

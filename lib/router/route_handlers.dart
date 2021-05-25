@@ -134,3 +134,23 @@ var profileEditHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return ProviderUtil.getProfileEditPage();
 });
+
+var usernameEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getUsernameEditPage(username: params['username'][0]);
+});
+
+var signatureEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getSignatureEditPage(signature: params["signature"][0]);
+});
+
+var genderEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getGenderEditPage(gender: int.parse(params["gender"][0]));
+});
+
+var emotionEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getEmotionEditPage(emotionStatus: int.parse(params["emotionStatus"][0]));
+});

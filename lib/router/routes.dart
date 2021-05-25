@@ -21,6 +21,10 @@ class Routes {
   static String userInfo = "/userInfo/:userId";
   static String myThumbs = "/myThumbs";
   static String profileEdit = "/profileEdit";
+  static String usernameEdit = "/usernameEdit/:username";
+  static String signatureEdit = "/signatureEdit/:signature";
+  static String genderEdit = "/genderEdit/:gender";
+  static String emotionEdit = "/emotionEdit/:emotionStatus";
 
   static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(
@@ -46,5 +50,9 @@ class Routes {
     router.define(userInfo, handler: userInfoHandler);
     router.define(myThumbs, handler: myThumbsHandler);
     router.define(profileEdit, handler: profileEditHandler);
+    router.define(usernameEdit, handler: usernameEditHandler);
+    router.define(signatureEdit, handler: signatureEditHandler);
+    router.define(genderEdit, handler: genderEditHandler);
+    router.define(emotionEdit, handler: emotionEditHandler);
   }
 }

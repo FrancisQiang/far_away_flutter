@@ -341,7 +341,6 @@ class ApiMethodUtil {
 
   static Future<dynamic> editUserInfo({
     @required String token,
-    @required String userId,
     String userName,
     String location,
     String school,
@@ -370,7 +369,7 @@ class ApiMethodUtil {
     userInfoEditBean.gender = gender;
 
     return DioFactory.getDioClient().post(
-        ApiProperties.HOST_BASE_URL + "/user_info/edit_info",
+        ApiProperties.HOST_BASE_URL + "/user/info/edit_info",
         options: Options(headers: {"Authorization": token}),
         data: userInfoEditBean.toJson(),
     );

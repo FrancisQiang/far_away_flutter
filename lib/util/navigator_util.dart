@@ -157,4 +157,38 @@ class NavigatorUtil {
     );
   }
 
+  static void toUsernameEditPage(BuildContext context, {@required String username}) {
+    Application.router.navigateTo(
+        context,
+        "/usernameEdit/$username",
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toSignatureEditPage(BuildContext context, {@required String signature}) {
+    Application.router.navigateTo(
+        context,
+        "/signatureEdit/$signature",
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toGenderEditPage(BuildContext context, {@required int gender}) {
+    Application.router.navigateTo(
+        context,
+        "/genderEdit/$gender",
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toEmotionEditPage(BuildContext context, {@required int emotionStatus}) {
+    Application.router.navigateTo(
+        context,
+        "/emotionEdit/$emotionStatus",
+        transition: TransitionType.inFromRight
+    );
+  }
+
+
+
 }
