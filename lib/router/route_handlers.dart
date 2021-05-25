@@ -5,6 +5,7 @@ import 'package:far_away_flutter/page/photo/asset_view_page.dart';
 import 'package:far_away_flutter/page/photo/media_view_page.dart';
 import 'package:far_away_flutter/page/recurit/comment_input_bottom_page.dart';
 import 'package:far_away_flutter/page/search/search_page.dart';
+import 'package:far_away_flutter/param/image_crop_param.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/param/recruit_param.dart';
 import 'package:far_away_flutter/param/together_detail_param.dart';
@@ -152,5 +153,18 @@ var genderEditHandler = Handler(
 
 var emotionEditHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  return ProviderUtil.getEmotionEditPage(emotionStatus: int.parse(params["emotionStatus"][0]));
+  return ProviderUtil.getEmotionEditPage(
+      emotionStatus: int.parse(params["emotionStatus"][0]));
+});
+
+var birthdayEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getBirthdayEditPage(
+      birthday: int.parse(params["birthday"][0]));
+});
+
+var imageCropHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  ImageCropParam arguments = context.settings.arguments as ImageCropParam;
+  return ProviderUtil.getImageCropPage(url: arguments.url, confirmCallback: arguments.confirmCallback, aspectRatio: arguments.aspectRatio);
 });

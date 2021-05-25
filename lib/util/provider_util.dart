@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
@@ -15,8 +17,10 @@ import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_dynamic_page.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/page/post/post_together_page.dart';
+import 'package:far_away_flutter/page/profile/birthday_edit_page.dart';
 import 'package:far_away_flutter/page/profile/emotion_edit_page.dart';
 import 'package:far_away_flutter/page/profile/gender_edit_page.dart';
+import 'package:far_away_flutter/page/profile/image_crop_page.dart';
 import 'package:far_away_flutter/page/profile/profile_edit_page.dart';
 import 'package:far_away_flutter/page/profile/signature_edit_page.dart';
 import 'package:far_away_flutter/page/profile/username_edit_page.dart';
@@ -329,4 +333,29 @@ class ProviderUtil {
     );
   }
 
+  static Widget getBirthdayEditPage({@required int birthday}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: BirthdayEditPage(
+        birthday: birthday,
+      ),
+    );
+  }
+
+  static Widget getImageCropPage(
+      {@required String url,
+      @required Function(File file) confirmCallback,
+      double aspectRatio}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: ImageCropPage(
+          url: url, confirmCallback: confirmCallback, aspectRatio: aspectRatio),
+    );
+  }
 }

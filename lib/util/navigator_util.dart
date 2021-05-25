@@ -1,3 +1,4 @@
+import 'package:far_away_flutter/param/image_crop_param.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/param/recruit_param.dart';
 import 'package:far_away_flutter/param/together_detail_param.dart';
@@ -185,6 +186,25 @@ class NavigatorUtil {
     Application.router.navigateTo(
         context,
         "/emotionEdit/$emotionStatus",
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toBirthdayEditPage(BuildContext context, {@required int birthday}) {
+    Application.router.navigateTo(
+        context,
+        "/birthdayEdit/$birthday",
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toImageCropPage(BuildContext context, {@required String url, @required Function confirmCallback, double aspectRatio}) {
+    Application.router.navigateTo(
+        context,
+        Routes.imageCrop,
+        routeSettings: RouteSettings(
+            arguments: ImageCropParam(url: url, confirmCallback: confirmCallback, aspectRatio: aspectRatio)
+        ),
         transition: TransitionType.inFromRight
     );
   }

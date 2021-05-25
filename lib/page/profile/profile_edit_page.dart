@@ -1,12 +1,26 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:city_pickers/city_pickers.dart';
+import 'package:city_pickers/modal/result.dart';
+import 'package:dio/dio.dart';
+import 'package:far_away_flutter/bean/response_bean.dart';
+import 'package:far_away_flutter/bean/upload_response_bean.dart';
+import 'package:far_away_flutter/bean/upload_token_bean.dart';
 import 'package:far_away_flutter/constant/profile.dart';
+import 'package:far_away_flutter/properties/api_properties.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
+import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
+import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_crop/image_crop.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class ProfileEditPage extends StatefulWidget {
   @override
@@ -56,59 +70,141 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   Positioned.fill(
                     child: Container(
                         alignment: Alignment.center,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            boxShadow: [
-                              BoxShadow(color: Colors.black, blurRadius: 10)
-                            ],
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1.5,
-                              style: BorderStyle.solid,
-                              color: Colors.white,
+                        child: GestureDetector(
+                          onTap: () async {
+                            final ImagePicker _picker = ImagePicker();
+                            final PickedFile file = await _picker.getImage(
+                                source: ImageSource.gallery);
+                            if (file == null) return null;
+                            NavigatorUtil.toImageCropPage(context,
+                                url: file.path,
+                                confirmCallback: (File cropImage) async {
+                              Response<dynamic> response =
+                                  await ApiMethodUtil.getUploadToken(
+                                      userToken: globalInfoProvider.jwt);
+                              ResponseBean responseBean =
+                                  ResponseBean.fromJson(response.data);
+                              UploadTokenBean uploadTokenBean =
+                                  UploadTokenBean.fromJson(responseBean.data);
+                              Response<dynamic> uploadResult =
+                                  await ApiMethodUtil.uploadPicture(
+                                      token: uploadTokenBean.token,
+                                      file: cropImage,
+                                      filename: '${Uuid().v4()}');
+                              UploadResponseBean uploadResponseBean =
+                                  UploadResponseBean.fromJson(
+                                      uploadResult.data);
+                              response = await ApiMethodUtil.editUserInfo(
+                                  token: globalInfoProvider.jwt,
+                                  avatar: ApiProperties.ASSET_PREFIX_URL +
+                                      uploadResponseBean.key);
+                              responseBean =
+                                  ResponseBean.fromJson(response.data);
+                              if (responseBean.isSuccess()) {
+                                ToastUtil.showSuccessToast("修改成功");
+                                globalInfoProvider.userInfoBean.avatar =
+                                    ApiProperties.ASSET_PREFIX_URL +
+                                        uploadResponseBean.key;
+                                globalInfoProvider.refresh();
+                              } else {
+                                ToastUtil.showErrorToast("修改失败");
+                              }
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(color: Colors.black, blurRadius: 10)
+                              ],
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 1.5,
+                                style: BorderStyle.solid,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              width: ScreenUtil().setWidth(120),
-                              height: ScreenUtil().setWidth(120),
-                              imageUrl: globalInfoProvider.userInfoBean.avatar,
-                              fit: BoxFit.cover,
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                width: ScreenUtil().setWidth(120),
+                                height: ScreenUtil().setWidth(120),
+                                imageUrl:
+                                    globalInfoProvider.userInfoBean.avatar,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         )),
                   ),
                   Positioned(
-                    right: 10,
-                    bottom: 8,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.black26,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            child: Icon(
-                              Icons.camera_alt_outlined,
-                              color: Colors.white,
-                              size: ScreenUtil().setSp(22),
-                            ),
+                      right: 10,
+                      bottom: 8,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final ImagePicker _picker = ImagePicker();
+                          final PickedFile file = await _picker.getImage(
+                              source: ImageSource.gallery);
+                          if (file == null) return null;
+                          NavigatorUtil.toImageCropPage(context,
+                              url: file.path, aspectRatio: 16.0 / 9.0,
+                              confirmCallback: (File cropImage) async {
+                            Response<dynamic> response =
+                                await ApiMethodUtil.getUploadToken(
+                                    userToken: globalInfoProvider.jwt);
+                            ResponseBean responseBean =
+                                ResponseBean.fromJson(response.data);
+                            UploadTokenBean uploadTokenBean =
+                                UploadTokenBean.fromJson(responseBean.data);
+                            Response<dynamic> uploadResult =
+                                await ApiMethodUtil.uploadPicture(
+                                    token: uploadTokenBean.token,
+                                    file: cropImage,
+                                    filename: '${Uuid().v4()}');
+                            UploadResponseBean uploadResponseBean =
+                                UploadResponseBean.fromJson(uploadResult.data);
+                            response = await ApiMethodUtil.editUserInfo(
+                                token: globalInfoProvider.jwt,
+                                cover: ApiProperties.ASSET_PREFIX_URL +
+                                    uploadResponseBean.key);
+                            responseBean = ResponseBean.fromJson(response.data);
+                            if (responseBean.isSuccess()) {
+                              ToastUtil.showSuccessToast("修改成功");
+                              globalInfoProvider.userInfoBean.cover =
+                                  ApiProperties.ASSET_PREFIX_URL +
+                                      uploadResponseBean.key;
+                              globalInfoProvider.refresh();
+                            } else {
+                              ToastUtil.showErrorToast("修改失败");
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          Container(
-                            child: Text(
-                              '更换封面',
-                              style: TextStyle(
+                          child: Row(
+                            children: [
+                              Container(
+                                child: Icon(
+                                  Icons.camera_alt_outlined,
                                   color: Colors.white,
-                                  fontSize: ScreenUtil().setSp(22)),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
+                                  size: ScreenUtil().setSp(22),
+                                ),
+                              ),
+                              Container(
+                                child: Text(
+                                  '更换封面',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: ScreenUtil().setSp(22)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ))
                 ],
               ),
               Divider(
@@ -120,7 +216,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 info: globalInfoProvider.userInfoBean.userName,
                 extraInfo: '2-15个字符，30天内限修改一次',
                 onPressed: () {
-                  NavigatorUtil.toUsernameEditPage(context, username: globalInfoProvider.userInfoBean.userName);
+                  NavigatorUtil.toUsernameEditPage(context,
+                      username: globalInfoProvider.userInfoBean.userName);
                 },
               ),
               Divider(
@@ -144,7 +241,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               ProfileEditItem(
                 title: '性别',
-                info: GenderConst.descriptionMap[globalInfoProvider.userInfoBean.gender],
+                info: GenderConst
+                    .descriptionMap[globalInfoProvider.userInfoBean.gender],
                 onPressed: () {
                   NavigatorUtil.toGenderEditPage(
                     context,
@@ -158,7 +256,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               ProfileEditItem(
                 title: '情感',
-                info: EmotionStatusConst.descriptionMap[globalInfoProvider.userInfoBean.emotionState],
+                info: EmotionStatusConst.descriptionMap[
+                    globalInfoProvider.userInfoBean.emotionState],
                 hintInfo: "你的情感状态",
                 onPressed: () {
                   NavigatorUtil.toEmotionEditPage(
@@ -175,7 +274,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 title: '生日',
                 info: parseBirthday(globalInfoProvider.userInfoBean.birthday),
                 extraInfo: "为你保密，只展示星座",
-                onPressed: () {},
+                onPressed: () {
+                  NavigatorUtil.toBirthdayEditPage(
+                    context,
+                    birthday: globalInfoProvider.userInfoBean.birthday,
+                  );
+                },
               ),
               Divider(
                 height: 1.2,
@@ -185,7 +289,34 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 title: '所在地',
                 info: globalInfoProvider.userInfoBean.location,
                 hintInfo: "你在哪儿",
-                onPressed: () {},
+                onPressed: () async {
+                  String originLocation =
+                      globalInfoProvider.userInfoBean.location;
+                  Result result = await CityPickers.showCityPicker(
+                    context: context,
+                    height: ScreenUtil().setHeight(400),
+                    locationCode: "321171",
+                  );
+                  if (result == null) {
+                    return;
+                  }
+                  String location =
+                      "${result.provinceName}·${result.cityName}·${result.areaName}";
+                  globalInfoProvider.userInfoBean.location = location;
+                  globalInfoProvider.refresh();
+                  Response res = await ApiMethodUtil.editUserInfo(
+                    token: globalInfoProvider.jwt,
+                    location: location,
+                  );
+                  ResponseBean responseBean = ResponseBean.fromJson(res.data);
+                  if (responseBean.isSuccess()) {
+                    ToastUtil.showSuccessToast("修改成功");
+                  } else {
+                    ToastUtil.showErrorToast("修改失败");
+                    globalInfoProvider.userInfoBean.location = originLocation;
+                    globalInfoProvider.refresh();
+                  }
+                },
               ),
               Divider(
                 height: 5,
