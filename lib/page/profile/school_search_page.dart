@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/list_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/school_search_bean.dart';
@@ -54,7 +53,6 @@ class _SchoolSearchPageState extends State<SchoolSearchPage> {
                 controller: _searchController,
                 onChanged: (text) async {
                   ResponseBean responseBean  = await ApiMethodUtil.searchSchool(
-                      token: globalInfoProvider.jwt,
                       keyword: _searchController.text);
                   ListBean listBean = ListBean.fromJson(responseBean.data);
                   searchResult.clear();
@@ -65,7 +63,6 @@ class _SchoolSearchPageState extends State<SchoolSearchPage> {
                 },
                 onSubmitted: (text) async {
                   ResponseBean responseBean = await ApiMethodUtil.searchSchool(
-                      token: globalInfoProvider.jwt,
                       keyword: _searchController.text);
                   ListBean listBean = ListBean.fromJson(responseBean.data);
                   searchResult.clear();
@@ -128,7 +125,6 @@ class _SchoolSearchPageState extends State<SchoolSearchPage> {
             return InkWell(
               onTap: () async {
                 ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-                    token: globalInfoProvider.jwt,
                     school: searchResult[index].name);
                 if (responseBean.isSuccess()) {
                   ToastUtil.showSuccessToast("修改成功");

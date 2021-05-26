@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
@@ -58,7 +57,6 @@ class _SignatureEditPageState extends State<SignatureEditPage> {
                 ),
                 onPressed: () async {
                   ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-                      token: globalInfoProvider.jwt,
                       signature: _editingController.text);
                   if (responseBean.isSuccess()) {
                     ToastUtil.showSuccessToast("修改成功");

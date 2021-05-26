@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/init_refresh_widget.dart';
@@ -8,19 +7,17 @@ import 'package:far_away_flutter/page/post/post_choose_widget.dart';
 import 'package:far_away_flutter/page/user/user_center_page.dart';
 import 'package:far_away_flutter/properties/shared_preferences_keys.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
+import 'package:far_away_flutter/util/dio_factory.dart';
 import 'package:far_away_flutter/util/logger_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/sp_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
-import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class MainPage extends StatefulWidget {
   final bool isLogin;
@@ -59,11 +56,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         try {
           // token暂存在内存中
           ProviderUtil.globalInfoProvider.jwt = value;
+          DioFactory.setAuthorization(value);
           // 获取关注列表
           await ProviderUtil.globalInfoProvider.refreshFollowList();
-          print(ProviderUtil.globalInfoProvider.jwt);
           // 更新用户信息
-          ResponseBean response = await ApiMethodUtil.getUserInfo(token: value);
+          ResponseBean response = await ApiMethodUtil.getUserInfo();
           ProviderUtil.globalInfoProvider.userInfoBean =
               UserInfoBean.fromJson(response.data);
           // IM系统登录

@@ -86,7 +86,6 @@ class TogetherDetailWidget extends StatelessWidget {
                       onPressed: () async {
                         ResponseBean responseBean =
                         await ApiMethodUtil.followChange(
-                          token: ProviderUtil.globalInfoProvider.jwt,
                           targetUserId: togetherInfoBean.userId,
                         );
                         FollowStatusBean followStatusBean =
@@ -171,7 +170,6 @@ class TogetherDetailWidget extends StatelessWidget {
                     onPressed: () async {
                       // TODO 跳转到私聊界面
                       ResponseBean responseBean = await ApiMethodUtil.togetherSignUp(
-                          token: ProviderUtil.globalInfoProvider.jwt,
                           id: togetherInfoBean.id);
                       if (ResponseBean.fromJson(responseBean.data).isSuccess()) {
                         togetherInfoBean.signUp = true;

@@ -65,7 +65,6 @@ class TextCommentBottom extends StatelessWidget {
                     String jwt = ProviderUtil.globalInfoProvider.jwt;
                     ResponseBean responseBean =
                     await ApiMethodUtil.postComment(
-                        token: jwt,
                         bizId: commentChosenProvider.targetBizId,
                         toUserId: commentChosenProvider.targetUserId,
                         content: duplicateContent,

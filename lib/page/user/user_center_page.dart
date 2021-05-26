@@ -90,7 +90,7 @@ class _UserCenterPageState extends State<UserCenterPage>
   _getUserInfo(GlobalInfoProvider globalInfoProvider) async {
     // 更新用户信息
     ResponseBean response =
-        await ApiMethodUtil.getUserInfo(token: globalInfoProvider.jwt);
+        await ApiMethodUtil.getUserInfo();
     globalInfoProvider.userInfoBean = UserInfoBean.fromJson(response.data);
     UserInfoBean userInfoBean = globalInfoProvider.userInfoBean;
     globalInfoProvider.refresh();

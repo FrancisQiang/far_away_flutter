@@ -20,7 +20,6 @@ class DynamicsProvider with ChangeNotifier {
       responseBean = await ApiMethodUtil.getDynamicList(
         timestamp: timestamp,
         currentPage: currentPage,
-        token: jwt,
       );
       pageBean = PageBean.fromJson(responseBean.data);
     } catch (ex) {

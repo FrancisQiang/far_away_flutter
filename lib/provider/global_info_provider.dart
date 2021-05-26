@@ -15,7 +15,7 @@ class GlobalInfoProvider with ChangeNotifier{
       if(jwt == null || jwt.isEmpty) {
         return;
       }
-      ResponseBean responseBean= await ApiMethodUtil.getFollowList(token: jwt);
+      ResponseBean responseBean= await ApiMethodUtil.getFollowList();
       FollowListVO followListVO = FollowListVO.fromJson(responseBean.data);
       Map<String, FollowUserInfo> followUserMap = HashMap();
       for(FollowUserInfo item in followListVO.list) {
@@ -27,7 +27,7 @@ class GlobalInfoProvider with ChangeNotifier{
   }
 
   refreshFollowList() async {
-    ResponseBean responseBean = await ApiMethodUtil.getFollowList(token: jwt);
+    ResponseBean responseBean = await ApiMethodUtil.getFollowList();
     FollowListVO followListVO = FollowListVO.fromJson(responseBean.data);
     Map<String, FollowUserInfo> followUserMap = HashMap();
     for(FollowUserInfo item in followListVO.list) {

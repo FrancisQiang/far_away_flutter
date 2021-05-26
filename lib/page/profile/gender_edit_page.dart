@@ -20,7 +20,7 @@ class GenderEditPage extends StatefulWidget {
 class _GenderEditPageState extends State<GenderEditPage> {
   choose(int type, GlobalInfoProvider globalInfoProvider) async {
     ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-        token: globalInfoProvider.jwt, gender: type);
+        gender: type);
     if (responseBean.isSuccess()) {
       globalInfoProvider.userInfoBean.gender = type;
       globalInfoProvider.refresh();

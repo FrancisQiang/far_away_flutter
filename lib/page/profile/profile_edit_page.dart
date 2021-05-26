@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:city_pickers/city_pickers.dart';
 import 'package:city_pickers/modal/result.dart';
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/upload_response_bean.dart';
 import 'package:far_away_flutter/bean/upload_token_bean.dart';
@@ -17,7 +16,6 @@ import 'package:far_away_flutter/util/string_util.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_crop/image_crop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -80,8 +78,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                 url: file.path,
                                 confirmCallback: (File cropImage) async {
                                   ResponseBean responseBean =
-                                  await ApiMethodUtil.getUploadToken(
-                                      userToken: globalInfoProvider.jwt);
+                                  await ApiMethodUtil.getUploadToken();
                               UploadTokenBean uploadTokenBean =
                                   UploadTokenBean.fromJson(responseBean.data);
                               UploadResponseBean uploadResponseBean =
@@ -90,7 +87,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                       file: cropImage,
                                       filename: '${Uuid().v4()}');
                               responseBean = await ApiMethodUtil.editUserInfo(
-                                  token: globalInfoProvider.jwt,
                                   avatar: ApiProperties.ASSET_PREFIX_URL +
                                       uploadResponseBean.key);
                               if (responseBean.isSuccess()) {
@@ -141,8 +137,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                               url: file.path, aspectRatio: 16.0 / 9.0,
                               confirmCallback: (File cropImage) async {
                                 ResponseBean responseBean =
-                                await ApiMethodUtil.getUploadToken(
-                                    userToken: globalInfoProvider.jwt);
+                                await ApiMethodUtil.getUploadToken();
                             UploadTokenBean uploadTokenBean =
                                 UploadTokenBean.fromJson(responseBean.data);
                             UploadResponseBean uploadResponseBean =
@@ -151,7 +146,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                     file: cropImage,
                                     filename: '${Uuid().v4()}');
                                 responseBean = await ApiMethodUtil.editUserInfo(
-                                token: globalInfoProvider.jwt,
                                 cover: ApiProperties.ASSET_PREFIX_URL +
                                     uploadResponseBean.key);
                             if (responseBean.isSuccess()) {
@@ -293,7 +287,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   globalInfoProvider.userInfoBean.location = location;
                   globalInfoProvider.refresh();
                   ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-                    token: globalInfoProvider.jwt,
                     location: location,
                   );
                   if (responseBean.isSuccess()) {

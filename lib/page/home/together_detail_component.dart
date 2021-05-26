@@ -92,8 +92,7 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
     if (hasLoadData) {
       ResponseBean responseBean =
           await ApiMethodUtil.getTogetherDetail(
-              id: widget.togetherInfoBean.id,
-              token: ProviderUtil.globalInfoProvider.jwt);
+              id: widget.togetherInfoBean.id,);
       TogetherInfoBean togetherInfoBean =
           TogetherInfoBean.fromJson(responseBean.data);
       setState(() {

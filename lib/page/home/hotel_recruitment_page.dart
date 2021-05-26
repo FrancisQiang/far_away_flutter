@@ -37,7 +37,7 @@ class _RecruitInfoPageState extends State<RecruitInfoPage>
     PageBean pageBean;
     try {
       responseBean = await ApiMethodUtil.getRecruitInfoList(
-          timestamp: timestamp, currentPage: currentPage, token: jwt);
+          timestamp: timestamp, currentPage: currentPage);
       pageBean = PageBean.fromJson(responseBean.data);
     } catch (ex) {
       print('error');

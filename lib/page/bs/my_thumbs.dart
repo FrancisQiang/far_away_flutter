@@ -37,7 +37,7 @@ class _MyThumbsPageState extends State<MyThumbsPage> with TickerProviderStateMix
   ];
 
   _getMyThumbsData() async {
-    ResponseBean responseBean = await ApiMethodUtil.getMyThumbs(token: ProviderUtil.globalInfoProvider.jwt);
+    ResponseBean responseBean = await ApiMethodUtil.getMyThumbs();
     MixingBean mixingBean = MixingBean.fromJson(responseBean.data);
     mixingBean.dynamics.forEach((element) {
       dynamicList.add(DynamicDetailBean.fromJson(element));

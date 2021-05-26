@@ -27,8 +27,6 @@ class ApiMethodUtil {
   static ApiMethodUtil get instance => _getInstance();
   static ApiMethodUtil _instance;
 
-  static String jwtToken;
-
   ApiMethodUtil._internal();
 
   static ApiMethodUtil _getInstance() {
@@ -108,13 +106,11 @@ class ApiMethodUtil {
   /// 获取动态圈数据
   static Future<ResponseBean> getDynamicList(
       {@required int timestamp,
-      @required int currentPage,
-      @required String token}) async {
+      @required int currentPage}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/dynamic/list/$timestamp/$currentPage",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -125,12 +121,11 @@ class ApiMethodUtil {
 
   /// 获取动态详情
   static Future<ResponseBean> getDynamicDetail(
-      {@required String id, @required String token}) async {
+      {@required String id}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/dynamic/detail/$id",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -174,12 +169,11 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getUserInfo({@required String token}) async {
+  static Future<ResponseBean> getUserInfo() async {
     Response response;
     try {
-      response = await DioFactory.getDioClient().get(
-          ApiProperties.HOST_BASE_URL + "/user/info",
-          options: Options(headers: {"Authorization": token}));
+      response = await DioFactory.getDioClient()
+          .get(ApiProperties.HOST_BASE_URL + "/user/info");
     } catch (ex) {
       LoggerUtil.logger.e('Error! getUserInfo request failed!', ex);
       return null;
@@ -188,12 +182,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getUserInfoById(
-      {@required String token, @required String userId}) async {
+      { @required String userId}) async {
     Response response;
     try {
-      response = await DioFactory.getDioClient().get(
-          ApiProperties.HOST_BASE_URL + "/user/info/$userId",
-          options: Options(headers: {"Authorization": token}));
+      response = await DioFactory.getDioClient()
+          .get(ApiProperties.HOST_BASE_URL + "/user/info/$userId");
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
       return null;
@@ -220,12 +213,11 @@ class ApiMethodUtil {
     return UploadResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getUploadToken({@required String userToken}) async {
+  static Future<ResponseBean> getUploadToken() async {
     Response response;
     try {
-      response = await DioFactory.getDioClient().get(
-          ApiProperties.HOST_BASE_URL + "/oss/token",
-          options: Options(headers: {"Authorization": userToken}));
+      response = await DioFactory.getDioClient()
+          .get(ApiProperties.HOST_BASE_URL + "/oss/token");
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
       return null;
@@ -234,12 +226,12 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postDynamic(
-      {@required String token, @required DynamicPostBean dynamicPostBean}) async {
+      {
+      @required DynamicPostBean dynamicPostBean}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
           ApiProperties.HOST_BASE_URL + "/dynamic",
-          options: Options(headers: {"Authorization": token}),
           data: dynamicPostBean.toJson());
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -248,13 +240,12 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<dynamic> getAround(
-      {@required String token, @required String location}) async {
+  static Future<ResponseBean> getAround(
+      { @required String location}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/poi/around/$location",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -264,7 +255,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> dynamicThumbChange(
-      {@required String token,
+      {
       @required bool thumb,
       @required String dynamicId}) async {
     Response response;
@@ -272,7 +263,6 @@ class ApiMethodUtil {
       response = await DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/dynamic/thumb",
         data: {"dynamicId": dynamicId, "thumb": thumb},
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -282,7 +272,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> recruitThumbChange(
-      {@required String token,
+      {
       @required bool thumb,
       @required String recruitId}) async {
     Response response;
@@ -290,7 +280,6 @@ class ApiMethodUtil {
       response = await DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/recruit/thumb",
         data: {"dynamicId": recruitId, "thumb": thumb},
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -300,7 +289,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postComment(
-      {@required String token,
+      {
       @required String bizId,
       @required String toUserId,
       @required String content,
@@ -319,7 +308,6 @@ class ApiMethodUtil {
           "content": content,
           "pictureUrlList": pictureList
         },
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -331,12 +319,11 @@ class ApiMethodUtil {
   static Future<ResponseBean> getTogetherInfoList(
       {@required int timestamp,
       @required int currentPage,
-      @required String token}) async {
+      }) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/together/list/$timestamp/$currentPage",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -346,12 +333,12 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postTogether(
-      {@required String token, @required TogetherPostBean togetherPostBean}) async {
+      {
+      @required TogetherPostBean togetherPostBean}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
           ApiProperties.HOST_BASE_URL + "/together",
-          options: Options(headers: {"Authorization": token}),
           data: togetherPostBean.toJson());
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -361,12 +348,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getTogetherDetail(
-      {@required String id, @required String token}) async {
+      {@required String id,}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/together/detail/$id",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -376,12 +362,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> togetherSignUp(
-      {@required String token, @required String id}) async {
+      { @required String id}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/together/signup/$id",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -391,12 +376,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> recruitSignUp(
-      {@required String token, @required String id}) async {
+      { @required String id}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/recruit/signup/$id",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -420,12 +404,12 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postRecruit(
-      {@required String token, @required RecruitPostBean recruitPostBean}) async {
+      {
+      @required RecruitPostBean recruitPostBean}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
           ApiProperties.HOST_BASE_URL + "/recruit",
-          options: Options(headers: {"Authorization": token}),
           data: recruitPostBean.toJson());
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -437,12 +421,11 @@ class ApiMethodUtil {
   static Future<ResponseBean> getRecruitInfoList(
       {@required int timestamp,
       @required int currentPage,
-      @required String token}) async {
+      }) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/recruit/list/$timestamp/$currentPage",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -452,12 +435,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getRecruitDetail(
-      {@required String id, @required String token}) async {
+      {@required String id,}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/recruit/detail/$id",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -467,12 +449,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> followChange(
-      {@required String token, @required String targetUserId}) async {
+      { @required String targetUserId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/follow/change/$targetUserId",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -481,12 +462,11 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getFollowList({@required String token}) async {
+  static Future<ResponseBean> getFollowList() async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/follow/follow_list",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -496,12 +476,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getDynamicsByUserId(
-      {@required String token, @required String userId}) async {
+      { @required String userId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/dynamic/list/$userId",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -511,12 +490,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getTogetherInfoByUserId(
-      {@required String token, @required String userId}) async {
+      { @required String userId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/together/list/$userId",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -526,12 +504,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getRecruitInfoListByUserId(
-      {@required String token, @required String userId}) async {
+      { @required String userId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/recruit/list/$userId",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -540,12 +517,11 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getMyThumbs({@required String token}) async {
+  static Future<ResponseBean> getMyThumbs() async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/user_service/thumbs",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
@@ -555,7 +531,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> editUserInfo(
-      {@required String token,
+      {
       String userName,
       String location,
       String school,
@@ -585,7 +561,6 @@ class ApiMethodUtil {
     try {
       response = await DioFactory.getDioClient().post(
         ApiProperties.HOST_BASE_URL + "/user/info/edit_info",
-        options: Options(headers: {"Authorization": token}),
         data: userInfoEditBean.toJson(),
       );
     } catch (ex) {
@@ -596,12 +571,11 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> searchSchool(
-      {@required String token, @required String keyword}) async {
+      { @required String keyword}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
         ApiProperties.HOST_BASE_URL + "/school/search/$keyword",
-        options: Options(headers: {"Authorization": token}),
       );
     } catch (ex) {
       LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);

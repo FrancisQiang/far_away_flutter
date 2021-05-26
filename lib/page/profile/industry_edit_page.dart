@@ -55,7 +55,7 @@ class _IndustryEditPageState extends State<IndustryEditPage> {
                     ),
                     onPressed: () async {
                       ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-                          token: globalInfoProvider.jwt,
+
                           industry: _editingController.text);
                       if (responseBean.isSuccess()) {
                         ToastUtil.showSuccessToast("修改成功");

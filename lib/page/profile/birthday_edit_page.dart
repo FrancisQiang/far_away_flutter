@@ -58,7 +58,6 @@ class _BirthdayEditPageState extends State<BirthdayEditPage> {
                 onPressed: () async {
                   String constellation = DateUtil.getConstellation(birthday);
                   ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-                    token: globalInfoProvider.jwt,
                     birthday: birthday,
                     constellation: constellation,
                   );

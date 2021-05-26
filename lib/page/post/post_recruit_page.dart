@@ -49,7 +49,6 @@ class PostRecruitPage extends StatelessWidget {
     provider.cover = null;
     provider.refresh();
     ResponseBean responseBean = await ApiMethodUtil.postRecruit(
-        token: ProviderUtil.globalInfoProvider.jwt,
         recruitPostBean: recruitPostBean);
     if (responseBean.isSuccess()) {
       ToastUtil.showSuccessToast("发布成功");
@@ -219,8 +218,7 @@ class MarkdownImageDelegate implements ZefyrImageDelegate<ImageSource> {
     final ImagePicker _picker = ImagePicker();
     final PickedFile file = await _picker.getImage(source: source);
     if (file == null) return null;
-    ResponseBean responseBean = await ApiMethodUtil.getUploadToken(
-        userToken: ProviderUtil.globalInfoProvider.jwt);
+    ResponseBean responseBean = await ApiMethodUtil.getUploadToken();
     UploadTokenBean uploadTokenBean =
         UploadTokenBean.fromJson(responseBean.data);
 
@@ -318,8 +316,7 @@ class MarkdownToolbarDelegate implements ZefyrToolbarDelegate {
           final PickedFile file =
               await _picker.getImage(source: ImageSource.gallery);
           if (file == null) return null;
-          ResponseBean responseBean = await ApiMethodUtil.getUploadToken(
-              userToken: ProviderUtil.globalInfoProvider.jwt);
+          ResponseBean responseBean = await ApiMethodUtil.getUploadToken();
           UploadTokenBean uploadTokenBean =
               UploadTokenBean.fromJson(responseBean.data);
           UploadResponseBean uploadResponseBean =

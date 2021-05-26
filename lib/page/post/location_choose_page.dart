@@ -29,10 +29,8 @@ class _LocationChoosePageState extends State<LocationChoosePage> {
   List<AddressBeanWrapper> _addressList = [];
 
   _getAround() async {
-    Response<dynamic> response = await ApiMethodUtil.getAround(
-        token: ProviderUtil.globalInfoProvider.jwt,
+    ResponseBean responseBean = await ApiMethodUtil.getAround(
         location: "${widget.longitude},${widget.latitude}");
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
     List<dynamic> dataList = responseBean.data;
     for (int i = 0; i < dataList.length; i++) {
       AddressBean addressBean = AddressBean.fromJson(dataList[i]);

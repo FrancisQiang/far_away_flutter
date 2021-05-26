@@ -55,7 +55,6 @@ class _MajorEditPageState extends State<MajorEditPage> {
                 ),
                 onPressed: () async {
                   ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-                      token: globalInfoProvider.jwt,
                       major: _editingController.text);
                   if (responseBean.isSuccess()) {
                     ToastUtil.showSuccessToast("修改成功");

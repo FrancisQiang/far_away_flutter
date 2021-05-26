@@ -8,6 +8,7 @@ import 'package:far_away_flutter/page/login/send_code_widget.dart';
 import 'package:far_away_flutter/properties/rong_cloud_properties.dart';
 import 'package:far_away_flutter/properties/shared_preferences_keys.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
+import 'package:far_away_flutter/util/dio_factory.dart';
 import 'package:far_away_flutter/util/logger_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
@@ -167,12 +168,14 @@ class _PhoneLoginFormState extends State<PhoneLoginForm> {
                 if(responseBean.isSuccess()) {
                   UserTokenBean userTokenBean = UserTokenBean.fromJson(responseBean.data);
                   // 暂存token 通过token获取用户信息
-                  responseBean = await ApiMethodUtil.getUserInfo(token: userTokenBean.token);
+                  DioFactory.setAuthorization(userTokenBean.token);
+                  responseBean = await ApiMethodUtil.getUserInfo();
                   if(responseBean == null) {
                     ToastUtil.showErrorToast("网络异常!");
                     _loginController.setStatus(LoginStatus.error);
                   }
                   ProviderUtil.globalInfoProvider.userInfoBean = UserInfoBean.fromJson(responseBean.data);
+                  ProviderUtil.globalInfoProvider.jwt = userTokenBean.token;
                   ApiMethodUtil.rongCloudConnect(imToken: ProviderUtil.globalInfoProvider.userInfoBean.IMToken);
                   await SharedPreferenceUtil.instance.setString(SharedPreferencesKeys.userToken, userTokenBean.token);
                   NavigatorUtil.toMainPage(context);

@@ -139,7 +139,7 @@ class EditBottom extends StatelessWidget {
 
   Future<String> _uploadPicture(String token, List<AssetEntity> assets) async {
     ResponseBean responseBean =
-        await ApiMethodUtil.getUploadToken(userToken: token);
+        await ApiMethodUtil.getUploadToken();
     UploadTokenBean uploadTokenBean =
         UploadTokenBean.fromJson(responseBean.data);
     List<String> pictureURLList = [];
@@ -224,7 +224,6 @@ class EditBottom extends StatelessWidget {
                     String jwt = ProviderUtil.globalInfoProvider.jwt;
                     ResponseBean responseBean =
                         await ApiMethodUtil.postComment(
-                            token: jwt,
                             bizId: commentChosenProvider.targetBizId,
                             toUserId: commentChosenProvider.targetUserId,
                             content: duplicateContent,

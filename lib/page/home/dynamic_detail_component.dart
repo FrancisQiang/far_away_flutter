@@ -89,8 +89,7 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
     if (hasLoadData) {
       ResponseBean responseBean =
           await ApiMethodUtil.getDynamicDetail(
-              id: widget.dynamicDetailBean.id,
-              token: ProviderUtil.globalInfoProvider.jwt);
+              id: widget.dynamicDetailBean.id,);
       DynamicDetailBean dynamicDetailBean =
           DynamicDetailBean.fromJson(responseBean.data);
       setState(() {

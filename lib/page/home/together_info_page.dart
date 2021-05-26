@@ -53,7 +53,7 @@ class _TogetherInfoPageState extends State<TogetherInfoPage>
     PageBean pageBean;
     try {
       responseBean = await ApiMethodUtil.getTogetherInfoList(
-          timestamp: timestamp, currentPage: currentPage, token: jwt);
+          timestamp: timestamp, currentPage: currentPage);
       pageBean = PageBean.fromJson(responseBean.data);
     } catch (ex) {
       print('error');
@@ -187,7 +187,6 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                       onPressed: () async {
                         ResponseBean responseBean =
                             await ApiMethodUtil.followChange(
-                          token: ProviderUtil.globalInfoProvider.jwt,
                           targetUserId: togetherInfoBean.userId,
                         );
                         FollowStatusBean followStatusBean =
@@ -284,7 +283,6 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                           }
                           ResponseBean responseBean =
                               await ApiMethodUtil.togetherSignUp(
-                                  token: ProviderUtil.globalInfoProvider.jwt,
                                   id: togetherInfoBean.id);
                           if (responseBean.isSuccess()) {
                             // 发送结伴消息

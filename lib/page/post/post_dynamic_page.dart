@@ -87,7 +87,7 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
       ToastUtil.showNoticeToast("发布中请稍后");
       try {
         ResponseBean responseBean =
-            await ApiMethodUtil.getUploadToken(userToken: jwt);
+            await ApiMethodUtil.getUploadToken();
         UploadTokenBean uploadTokenBean =
             UploadTokenBean.fromJson(responseBean.data);
         DynamicPostBean dynamicPostBean = DynamicPostBean();
@@ -110,7 +110,7 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
         }
         // 链接信息
         responseBean = await ApiMethodUtil.postDynamic(
-            token: jwt, dynamicPostBean: dynamicPostBean);
+            dynamicPostBean: dynamicPostBean);
         if (responseBean.isSuccess()) {
           ToastUtil.showSuccessToast("发布成功");
         } else {

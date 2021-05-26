@@ -92,7 +92,6 @@ class DynamicDetailWidget extends StatelessWidget {
                       onPressed: () async {
                         ResponseBean responseBean =
                         await ApiMethodUtil.followChange(
-                          token: ProviderUtil.globalInfoProvider.jwt,
                           targetUserId: dynamicDetailBean.userId,
                         );
                         FollowStatusBean followStatusBean =
@@ -213,7 +212,6 @@ class DynamicDetailWidget extends StatelessWidget {
                         size: ScreenUtil().setSp(40),
                         onTap: (bool isLiked) async {
                           await ApiMethodUtil.dynamicThumbChange(
-                              token: ProviderUtil.globalInfoProvider.jwt,
                               thumb: !isLiked,
                               dynamicId: dynamicDetailBean.id);
                           if (!isLiked) {

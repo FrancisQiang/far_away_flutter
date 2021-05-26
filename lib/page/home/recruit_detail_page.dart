@@ -64,8 +64,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
 
   _getRecruitDetail() async {
     ResponseBean responseBean = await ApiMethodUtil.getRecruitDetail(
-        id: widget.recruitDetailInfoBean.id,
-        token: ProviderUtil.globalInfoProvider.jwt);
+        id: widget.recruitDetailInfoBean.id,);
     RecruitDetailInfoBean recruitDetailInfoBean =
         RecruitDetailInfoBean.fromJson(responseBean.data);
     setState(() {
@@ -299,7 +298,6 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                     FlatButton(
                         onPressed: () async {
                           await ApiMethodUtil.dynamicThumbChange(
-                            token: ProviderUtil.globalInfoProvider.jwt,
                             thumb: !widget.recruitDetailInfoBean.thumbed,
                             dynamicId: widget.recruitDetailInfoBean.id,
                           );
@@ -349,7 +347,6 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                             return;
                           }
                           ResponseBean responseBean = await ApiMethodUtil.recruitSignUp(
-                            token: ProviderUtil.globalInfoProvider.jwt,
                             id: widget.recruitDetailInfoBean.id,
                           );
                           if (responseBean.isSuccess()) {

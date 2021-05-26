@@ -19,8 +19,7 @@ class EmotionEditPage extends StatefulWidget {
 
 class _EmotionEditPageState extends State<EmotionEditPage> {
   choose(int type, GlobalInfoProvider globalInfoProvider) async {
-    ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
-        token: globalInfoProvider.jwt, emotionState: type);
+    ResponseBean responseBean = await ApiMethodUtil.editUserInfo(emotionState: type);
     if (responseBean.isSuccess()) {
       globalInfoProvider.userInfoBean.emotionState = type;
       globalInfoProvider.refresh();

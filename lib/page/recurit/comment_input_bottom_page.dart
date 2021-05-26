@@ -134,7 +134,6 @@ class CommentInputBottomPage extends StatelessWidget {
                               ToastUtil.showNoticeToast("评论发布中");
                               String jwt = ProviderUtil.globalInfoProvider.jwt;
                               ResponseBean responseBean = await ApiMethodUtil.postComment(
-                                token: jwt,
                                 bizId: bizId,
                                 toUserId: toUserId,
                                 content: controller.text,

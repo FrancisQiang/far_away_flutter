@@ -101,7 +101,7 @@ class _UserInfoPageState extends State<UserInfoPage>
 
   _getUserInfo() async {
     ResponseBean responseBean  = await ApiMethodUtil.getUserInfoById(
-        token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
+        userId: widget.userId);
     userInfoBean = UserInfoBean.fromJson(responseBean.data);
     _generateBubbleList(userInfoBean);
   }
@@ -119,7 +119,7 @@ class _UserInfoPageState extends State<UserInfoPage>
   _getTogetherInfoList() async {
     togetherInfoList = [];
     ResponseBean responseBean = await ApiMethodUtil.getTogetherInfoByUserId(
-        token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
+         userId: widget.userId);
     ListBean listBean = ListBean.fromJson(responseBean.data);
     for (var element in listBean.listData) {
       togetherInfoList.add(TogetherInfoBean.fromJson(element));
@@ -128,8 +128,7 @@ class _UserInfoPageState extends State<UserInfoPage>
 
   _getDynamics() async {
     dynamics = [];
-    ResponseBean responseBean= await ApiMethodUtil.getDynamicsByUserId(
-        token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
+    ResponseBean responseBean= await ApiMethodUtil.getDynamicsByUserId(userId: widget.userId);
     ListBean listBean = ListBean.fromJson(responseBean.data);
     for (var element in listBean.listData) {
       dynamics.add(DynamicDetailBean.fromJson(element));
@@ -139,7 +138,7 @@ class _UserInfoPageState extends State<UserInfoPage>
   _getRecruitInfoList() async {
     recruitList = [];
     ResponseBean responseBean = await ApiMethodUtil.getRecruitInfoListByUserId(
-        token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
+         userId: widget.userId);
     ListBean listBean = ListBean.fromJson(responseBean.data);
     for (var element in listBean.listData) {
       recruitList.add(RecruitDetailInfoBean.fromJson(element));
@@ -483,9 +482,6 @@ class _UserInfoPageState extends State<UserInfoPage>
                                                           responseBean=
                                                               await ApiMethodUtil
                                                                   .followChange(
-                                                            token: ProviderUtil
-                                                                .globalInfoProvider
-                                                                .jwt,
                                                             targetUserId:
                                                                 userInfoBean.id,
                                                           );
@@ -1201,7 +1197,6 @@ class DynamicPreviewCard extends StatelessWidget {
                     onPressed: () async {
                       ResponseBean responseBean =
                           await ApiMethodUtil.followChange(
-                        token: ProviderUtil.globalInfoProvider.jwt,
                         targetUserId: dynamicDetailBean.userId,
                       );
                       FollowStatusBean followStatusBean =
@@ -1336,7 +1331,6 @@ class DynamicPreviewCard extends StatelessWidget {
                       size: ScreenUtil().setSp(40),
                       onTap: (bool isLiked) async {
                         await ApiMethodUtil.dynamicThumbChange(
-                          token: ProviderUtil.globalInfoProvider.jwt,
                           thumb: !isLiked,
                           dynamicId: dynamicDetailBean.id,
                         );
