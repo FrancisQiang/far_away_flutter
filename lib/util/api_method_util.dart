@@ -38,7 +38,7 @@ class ApiMethodUtil {
     return _instance;
   }
 
-  /// QQ登录注册
+  /// QQ登录注册 暂未开放 暂时不修改重构
   void qqRegisterOrLogin({
     Function success,
     Function failed,
@@ -58,21 +58,19 @@ class ApiMethodUtil {
   }
 
   /// 获取手机验证码
-  void getMobileCode({
-    Function success,
-    Function failed,
-    Function error,
-    String mobile,
-    CancelToken token,
-  }) {
-    DioUtil.instance.post(
-      ApiProperties.HOST_BASE_URL + "/msg/verify_code/$mobile",
-      success,
-      errorCallBack: (errorMessage) {
-        error(errorMessage);
-      },
-      token: token,
-    );
+  static Future<ResponseBean> getMobileCode({
+    @required String mobile,
+  }) async {
+    Response response;
+    try {
+      response = await DioFactory.getDioClient().post(
+        ApiProperties.HOST_BASE_URL + "/msg/verify_code/$mobile",
+      );
+    } catch (ex) {
+      LoggerUtil.logger.e('Error! getMobileCode request failed!', ex);
+      return null;
+    }
+    return ResponseBean.fromJson(response.data);
   }
 
   /// 手机验证码注册登录
@@ -84,12 +82,8 @@ class ApiMethodUtil {
     try {
       response = await DioFactory.getDioClient().post(
           ApiProperties.HOST_BASE_URL + "/user/mobile/register_login",
-          data: {
-            "mobile": mobile,
-            "code": code
-          }
-      );
-    } catch(ex) {
+          data: {"mobile": mobile, "code": code});
+    } catch (ex) {
       LoggerUtil.logger.e('Error! mobileRegisterOrLogin request failed!', ex);
       return null;
     }
@@ -109,7 +103,6 @@ class ApiMethodUtil {
         }
       });
     });
-
   }
 
   /// 获取动态圈数据

@@ -117,23 +117,22 @@ class _PhoneLoginFormState extends State<PhoneLoginForm> {
                       textColor: Colors.brown,
                       disabledColor: Colors.black54,
                       disabledTextColor: Colors.white70,
-                      send: () {
-                        ApiMethodUtil.instance.getMobileCode(
-                            success: (data) {
-                              ToastUtil.showSuccessToast("发送成功");
-                            },
-                            failed: (data) {
-                              ToastUtil.showErrorToast("发送失败");
-                              _sendingController
-                                  .setStatus(SendStatus.available);
-                            },
-                            error: (data) {
-                              // 弹出totast 验证码重新回显
-                              ToastUtil.showErrorToast("发送失败");
-                              _sendingController
-                                  .setStatus(SendStatus.available);
-                            },
+                      send: () async {
+                        ResponseBean responseBean = await ApiMethodUtil.getMobileCode(
                             mobile: _mobileController.text);
+                        if (responseBean == null) {
+                          ToastUtil.showErrorToast("发送失败");
+                          _sendingController
+                              .setStatus(SendStatus.available);
+                          return;
+                        }
+                        if(responseBean.isSuccess()) {
+                          ToastUtil.showSuccessToast("发送成功");
+                          return;
+                        }
+                        ToastUtil.showErrorToast("发送失败");
+                        _sendingController
+                            .setStatus(SendStatus.available);
                       })
                 ],
               )),

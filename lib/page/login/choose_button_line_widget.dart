@@ -19,6 +19,7 @@ class ChooseButtonLineWidget extends StatefulWidget {
 }
 
 class _ChooseButtonLineWidgetState extends State<ChooseButtonLineWidget> {
+
   Tencent _tencent = Tencent()
     ..registerApp(appId: CertificateProperties.TENCENT_APP_ID);
 
@@ -28,7 +29,6 @@ class _ChooseButtonLineWidgetState extends State<ChooseButtonLineWidget> {
 
   void _listenLogin(TencentLoginResp resp) {
     _loginResp = resp;
-    String content = 'login: ${resp.openid} - ${resp.accessToken}';
     print("openid: ${resp.openid}, accessToken: ${resp.accessToken}");
     ApiMethodUtil.instance.qqRegisterOrLogin(
       success: (data) {
