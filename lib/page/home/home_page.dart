@@ -1,8 +1,5 @@
 
-import 'package:far_away_flutter/page/home/aid_education_page.dart';
-import 'package:far_away_flutter/page/home/dynamics_page.dart';
 import 'package:far_away_flutter/page/home/search_text_field.dart';
-import 'package:far_away_flutter/page/home/together_info_page.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,15 +28,12 @@ class _HomePageState extends State<HomePage>
     Tab(
       text: '旅舍招聘',
     ),
-    Tab(
-      text: '支教信息',
-    ),
   ];
 
   @override
   void initState() {
     super.initState();
-    this._tabController = TabController(vsync: this, length: 4);
+    this._tabController = TabController(vsync: this, length: 3);
   }
 
   @override
@@ -47,7 +41,7 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        brightness: Brightness.light,
+        // brightness: Brightness.light,
         elevation: 0,
         leading: InkWell(
           onTap: () => {},
@@ -67,20 +61,28 @@ class _HomePageState extends State<HomePage>
             ),
           )
         ],
-        bottom: TabBar(
-            isScrollable: true,
-            labelColor: Colors.deepOrangeAccent,
-            indicatorColor: Colors.deepOrangeAccent,
-            labelStyle: TextStyle(
-                fontSize: ScreenUtil().setSp(28),
-                letterSpacing: 1,
-                fontWeight: FontWeight.bold),
-            unselectedLabelColor: Colors.black54,
-            controller: _tabController,
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicatorWeight: 2.5,
-            tabs: _tabs,
-        ),
+        bottom: PreferredSize(
+          child: Container(
+            // color: Colors.red,
+            alignment: Alignment.centerLeft,
+            height: 30,
+            child: TabBar(
+              isScrollable: true,
+              labelColor: Colors.deepOrangeAccent,
+              indicatorColor: Colors.deepOrangeAccent,
+              labelStyle: TextStyle(
+                  fontSize: ScreenUtil().setSp(28),
+                  letterSpacing: 1,
+                  fontWeight: FontWeight.bold),
+              unselectedLabelColor: Colors.black54,
+              controller: _tabController,
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorWeight: 2.5,
+              tabs: _tabs,
+            ),
+          ),
+          preferredSize: Size(double.infinity, 30),
+        )
       ),
       body: TabBarView(
           controller: _tabController,
@@ -89,7 +91,6 @@ class _HomePageState extends State<HomePage>
             ProviderUtil.getDynamicsPage(),
             ProviderUtil.getTogetherPage(),
             RecruitInfoPage(),
-            AidEducationPage(),
           ]),
     );
   }
