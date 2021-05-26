@@ -21,7 +21,10 @@ import 'package:far_away_flutter/page/profile/birthday_edit_page.dart';
 import 'package:far_away_flutter/page/profile/emotion_edit_page.dart';
 import 'package:far_away_flutter/page/profile/gender_edit_page.dart';
 import 'package:far_away_flutter/page/profile/image_crop_page.dart';
+import 'package:far_away_flutter/page/profile/industry_edit_page.dart';
+import 'package:far_away_flutter/page/profile/major_edit_page.dart';
 import 'package:far_away_flutter/page/profile/profile_edit_page.dart';
+import 'package:far_away_flutter/page/profile/school_search_page.dart';
 import 'package:far_away_flutter/page/profile/signature_edit_page.dart';
 import 'package:far_away_flutter/page/profile/username_edit_page.dart';
 import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
@@ -358,4 +361,44 @@ class ProviderUtil {
           url: url, confirmCallback: confirmCallback, aspectRatio: aspectRatio),
     );
   }
+
+  static Widget getSchoolSearchPage() {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: SchoolSearchPage(),
+    );
+  }
+
+
+  static Widget getMajorEditPage({@required String major}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: MajorEditPage(
+        major: major,
+      ),
+    );
+  }
+
+  static Widget getIndustryEditPage({@required String industry}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider)
+      ],
+      child: IndustryEditPage(
+        industry: industry,
+      ),
+    );
+  }
+
+
+
 }
+
+

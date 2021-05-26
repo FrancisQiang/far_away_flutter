@@ -7,22 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-class UsernameEditPage extends StatefulWidget {
-  final String username;
+class MajorEditPage extends StatefulWidget {
+  final String major;
 
-  UsernameEditPage({@required this.username});
+  MajorEditPage({@required this.major});
 
   @override
-  _UsernameEditPageState createState() => _UsernameEditPageState();
+  _MajorEditPageState createState() => _MajorEditPageState();
 }
 
-class _UsernameEditPageState extends State<UsernameEditPage> {
-
+class _MajorEditPageState extends State<MajorEditPage> {
   TextEditingController _editingController;
 
   @override
   void initState() {
-    _editingController = TextEditingController(text: widget.username);
+    _editingController = TextEditingController(text: widget.major);
     super.initState();
   }
 
@@ -35,7 +34,7 @@ class _UsernameEditPageState extends State<UsernameEditPage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: Text(
-            '修改昵称',
+            '修改专业',
             style: TextStyle(
                 fontSize: ScreenUtil().setSp(32), fontWeight: FontWeight.bold),
           ),
@@ -52,18 +51,16 @@ class _UsernameEditPageState extends State<UsernameEditPage> {
                 icon: Text(
                   '保存',
                   style: TextStyle(
-                      // fontWeight: FontWeight.bold,
-                      fontSize: ScreenUtil().setSp(28),
-                      letterSpacing: 0.5),
+                      fontSize: ScreenUtil().setSp(28), letterSpacing: 0.5),
                 ),
                 onPressed: () async {
                   Response res = await ApiMethodUtil.editUserInfo(
                       token: globalInfoProvider.jwt,
-                      userName: _editingController.text);
+                      major: _editingController.text);
                   ResponseBean responseBean = ResponseBean.fromJson(res.data);
                   if (responseBean.isSuccess()) {
                     ToastUtil.showSuccessToast("修改成功");
-                    globalInfoProvider.userInfoBean.userName =
+                    globalInfoProvider.userInfoBean.major =
                         _editingController.text;
                     globalInfoProvider.refresh();
                     Navigator.pop(context);
@@ -92,7 +89,7 @@ class _UsernameEditPageState extends State<UsernameEditPage> {
             Container(
               margin: EdgeInsets.only(left: 5, top: 5),
               child: Text(
-                '2~15个字符，30天内限改一次',
+                '请填写您的专业',
                 style: TextStyle(
                     color: Colors.grey, fontSize: ScreenUtil().setSp(24)),
               ),
@@ -103,4 +100,3 @@ class _UsernameEditPageState extends State<UsernameEditPage> {
     });
   }
 }
-

@@ -166,5 +166,24 @@ var birthdayEditHandler = Handler(
 var imageCropHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   ImageCropParam arguments = context.settings.arguments as ImageCropParam;
-  return ProviderUtil.getImageCropPage(url: arguments.url, confirmCallback: arguments.confirmCallback, aspectRatio: arguments.aspectRatio);
+  return ProviderUtil.getImageCropPage(
+      url: arguments.url,
+      confirmCallback: arguments.confirmCallback,
+      aspectRatio: arguments.aspectRatio);
 });
+
+var schoolSearchHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getSchoolSearchPage();
+});
+
+var majorEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return ProviderUtil.getMajorEditPage(major: params['major'][0]);
+});
+
+var industryEditHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      return ProviderUtil.getIndustryEditPage(industry: params['industry'][0]);
+    });
+

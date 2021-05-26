@@ -27,6 +27,9 @@ class Routes {
   static String emotionEdit = "/emotionEdit/:emotionStatus";
   static String birthdayEdit = "/birthdayEdit/:birthday";
   static String imageCrop = '/imageCrop';
+  static String schoolSearch = '/schoolSearch';
+  static String majorEdit = '/majorEdit/:major';
+  static String industryEdit = '/industryEdit/:industry';
 
   static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(
@@ -58,5 +61,8 @@ class Routes {
     router.define(emotionEdit, handler: emotionEditHandler);
     router.define(birthdayEdit, handler: birthdayEditHandler);
     router.define(imageCrop, handler: imageCropHandler);
+    router.define(schoolSearch, handler: schoolSearchHandler);
+    router.define(majorEdit, handler: majorEditHandler);
+    router.define(industryEdit, handler: industryEditHandler);
   }
 }

@@ -209,6 +209,29 @@ class NavigatorUtil {
     );
   }
 
+  static void toSchoolSearchPage(BuildContext context) {
+    Application.router.navigateTo(
+        context,
+        Routes.schoolSearch,
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toMajorEditPage(BuildContext context, {@required String major}) {
+    Application.router.navigateTo(
+        context,
+        "/majorEdit/$major",
+        transition: TransitionType.inFromRight
+    );
+  }
+
+  static void toIndustryEditPage(BuildContext context, {@required String industry}) {
+    Application.router.navigateTo(
+        context,
+        "/industryEdit/$industry",
+        transition: TransitionType.inFromRight
+    );
+  }
 
 
 }

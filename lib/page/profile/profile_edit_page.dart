@@ -325,7 +325,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ProfileEditItem(
                 title: '学校',
                 info: globalInfoProvider.userInfoBean.school,
-                onPressed: () {},
+                onPressed: () {
+                  NavigatorUtil.toSchoolSearchPage(
+                    context,
+                  );
+                },
               ),
               Divider(
                 height: 1.2,
@@ -334,7 +338,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ProfileEditItem(
                 title: '专业',
                 info: globalInfoProvider.userInfoBean.major,
-                onPressed: () {},
+                onPressed: () {
+                  NavigatorUtil.toMajorEditPage(context,
+                      major: globalInfoProvider.userInfoBean.major);
+                },
               ),
               Divider(
                 height: 1.2,
@@ -343,7 +350,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ProfileEditItem(
                 title: '行业',
                 info: globalInfoProvider.userInfoBean.industry,
-                onPressed: () {},
+                onPressed: () {
+                  NavigatorUtil.toIndustryEditPage(context,
+                      industry: globalInfoProvider.userInfoBean.industry);
+                },
               ),
             ],
           );

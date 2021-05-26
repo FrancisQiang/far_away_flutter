@@ -374,4 +374,12 @@ class ApiMethodUtil {
         data: userInfoEditBean.toJson(),
     );
   }
+
+  static Future<dynamic> searchSchool({@required String token, @required String keyword}) {
+    return DioFactory.getDioClient().get(
+      ApiProperties.HOST_BASE_URL + "/school/search/$keyword",
+      options: Options(headers: {"Authorization": token}),
+    );
+  }
+
 }
