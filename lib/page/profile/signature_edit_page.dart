@@ -57,10 +57,9 @@ class _SignatureEditPageState extends State<SignatureEditPage> {
                       letterSpacing: 0.5),
                 ),
                 onPressed: () async {
-                  Response res = await ApiMethodUtil.editUserInfo(
+                  ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
                       token: globalInfoProvider.jwt,
                       signature: _editingController.text);
-                  ResponseBean responseBean = ResponseBean.fromJson(res.data);
                   if (responseBean.isSuccess()) {
                     ToastUtil.showSuccessToast("修改成功");
                     globalInfoProvider.userInfoBean.signature =
@@ -85,12 +84,12 @@ class _SignatureEditPageState extends State<SignatureEditPage> {
                 maxLines: 10,
                 maxLength: 50,
                 decoration: InputDecoration(
-                    isDense: false,
-                    counterText: "",
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 12, horizontal: 5),
-                    isCollapsed: true,
-                    border: InputBorder.none,
+                  isDense: false,
+                  counterText: "",
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 5),
+                  isCollapsed: true,
+                  border: InputBorder.none,
                 ),
               ),
             ),

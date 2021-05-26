@@ -41,11 +41,10 @@ class _RecruitCommentDrawWidgetState extends State<RecruitCommentDrawWidget> {
   List<CommentListBean> childrenCommentList = [];
 
   _loadChildrenCommentListData() async {
-    Response<dynamic> data = await ApiMethodUtil.getChildrenCommentList(
+    ResponseBean responseBean = await ApiMethodUtil.getChildrenCommentList(
         childrenCommentQueryParam: ChildrenCommentQueryParam(
             parentId: widget.comment.id, currentPage: currentPage));
-    ResponseBean response = ResponseBean.fromJson(data.data);
-    PageBean pageBean = PageBean.fromJson(response.data);
+    PageBean pageBean = PageBean.fromJson(responseBean.data);
     if (pageBean.list.isEmpty) {
       Fluttertoast.showToast(
           msg: "没有数据啦",

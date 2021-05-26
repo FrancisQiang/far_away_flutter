@@ -182,13 +182,11 @@ class DynamicPreviewCard extends StatelessWidget {
                     height: ScreenUtil().setHeight(40),
                     width: ScreenUtil().setWidth(110),
                     onPressed: () async {
-                      Response<dynamic> response =
+                      ResponseBean responseBean =
                           await ApiMethodUtil.followChange(
                         token: ProviderUtil.globalInfoProvider.jwt,
                         targetUserId: dynamicDetailBean.userId,
                       );
-                      ResponseBean responseBean =
-                          ResponseBean.fromJson(response.data);
                       FollowStatusBean followStatusBean =
                           FollowStatusBean.fromJson(responseBean.data);
                       if (followStatusBean.follow) {

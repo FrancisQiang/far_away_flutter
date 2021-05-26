@@ -84,13 +84,11 @@ class TogetherDetailWidget extends StatelessWidget {
                       height: ScreenUtil().setHeight(40),
                       width: ScreenUtil().setWidth(110),
                       onPressed: () async {
-                        Response<dynamic> response =
+                        ResponseBean responseBean =
                         await ApiMethodUtil.followChange(
                           token: ProviderUtil.globalInfoProvider.jwt,
                           targetUserId: togetherInfoBean.userId,
                         );
-                        ResponseBean responseBean =
-                        ResponseBean.fromJson(response.data);
                         FollowStatusBean followStatusBean =
                         FollowStatusBean.fromJson(responseBean.data);
                         if(followStatusBean.follow) {
@@ -172,10 +170,10 @@ class TogetherDetailWidget extends StatelessWidget {
                 FlatButton(
                     onPressed: () async {
                       // TODO 跳转到私聊界面
-                      Response<dynamic> response = await ApiMethodUtil.togetherSignUp(
+                      ResponseBean responseBean = await ApiMethodUtil.togetherSignUp(
                           token: ProviderUtil.globalInfoProvider.jwt,
                           id: togetherInfoBean.id);
-                      if (ResponseBean.fromJson(response.data).isSuccess()) {
+                      if (ResponseBean.fromJson(responseBean.data).isSuccess()) {
                         togetherInfoBean.signUp = true;
                       } else {
                         ToastUtil.showErrorToast("网络异常，请稍后再试");

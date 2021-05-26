@@ -48,14 +48,13 @@ class PostRecruitPage extends StatelessWidget {
     provider.locationDetail = null;
     provider.cover = null;
     provider.refresh();
-    Response postResponse = await ApiMethodUtil.postRecruit(
+    ResponseBean responseBean = await ApiMethodUtil.postRecruit(
         token: ProviderUtil.globalInfoProvider.jwt,
         recruitPostBean: recruitPostBean);
-    ResponseBean postResponseBean = ResponseBean.fromJson(postResponse.data);
-    if (postResponseBean.isSuccess()) {
+    if (responseBean.isSuccess()) {
       ToastUtil.showSuccessToast("发布成功");
     } else {
-      ToastUtil.showSuccessToast("发布失败 ${postResponseBean.message}");
+      ToastUtil.showSuccessToast("发布失败 ${responseBean.message}");
     }
   }
 
@@ -133,67 +132,68 @@ class PostRecruitPage extends StatelessWidget {
                     imageDelegate: MarkdownImageDelegate(),
                     toolbarDelegate: MarkdownToolbarDelegate(),
                     customAboveWidget: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil().setWidth(30),
-                      ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(30),
+                        ),
                         child: Column(
-                      children: [
-                        Consumer<PostRecruitProvider>(
-                          builder: (context, postRecruitProvider, child) {
-                            return TextField(
-                              minLines: 1,
-                              maxLines: 2,
-                              keyboardType: TextInputType.multiline,
-                              controller: postRecruitProvider.titleController,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: ScreenUtil().setSp(35),
-                                fontWeight: FontWeight.bold,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: '请输入一个完整的标题',
-                                hintStyle: TextStyle(
-                                  color: Colors.black12,
-                                  fontSize: ScreenUtil().setSp(35),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black12, width: 1.5)),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black12, width: 1.5)),
-                                border: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black12, width: 1.5)),
-                              ),
-                            );
-                          },
-                        ),
-                        Consumer<PostRecruitProvider>(
-                          builder: (context, postRecruitProvider, child) {
-                            if (postRecruitProvider.cover == null) {
-                              return Container();
-                            }
-                            return Container(
-                              margin: EdgeInsets.only(top: 20),
-                              alignment: Alignment.center,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  child: CachedNetworkImage(
-                                    height: ScreenUtil().setHeight(250),
-                                    width: double.infinity,
-                                    imageUrl: postRecruitProvider.cover,
-                                    fit: BoxFit.cover,
+                          children: [
+                            Consumer<PostRecruitProvider>(
+                              builder: (context, postRecruitProvider, child) {
+                                return TextField(
+                                  minLines: 1,
+                                  maxLines: 2,
+                                  keyboardType: TextInputType.multiline,
+                                  controller:
+                                      postRecruitProvider.titleController,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: ScreenUtil().setSp(35),
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    )),
+                                  decoration: InputDecoration(
+                                    hintText: '请输入一个完整的标题',
+                                    hintStyle: TextStyle(
+                                      color: Colors.black12,
+                                      fontSize: ScreenUtil().setSp(35),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black12, width: 1.5)),
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black12, width: 1.5)),
+                                    border: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black12, width: 1.5)),
+                                  ),
+                                );
+                              },
+                            ),
+                            Consumer<PostRecruitProvider>(
+                              builder: (context, postRecruitProvider, child) {
+                                if (postRecruitProvider.cover == null) {
+                                  return Container();
+                                }
+                                return Container(
+                                  margin: EdgeInsets.only(top: 20),
+                                  alignment: Alignment.center,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      child: CachedNetworkImage(
+                                        height: ScreenUtil().setHeight(250),
+                                        width: double.infinity,
+                                        imageUrl: postRecruitProvider.cover,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        )),
                   );
                 },
               ),
@@ -219,18 +219,15 @@ class MarkdownImageDelegate implements ZefyrImageDelegate<ImageSource> {
     final ImagePicker _picker = ImagePicker();
     final PickedFile file = await _picker.getImage(source: source);
     if (file == null) return null;
-    Response<dynamic> response = await ApiMethodUtil.getUploadToken(
+    ResponseBean responseBean = await ApiMethodUtil.getUploadToken(
         userToken: ProviderUtil.globalInfoProvider.jwt);
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
     UploadTokenBean uploadTokenBean =
         UploadTokenBean.fromJson(responseBean.data);
 
-    Response<dynamic> uploadResult = await ApiMethodUtil.uploadPicture(
+    UploadResponseBean uploadResponseBean = await ApiMethodUtil.uploadPicture(
         token: uploadTokenBean.token,
         file: File(file.path),
         filename: '${Uuid().v4()}');
-    UploadResponseBean uploadResponseBean =
-        UploadResponseBean.fromJson(uploadResult.data);
     return ApiProperties.ASSET_PREFIX_URL + uploadResponseBean.key;
   }
 
@@ -321,17 +318,15 @@ class MarkdownToolbarDelegate implements ZefyrToolbarDelegate {
           final PickedFile file =
               await _picker.getImage(source: ImageSource.gallery);
           if (file == null) return null;
-          Response<dynamic> response = await ApiMethodUtil.getUploadToken(
+          ResponseBean responseBean = await ApiMethodUtil.getUploadToken(
               userToken: ProviderUtil.globalInfoProvider.jwt);
-          ResponseBean responseBean = ResponseBean.fromJson(response.data);
           UploadTokenBean uploadTokenBean =
               UploadTokenBean.fromJson(responseBean.data);
-          Response<dynamic> uploadResult = await ApiMethodUtil.uploadPicture(
-              token: uploadTokenBean.token,
-              file: File(file.path),
-              filename: '${Uuid().v4()}');
           UploadResponseBean uploadResponseBean =
-              UploadResponseBean.fromJson(uploadResult.data);
+              await ApiMethodUtil.uploadPicture(
+                  token: uploadTokenBean.token,
+                  file: File(file.path),
+                  filename: '${Uuid().v4()}');
           ProviderUtil.postRecruitProvider.cover =
               ApiProperties.ASSET_PREFIX_URL + uploadResponseBean.key;
           ProviderUtil.postRecruitProvider.refresh();

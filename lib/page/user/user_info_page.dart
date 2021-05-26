@@ -100,9 +100,8 @@ class _UserInfoPageState extends State<UserInfoPage>
   }
 
   _getUserInfo() async {
-    Response response = await ApiMethodUtil.getUserInfoById(
+    ResponseBean responseBean  = await ApiMethodUtil.getUserInfoById(
         token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
     userInfoBean = UserInfoBean.fromJson(responseBean.data);
     _generateBubbleList(userInfoBean);
   }
@@ -119,9 +118,8 @@ class _UserInfoPageState extends State<UserInfoPage>
 
   _getTogetherInfoList() async {
     togetherInfoList = [];
-    Response response = await ApiMethodUtil.getTogetherInfoByUserId(
+    ResponseBean responseBean = await ApiMethodUtil.getTogetherInfoByUserId(
         token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
     ListBean listBean = ListBean.fromJson(responseBean.data);
     for (var element in listBean.listData) {
       togetherInfoList.add(TogetherInfoBean.fromJson(element));
@@ -130,9 +128,8 @@ class _UserInfoPageState extends State<UserInfoPage>
 
   _getDynamics() async {
     dynamics = [];
-    Response response = await ApiMethodUtil.getDynamicsByUserId(
+    ResponseBean responseBean= await ApiMethodUtil.getDynamicsByUserId(
         token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
     ListBean listBean = ListBean.fromJson(responseBean.data);
     for (var element in listBean.listData) {
       dynamics.add(DynamicDetailBean.fromJson(element));
@@ -141,9 +138,8 @@ class _UserInfoPageState extends State<UserInfoPage>
 
   _getRecruitInfoList() async {
     recruitList = [];
-    Response response = await ApiMethodUtil.getRecruitInfoListByUserId(
+    ResponseBean responseBean = await ApiMethodUtil.getRecruitInfoListByUserId(
         token: ProviderUtil.globalInfoProvider.jwt, userId: widget.userId);
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
     ListBean listBean = ListBean.fromJson(responseBean.data);
     for (var element in listBean.listData) {
       recruitList.add(RecruitDetailInfoBean.fromJson(element));
@@ -483,8 +479,8 @@ class _UserInfoPageState extends State<UserInfoPage>
                                                         followedBackColor:
                                                             Colors.orange,
                                                         onPressed: () async {
-                                                          Response<dynamic>
-                                                              response =
+                                                          ResponseBean
+                                                          responseBean=
                                                               await ApiMethodUtil
                                                                   .followChange(
                                                             token: ProviderUtil
@@ -493,12 +489,6 @@ class _UserInfoPageState extends State<UserInfoPage>
                                                             targetUserId:
                                                                 userInfoBean.id,
                                                           );
-                                                          ResponseBean
-                                                              responseBean =
-                                                              ResponseBean
-                                                                  .fromJson(
-                                                                      response
-                                                                          .data);
                                                           FollowStatusBean
                                                               followStatusBean =
                                                               FollowStatusBean
@@ -1209,13 +1199,11 @@ class DynamicPreviewCard extends StatelessWidget {
                     height: ScreenUtil().setHeight(40),
                     width: ScreenUtil().setWidth(110),
                     onPressed: () async {
-                      Response<dynamic> response =
+                      ResponseBean responseBean =
                           await ApiMethodUtil.followChange(
                         token: ProviderUtil.globalInfoProvider.jwt,
                         targetUserId: dynamicDetailBean.userId,
                       );
-                      ResponseBean responseBean =
-                          ResponseBean.fromJson(response.data);
                       FollowStatusBean followStatusBean =
                           FollowStatusBean.fromJson(responseBean.data);
                       if (followStatusBean.follow) {

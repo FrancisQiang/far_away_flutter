@@ -63,13 +63,11 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
   }
 
   _getRecruitDetail() async {
-    Response<dynamic> recruitDetailData = await ApiMethodUtil.getRecruitDetail(
+    ResponseBean responseBean = await ApiMethodUtil.getRecruitDetail(
         id: widget.recruitDetailInfoBean.id,
         token: ProviderUtil.globalInfoProvider.jwt);
-    ResponseBean recruitResponseBean =
-        ResponseBean.fromJson(recruitDetailData.data);
     RecruitDetailInfoBean recruitDetailInfoBean =
-        RecruitDetailInfoBean.fromJson(recruitResponseBean.data);
+        RecruitDetailInfoBean.fromJson(responseBean.data);
     setState(() {
       widget.recruitDetailInfoBean.username = recruitDetailInfoBean.username;
       widget.recruitDetailInfoBean.userAvatar =
@@ -350,12 +348,11 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                             ToastUtil.showNoticeToast("您是发布者，不能报名哦！");
                             return;
                           }
-                          Response<dynamic> response = await ApiMethodUtil.recruitSignUp(
+                          ResponseBean responseBean = await ApiMethodUtil.recruitSignUp(
                             token: ProviderUtil.globalInfoProvider.jwt,
                             id: widget.recruitDetailInfoBean.id,
                           );
-                          if (ResponseBean.fromJson(response.data)
-                              .isSuccess()) {
+                          if (responseBean.isSuccess()) {
                             // 发送结伴消息
                             TextMessage textMessage = TextMessage();
                             MessageContentJson json = MessageContentJson(
@@ -502,11 +499,10 @@ class _RecruitCommentState extends State<RecruitComment> {
   }
 
   loadData() async {
-    Response<dynamic> data = await ApiMethodUtil.getCommentList(
+    ResponseBean responseBean = await ApiMethodUtil.getCommentList(
         commentQueryParam: CommentQueryParam(
             businessType: 27, businessId: widget.id, currentPage: currentPage));
-    ResponseBean response = ResponseBean.fromJson(data.data);
-    PageBean pageBean = PageBean.fromJson(response.data);
+    PageBean pageBean = PageBean.fromJson(responseBean.data);
     if (pageBean.list.isEmpty) {
       // 本身没有评论
       if (currentPage == 1) {

@@ -49,15 +49,12 @@ class _TogetherInfoPageState extends State<TogetherInfoPage>
   int currentPage = 1;
 
   _loadTogetherData(String jwt) async {
-    Response<dynamic> data;
-    ResponseBean response;
+    ResponseBean responseBean;
     PageBean pageBean;
     try {
-      data = await ApiMethodUtil.getTogetherInfoList(
+      responseBean = await ApiMethodUtil.getTogetherInfoList(
           timestamp: timestamp, currentPage: currentPage, token: jwt);
-      response = ResponseBean.fromJson(data.data);
-      pageBean = PageBean.fromJson(response.data);
-      print(response.data);
+      pageBean = PageBean.fromJson(responseBean.data);
     } catch (ex) {
       print('error');
       return;
@@ -188,13 +185,11 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                       height: ScreenUtil().setHeight(40),
                       width: ScreenUtil().setWidth(110),
                       onPressed: () async {
-                        Response<dynamic> response =
+                        ResponseBean responseBean =
                             await ApiMethodUtil.followChange(
                           token: ProviderUtil.globalInfoProvider.jwt,
                           targetUserId: togetherInfoBean.userId,
                         );
-                        ResponseBean responseBean =
-                            ResponseBean.fromJson(response.data);
                         FollowStatusBean followStatusBean =
                             FollowStatusBean.fromJson(responseBean.data);
                         if (followStatusBean.follow) {
@@ -287,12 +282,11 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                             ToastUtil.showNoticeToast("您是发布者，不能报名哦！");
                             return;
                           }
-                          Response<dynamic> response =
+                          ResponseBean responseBean =
                               await ApiMethodUtil.togetherSignUp(
                                   token: ProviderUtil.globalInfoProvider.jwt,
                                   id: togetherInfoBean.id);
-                          if (ResponseBean.fromJson(response.data)
-                              .isSuccess()) {
+                          if (responseBean.isSuccess()) {
                             // 发送结伴消息
                             TextMessage textMessage = TextMessage();
                             MessageContentJson json = MessageContentJson(

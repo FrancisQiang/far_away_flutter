@@ -87,14 +87,12 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
 
   _loadCommentListData() async {
     if (hasLoadData) {
-      Response<dynamic> dynamicDetailData =
+      ResponseBean responseBean =
           await ApiMethodUtil.getDynamicDetail(
               id: widget.dynamicDetailBean.id,
               token: ProviderUtil.globalInfoProvider.jwt);
-      ResponseBean dynamicDetailDataResponse =
-          ResponseBean.fromJson(dynamicDetailData.data);
       DynamicDetailBean dynamicDetailBean =
-          DynamicDetailBean.fromJson(dynamicDetailDataResponse.data);
+          DynamicDetailBean.fromJson(responseBean.data);
       setState(() {
         widget.dynamicDetailBean.username = dynamicDetailBean.username;
         widget.dynamicDetailBean.userAvatar = dynamicDetailBean.userAvatar;
@@ -107,13 +105,12 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
       });
     }
     hasLoadData = true;
-    Response<dynamic> data = await ApiMethodUtil.getCommentList(
+    ResponseBean responseBean = await ApiMethodUtil.getCommentList(
         commentQueryParam: CommentQueryParam(
             businessType: 2,
             businessId: widget.dynamicDetailBean.id,
             currentPage: currentPage));
-    ResponseBean response = ResponseBean.fromJson(data.data);
-    PageBean pageBean = PageBean.fromJson(response.data);
+    PageBean pageBean = PageBean.fromJson(responseBean.data);
     if (pageBean.list.isEmpty) {
       // 本身没有评论
       if (currentPage == 1) {

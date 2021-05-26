@@ -127,10 +127,8 @@ class EditBottom extends StatelessWidget {
       String token, List<AssetFile> files) async {
     List<MediaList> result = [];
     for (int i = 0; i < files.length; i++) {
-      Response<dynamic> uploadResult = await ApiMethodUtil.uploadPicture(
+      UploadResponseBean uploadResponseBean = await ApiMethodUtil.uploadPicture(
           token: token, file: files[i].file, filename: '${Uuid().v4()}');
-      UploadResponseBean uploadResponseBean =
-          UploadResponseBean.fromJson(uploadResult.data);
       MediaList mediaList = MediaList(
           type: files[i].type,
           url: ApiProperties.ASSET_PREFIX_URL + uploadResponseBean.key);
@@ -140,18 +138,15 @@ class EditBottom extends StatelessWidget {
   }
 
   Future<String> _uploadPicture(String token, List<AssetEntity> assets) async {
-    Response<dynamic> response =
+    ResponseBean responseBean =
         await ApiMethodUtil.getUploadToken(userToken: token);
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
     UploadTokenBean uploadTokenBean =
         UploadTokenBean.fromJson(responseBean.data);
     List<String> pictureURLList = [];
     for (int i = 0; i < assets.length; i++) {
       File file = await assets[i].file;
-      Response<dynamic> uploadResult = await ApiMethodUtil.uploadPicture(
+      UploadResponseBean uploadResponseBean = await ApiMethodUtil.uploadPicture(
           token: uploadTokenBean.token, file: file, filename: '${Uuid().v4()}');
-      UploadResponseBean uploadResponseBean =
-          UploadResponseBean.fromJson(uploadResult.data);
       pictureURLList
           .add(ApiProperties.ASSET_PREFIX_URL + uploadResponseBean.key);
     }
@@ -227,7 +222,7 @@ class EditBottom extends StatelessWidget {
                     FocusScope.of(context).requestFocus(FocusNode());
                     ToastUtil.showNoticeToast("评论发布中");
                     String jwt = ProviderUtil.globalInfoProvider.jwt;
-                    Response<dynamic> response =
+                    ResponseBean responseBean =
                         await ApiMethodUtil.postComment(
                             token: jwt,
                             bizId: commentChosenProvider.targetBizId,
@@ -237,8 +232,6 @@ class EditBottom extends StatelessWidget {
                             bizType: "2",
                             pictureList:
                                 await _uploadPicture(jwt, duplicateAssets));
-                    ResponseBean responseBean =
-                        ResponseBean.fromJson(response.data);
                     if (responseBean.isSuccess()) {
                       ToastUtil.showSuccessToast("评论成功");
                     }

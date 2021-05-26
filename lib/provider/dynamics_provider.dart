@@ -14,17 +14,15 @@ class DynamicsProvider with ChangeNotifier {
   int timestamp = DateTime.now().millisecondsSinceEpoch;
 
   loadDynamicData(String jwt) async {
-    Response<dynamic> data;
-    ResponseBean response;
+    ResponseBean responseBean;
     PageBean pageBean;
     try {
-      data = await ApiMethodUtil.getDynamicList(
+      responseBean = await ApiMethodUtil.getDynamicList(
         timestamp: timestamp,
         currentPage: currentPage,
         token: jwt,
       );
-      response = ResponseBean.fromJson(data.data);
-      pageBean = PageBean.fromJson(response.data);
+      pageBean = PageBean.fromJson(responseBean.data);
     } catch (ex) {
       return;
     }

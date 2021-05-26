@@ -33,14 +33,12 @@ class _RecruitInfoPageState extends State<RecruitInfoPage>
   List<RecruitDetailInfoBean> recruitInfoList = [];
 
   _loadRecruitData(String jwt) async {
-    Response<dynamic> data;
-    ResponseBean response;
+    ResponseBean responseBean;
     PageBean pageBean;
     try {
-      data = await ApiMethodUtil.getRecruitInfoList(
+      responseBean = await ApiMethodUtil.getRecruitInfoList(
           timestamp: timestamp, currentPage: currentPage, token: jwt);
-      response = ResponseBean.fromJson(data.data);
-      pageBean = PageBean.fromJson(response.data);
+      pageBean = PageBean.fromJson(responseBean.data);
     } catch (ex) {
       print('error');
       return;

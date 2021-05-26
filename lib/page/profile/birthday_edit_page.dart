@@ -57,16 +57,16 @@ class _BirthdayEditPageState extends State<BirthdayEditPage> {
                 ),
                 onPressed: () async {
                   String constellation = DateUtil.getConstellation(birthday);
-                  Response res = await ApiMethodUtil.editUserInfo(
+                  ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
                     token: globalInfoProvider.jwt,
                     birthday: birthday,
                     constellation: constellation,
                   );
-                  ResponseBean responseBean = ResponseBean.fromJson(res.data);
                   if (responseBean.isSuccess()) {
                     ToastUtil.showSuccessToast("修改成功");
                     globalInfoProvider.userInfoBean.birthday = birthday;
-                    globalInfoProvider.userInfoBean.constellation = constellation;
+                    globalInfoProvider.userInfoBean.constellation =
+                        constellation;
                     globalInfoProvider.refresh();
                     Navigator.pop(context);
                   }
@@ -79,16 +79,16 @@ class _BirthdayEditPageState extends State<BirthdayEditPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Theme(
-                data: ThemeData(),
-                child: CalendarDatePicker(
-                  initialDate:
-                      DateTime.fromMillisecondsSinceEpoch(widget.birthday),
-                  firstDate: DateTime.fromMillisecondsSinceEpoch(0),
-                  lastDate: DateTime.now(),
-                  onDateChanged: (DateTime datetime) {
-                    birthday = datetime.millisecondsSinceEpoch;
-                  },
-                ),
+              data: ThemeData(),
+              child: CalendarDatePicker(
+                initialDate:
+                    DateTime.fromMillisecondsSinceEpoch(widget.birthday),
+                firstDate: DateTime.fromMillisecondsSinceEpoch(0),
+                lastDate: DateTime.now(),
+                onDateChanged: (DateTime datetime) {
+                  birthday = datetime.millisecondsSinceEpoch;
+                },
+              ),
             )
           ],
         ),

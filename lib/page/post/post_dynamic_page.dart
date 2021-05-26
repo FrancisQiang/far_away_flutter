@@ -86,9 +86,8 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
       Navigator.pop(context);
       ToastUtil.showNoticeToast("发布中请稍后");
       try {
-        Response<dynamic> response =
+        ResponseBean responseBean =
             await ApiMethodUtil.getUploadToken(userToken: jwt);
-        ResponseBean responseBean = ResponseBean.fromJson(response.data);
         UploadTokenBean uploadTokenBean =
             UploadTokenBean.fromJson(responseBean.data);
         DynamicPostBean dynamicPostBean = DynamicPostBean();
@@ -110,14 +109,12 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
           dynamicPostBean.latitude = latitude;
         }
         // 链接信息
-        Response<dynamic> postResponse = await ApiMethodUtil.postDynamic(
+        responseBean = await ApiMethodUtil.postDynamic(
             token: jwt, dynamicPostBean: dynamicPostBean);
-        ResponseBean postResponseBean =
-            ResponseBean.fromJson(postResponse.data);
-        if (postResponseBean.isSuccess()) {
+        if (responseBean.isSuccess()) {
           ToastUtil.showSuccessToast("发布成功");
         } else {
-          ToastUtil.showSuccessToast("发布失败 ${postResponseBean.message}");
+          ToastUtil.showSuccessToast("发布失败 ${responseBean.message}");
         }
       } catch (ex) {
         print(ex);
@@ -135,10 +132,8 @@ class _PostDynamicPageState extends State<PostDynamicPage> {
       String token, List<AssetFile> files) async {
     List<MediaList> result = [];
     for (int i = 0; i < files.length; i++) {
-      Response<dynamic> uploadResult = await ApiMethodUtil.uploadPicture(
+      UploadResponseBean uploadResponseBean = await ApiMethodUtil.uploadPicture(
           token: token, file: files[i].file, filename: '${Uuid().v4()}');
-      UploadResponseBean uploadResponseBean =
-          UploadResponseBean.fromJson(uploadResult.data);
       MediaList mediaList = MediaList(
           type: files[i].type,
           url: ApiProperties.ASSET_PREFIX_URL + uploadResponseBean.key);

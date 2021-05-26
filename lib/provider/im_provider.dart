@@ -6,12 +6,11 @@ import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
-class ImProvider with ChangeNotifier{
-
+class ImProvider with ChangeNotifier {
   ImProvider() {
     refreshConversationList();
     //消息接收回调
-    RongIMClient.onMessageReceived = (Message msg,int left) async {
+    RongIMClient.onMessageReceived = (Message msg, int left) async {
       await refreshConversationList();
       PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
       TextMessage textMessage = msg.content as TextMessage;
@@ -40,12 +39,16 @@ class ImProvider with ChangeNotifier{
 
   refreshConversationList() async {
     conversations = [];
-    List conversationList = await RongIMClient.getConversationList([RCConversationType.Private,RCConversationType.Group,RCConversationType.System]);
+    List conversationList = await RongIMClient.getConversationList([
+      RCConversationType.Private,
+      RCConversationType.Group,
+      RCConversationType.System
+    ]);
     if (conversationList == null) {
       return;
     }
     List<String> idList = [];
-    for(Conversation conversation in conversationList) {
+    for (Conversation conversation in conversationList) {
       idList.add(conversation.targetId);
       TextMessage message = conversation.latestMessageContent as TextMessage;
       ConversationWrapper conversationWrapper = ConversationWrapper(
@@ -55,9 +58,10 @@ class ImProvider with ChangeNotifier{
       );
       conversations.add(conversationWrapper);
     }
-    Response<dynamic> response = await ApiMethodUtil.getSimpleUserInfoList(userIds: idList);
-    ResponseBean responseBean = ResponseBean.fromJson(response.data);
-    SimpleUserInfoList userList = SimpleUserInfoList.fromJson(responseBean.data);
+    ResponseBean responseBean =
+        await ApiMethodUtil.getSimpleUserInfoList(userIds: idList);
+    SimpleUserInfoList userList =
+        SimpleUserInfoList.fromJson(responseBean.data);
     for (int i = 0; i < conversations.length; i++) {
       SimpleUserInfo simpleUserInfo = SimpleUserInfo.fromJson(userList.list[i]);
       ConversationWrapper conversationWrapper = conversations[i];
@@ -72,5 +76,4 @@ class ImProvider with ChangeNotifier{
   void refresh() {
     notifyListeners();
   }
-
 }

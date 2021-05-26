@@ -53,11 +53,9 @@ class _SchoolSearchPageState extends State<SchoolSearchPage> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (text) async {
-                  Response response = await ApiMethodUtil.searchSchool(
+                  ResponseBean responseBean  = await ApiMethodUtil.searchSchool(
                       token: globalInfoProvider.jwt,
                       keyword: _searchController.text);
-                  ResponseBean responseBean =
-                      ResponseBean.fromJson(response.data);
                   ListBean listBean = ListBean.fromJson(responseBean.data);
                   searchResult.clear();
                   listBean.listData.forEach((element) {
@@ -66,11 +64,9 @@ class _SchoolSearchPageState extends State<SchoolSearchPage> {
                   setState(() {});
                 },
                 onSubmitted: (text) async {
-                  Response response = await ApiMethodUtil.searchSchool(
+                  ResponseBean responseBean = await ApiMethodUtil.searchSchool(
                       token: globalInfoProvider.jwt,
                       keyword: _searchController.text);
-                  ResponseBean responseBean =
-                      ResponseBean.fromJson(response.data);
                   ListBean listBean = ListBean.fromJson(responseBean.data);
                   searchResult.clear();
                   listBean.listData.forEach((element) {
@@ -131,10 +127,9 @@ class _SchoolSearchPageState extends State<SchoolSearchPage> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () async {
-                Response res = await ApiMethodUtil.editUserInfo(
+                ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
                     token: globalInfoProvider.jwt,
                     school: searchResult[index].name);
-                ResponseBean responseBean = ResponseBean.fromJson(res.data);
                 if (responseBean.isSuccess()) {
                   ToastUtil.showSuccessToast("修改成功");
                   globalInfoProvider.userInfoBean.school =

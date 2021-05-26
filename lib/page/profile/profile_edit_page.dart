@@ -79,27 +79,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             NavigatorUtil.toImageCropPage(context,
                                 url: file.path,
                                 confirmCallback: (File cropImage) async {
-                              Response<dynamic> response =
+                                  ResponseBean responseBean =
                                   await ApiMethodUtil.getUploadToken(
                                       userToken: globalInfoProvider.jwt);
-                              ResponseBean responseBean =
-                                  ResponseBean.fromJson(response.data);
                               UploadTokenBean uploadTokenBean =
                                   UploadTokenBean.fromJson(responseBean.data);
-                              Response<dynamic> uploadResult =
+                              UploadResponseBean uploadResponseBean =
                                   await ApiMethodUtil.uploadPicture(
                                       token: uploadTokenBean.token,
                                       file: cropImage,
                                       filename: '${Uuid().v4()}');
-                              UploadResponseBean uploadResponseBean =
-                                  UploadResponseBean.fromJson(
-                                      uploadResult.data);
-                              response = await ApiMethodUtil.editUserInfo(
+                              responseBean = await ApiMethodUtil.editUserInfo(
                                   token: globalInfoProvider.jwt,
                                   avatar: ApiProperties.ASSET_PREFIX_URL +
                                       uploadResponseBean.key);
-                              responseBean =
-                                  ResponseBean.fromJson(response.data);
                               if (responseBean.isSuccess()) {
                                 ToastUtil.showSuccessToast("修改成功");
                                 globalInfoProvider.userInfoBean.avatar =
@@ -147,25 +140,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           NavigatorUtil.toImageCropPage(context,
                               url: file.path, aspectRatio: 16.0 / 9.0,
                               confirmCallback: (File cropImage) async {
-                            Response<dynamic> response =
+                                ResponseBean responseBean =
                                 await ApiMethodUtil.getUploadToken(
                                     userToken: globalInfoProvider.jwt);
-                            ResponseBean responseBean =
-                                ResponseBean.fromJson(response.data);
                             UploadTokenBean uploadTokenBean =
                                 UploadTokenBean.fromJson(responseBean.data);
-                            Response<dynamic> uploadResult =
+                            UploadResponseBean uploadResponseBean =
                                 await ApiMethodUtil.uploadPicture(
                                     token: uploadTokenBean.token,
                                     file: cropImage,
                                     filename: '${Uuid().v4()}');
-                            UploadResponseBean uploadResponseBean =
-                                UploadResponseBean.fromJson(uploadResult.data);
-                            response = await ApiMethodUtil.editUserInfo(
+                                responseBean = await ApiMethodUtil.editUserInfo(
                                 token: globalInfoProvider.jwt,
                                 cover: ApiProperties.ASSET_PREFIX_URL +
                                     uploadResponseBean.key);
-                            responseBean = ResponseBean.fromJson(response.data);
                             if (responseBean.isSuccess()) {
                               ToastUtil.showSuccessToast("修改成功");
                               globalInfoProvider.userInfoBean.cover =
@@ -304,11 +292,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       "${result.provinceName}·${result.cityName}·${result.areaName}";
                   globalInfoProvider.userInfoBean.location = location;
                   globalInfoProvider.refresh();
-                  Response res = await ApiMethodUtil.editUserInfo(
+                  ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
                     token: globalInfoProvider.jwt,
                     location: location,
                   );
-                  ResponseBean responseBean = ResponseBean.fromJson(res.data);
                   if (responseBean.isSuccess()) {
                     ToastUtil.showSuccessToast("修改成功");
                   } else {

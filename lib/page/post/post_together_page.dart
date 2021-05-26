@@ -44,13 +44,12 @@ class _PostTogetherPageState extends State<PostTogetherPage> {
           togetherPostBean.longitude = longitude;
           togetherPostBean.latitude = latitude;
         }
-        Response<dynamic> postResponse = await ApiMethodUtil.postTogether(
+        ResponseBean responseBean = await ApiMethodUtil.postTogether(
             token: jwt, togetherPostBean: togetherPostBean);
-        ResponseBean postResponseBean = ResponseBean.fromJson(postResponse.data);
-        if (postResponseBean.isSuccess()) {
+        if (responseBean.isSuccess()) {
           ToastUtil.showSuccessToast("发布成功");
         } else {
-          ToastUtil.showSuccessToast("发布失败 ${postResponseBean.message}");
+          ToastUtil.showSuccessToast("发布失败 ${responseBean.message}");
         }
       } catch (ex) {
         print(ex);

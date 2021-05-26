@@ -133,7 +133,7 @@ class CommentInputBottomPage extends StatelessWidget {
                               Navigator.pop(context);
                               ToastUtil.showNoticeToast("评论发布中");
                               String jwt = ProviderUtil.globalInfoProvider.jwt;
-                              Response<dynamic> response = await ApiMethodUtil.postComment(
+                              ResponseBean responseBean = await ApiMethodUtil.postComment(
                                 token: jwt,
                                 bizId: bizId,
                                 toUserId: toUserId,
@@ -141,7 +141,6 @@ class CommentInputBottomPage extends StatelessWidget {
                                 pid: pid,
                                 bizType: '27',
                               );
-                              ResponseBean responseBean = ResponseBean.fromJson(response.data);
                               if (responseBean.isSuccess()) {
                                 ToastUtil.showSuccessToast("评论成功");
                               }

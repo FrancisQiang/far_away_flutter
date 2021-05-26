@@ -21,7 +21,6 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'dynamic_comment_widget.dart';
 
 class TogetherDetailComponent extends StatefulWidget {
-
   // 是否滚动到评论页
   final bool scrollToComment;
 
@@ -31,14 +30,15 @@ class TogetherDetailComponent extends StatefulWidget {
   // 动态详情
   final TogetherInfoBean togetherInfoBean;
 
-  TogetherDetailComponent({this.scrollToComment, this.avatarHeroTag, this.togetherInfoBean});
+  TogetherDetailComponent(
+      {this.scrollToComment, this.avatarHeroTag, this.togetherInfoBean});
 
   @override
-  _TogetherDetailComponentState createState() => _TogetherDetailComponentState();
+  _TogetherDetailComponentState createState() =>
+      _TogetherDetailComponentState();
 }
 
 class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
-
   final GlobalKey _globalKey = GlobalKey();
 
   final ScrollController _controller = ScrollController();
@@ -84,18 +84,18 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
         offset.dy -
         MediaQueryData.fromWindow(window).padding.top -
         56.0;
-    _controller.animateTo(animateHeight, duration: Duration(milliseconds: 400), curve: Curves.ease);
+    _controller.animateTo(animateHeight,
+        duration: Duration(milliseconds: 400), curve: Curves.ease);
   }
 
   _loadCommentListData() async {
     if (hasLoadData) {
-      Response<dynamic> togetherDetailData =
-      await ApiMethodUtil.getTogetherDetail(
-          id: widget.togetherInfoBean.id,
-          token: ProviderUtil.globalInfoProvider.jwt);
-      ResponseBean togetherInfoResponseBean = ResponseBean.fromJson(togetherDetailData.data);
+      ResponseBean responseBean =
+          await ApiMethodUtil.getTogetherDetail(
+              id: widget.togetherInfoBean.id,
+              token: ProviderUtil.globalInfoProvider.jwt);
       TogetherInfoBean togetherInfoBean =
-      TogetherInfoBean.fromJson(togetherInfoResponseBean.data);
+          TogetherInfoBean.fromJson(responseBean.data);
       setState(() {
         widget.togetherInfoBean.username = togetherInfoBean.username;
         widget.togetherInfoBean.userAvatar = togetherInfoBean.userAvatar;
@@ -105,13 +105,12 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
       });
     }
     hasLoadData = true;
-    Response<dynamic> data = await ApiMethodUtil.getCommentList(
+    ResponseBean responseBean = await ApiMethodUtil.getCommentList(
         commentQueryParam: CommentQueryParam(
             businessType: 10,
             businessId: widget.togetherInfoBean.id,
             currentPage: currentPage));
-    ResponseBean response = ResponseBean.fromJson(data.data);
-    PageBean pageBean = PageBean.fromJson(response.data);
+    PageBean pageBean = PageBean.fromJson(responseBean.data);
     if (pageBean.list.isEmpty) {
       // 本身没有评论
       if (currentPage == 1) {
@@ -156,16 +155,15 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
             ),
             Container(
               decoration: BoxDecoration(color: Colors.white),
-              padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(22)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22)),
               child: Column(
                 children: [
                   Container(
                     key: _globalKey,
                     decoration: BoxDecoration(
                       border: Border(
-                          bottom: BorderSide(
-                              color: Colors.black, width: 0.05)),
+                          bottom: BorderSide(color: Colors.black, width: 0.05)),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 5),
                     width: double.infinity,
@@ -177,18 +175,19 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
                   Container(
                     child: commentList.isEmpty && emptyData
                         ? Container(
-                      child: CommentEmpty(
-                        iconHeight: ScreenUtil().setHeight(500),
-                        iconWidth: ScreenUtil().setWidth(750),
-                      ),
-                    )
+                            child: CommentEmpty(
+                              iconHeight: ScreenUtil().setHeight(500),
+                              iconWidth: ScreenUtil().setWidth(750),
+                            ),
+                          )
                         : Column(
-                      children: List.generate(commentList.length, (commentIndex) {
-                        return TogetherCommentWidget(
-                          commentListBean: commentList[commentIndex],
-                        );
-                      }),
-                    ),
+                            children: List.generate(commentList.length,
+                                (commentIndex) {
+                              return TogetherCommentWidget(
+                                commentListBean: commentList[commentIndex],
+                              );
+                            }),
+                          ),
                   ),
                 ],
               ),

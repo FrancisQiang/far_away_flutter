@@ -54,10 +54,9 @@ class _IndustryEditPageState extends State<IndustryEditPage> {
                           fontSize: ScreenUtil().setSp(28), letterSpacing: 0.5),
                     ),
                     onPressed: () async {
-                      Response res = await ApiMethodUtil.editUserInfo(
+                      ResponseBean responseBean = await ApiMethodUtil.editUserInfo(
                           token: globalInfoProvider.jwt,
                           industry: _editingController.text);
-                      ResponseBean responseBean = ResponseBean.fromJson(res.data);
                       if (responseBean.isSuccess()) {
                         ToastUtil.showSuccessToast("修改成功");
                         globalInfoProvider.userInfoBean.industry =

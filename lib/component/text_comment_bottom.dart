@@ -63,7 +63,7 @@ class TextCommentBottom extends StatelessWidget {
                     FocusScope.of(context).requestFocus(FocusNode());
                     ToastUtil.showNoticeToast("评论发布中");
                     String jwt = ProviderUtil.globalInfoProvider.jwt;
-                    Response<dynamic> response =
+                    ResponseBean responseBean =
                     await ApiMethodUtil.postComment(
                         token: jwt,
                         bizId: commentChosenProvider.targetBizId,
@@ -71,8 +71,6 @@ class TextCommentBottom extends StatelessWidget {
                         content: duplicateContent,
                         pid: commentChosenProvider.pid,
                         bizType: bizType.toString(),);
-                    ResponseBean responseBean =
-                    ResponseBean.fromJson(response.data);
                     if (responseBean.isSuccess()) {
                       ToastUtil.showSuccessToast("评论成功");
                     }
