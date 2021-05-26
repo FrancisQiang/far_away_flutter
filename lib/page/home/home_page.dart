@@ -1,4 +1,5 @@
 
+import 'package:far_away_flutter/config/OverScrollBehavior.dart';
 import 'package:far_away_flutter/page/home/search_text_field.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with TickerProviderStateMixin<HomePage> {
 
-  // TabBar控制器
   TabController _tabController;
 
   final List<Tab> _tabs = [
@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        // brightness: Brightness.light,
         elevation: 0,
         leading: InkWell(
           onTap: () => {},
@@ -63,7 +62,6 @@ class _HomePageState extends State<HomePage>
         ],
         bottom: PreferredSize(
           child: Container(
-            // color: Colors.red,
             alignment: Alignment.centerLeft,
             height: 30,
             child: TabBar(
@@ -73,7 +71,8 @@ class _HomePageState extends State<HomePage>
               labelStyle: TextStyle(
                   fontSize: ScreenUtil().setSp(28),
                   letterSpacing: 1,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold,
+              ),
               unselectedLabelColor: Colors.black54,
               controller: _tabController,
               indicatorSize: TabBarIndicatorSize.label,
@@ -84,14 +83,20 @@ class _HomePageState extends State<HomePage>
           preferredSize: Size(double.infinity, 30),
         )
       ),
-      body: TabBarView(
-          controller: _tabController,
-          physics: BouncingScrollPhysics(),
-          children: [
-            ProviderUtil.getDynamicsPage(),
-            ProviderUtil.getTogetherPage(),
-            RecruitInfoPage(),
-          ]),
+      body: ScrollConfiguration(
+        behavior: OverScrollBehavior.instance,
+        child: Padding(
+          padding: EdgeInsets.only(top: 5),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              ProviderUtil.getDynamicsPage(),
+              ProviderUtil.getTogetherPage(),
+              RecruitInfoPage(),
+            ],
+          ),
+        ),
+      )
     );
   }
 }

@@ -27,7 +27,7 @@ class AnimatedLoginButton extends StatefulWidget {
     @required this.originLength,
     @required this.criticalLength,
     @required this.login,
-    this.duration = const Duration(milliseconds: 800),
+    this.duration = const Duration(milliseconds: 400),
     this.curve = Curves.ease});
 
   @override

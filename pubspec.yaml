@@ -93,6 +93,7 @@ dependencies:
   extended_nested_scroll_view: ^1.0.1
   # 头像裁剪
   image_crop: ^0.3.4
+  logger: ^0.9.4
 
 
   # The following adds the Cupertino Icons font to your application.

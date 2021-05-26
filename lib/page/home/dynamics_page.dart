@@ -28,15 +28,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 
-import 'dynamic_empty_widget.dart';
-
 class DynamicsPage extends StatefulWidget {
   @override
   _DynamicsPageState createState() => _DynamicsPageState();
 }
 
-class _DynamicsPageState extends State<DynamicsPage>
-    with AutomaticKeepAliveClientMixin {
+class _DynamicsPageState extends State<DynamicsPage> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 

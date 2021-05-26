@@ -1,16 +1,22 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_post_bean.dart';
 import 'package:far_away_flutter/bean/recruit_post_bean.dart';
+import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/together_post_bean.dart';
 import 'package:far_away_flutter/bean/user_id_list_bean.dart';
 import 'package:far_away_flutter/bean/user_info_edit_bean.dart';
+import 'package:far_away_flutter/bean/user_token_bean.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
+import 'package:far_away_flutter/properties/rong_cloud_properties.dart';
 import 'package:far_away_flutter/util/dio_factory.dart';
+import 'package:far_away_flutter/util/logger_util.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 import 'dio_util.dart';
 
@@ -20,6 +26,8 @@ class ApiMethodUtil {
 
   static ApiMethodUtil get instance => _getInstance();
   static ApiMethodUtil _instance;
+
+  static String jwtToken;
 
   ApiMethodUtil._internal();
 
@@ -68,22 +76,40 @@ class ApiMethodUtil {
   }
 
   /// 手机验证码注册登录
-  void mobileRegisterOrLogin({
-    Function success,
-    Function failed,
-    Function error,
-    Map<String, String> params,
-    CancelToken token,
-  }) {
-    DioUtil.instance.post(
-      ApiProperties.HOST_BASE_URL + "/user/mobile/register_login",
-      success,
-      params: params,
-      errorCallBack: (errorMessage) {
-        error(errorMessage);
-      },
-      token: token,
-    );
+  static Future<ResponseBean> mobileRegisterOrLogin({
+    @required String mobile,
+    @required String code,
+  }) async {
+    Response response;
+    try {
+      response = await DioFactory.getDioClient().post(
+          ApiProperties.HOST_BASE_URL + "/user/mobile/register_login",
+          data: {
+            "mobile": mobile,
+            "code": code
+          }
+      );
+    } catch(ex) {
+      LoggerUtil.logger.e('Error! mobileRegisterOrLogin request failed!', ex);
+      return null;
+    }
+    return ResponseBean.fromJson(response.data);
+  }
+
+  static void rongCloudConnect({@required String imToken}) {
+    RongIMClient.init(RongCloudProperties.appKey);
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      RongIMClient.connect(imToken, (int code, String userId) {
+        if (code == 12 || code == 31004) {
+          LoggerUtil.logger.e("Error! Rong Cloud connect failed!");
+        } else if (code == 0 || code == 34001) {
+          LoggerUtil.logger.i("Info! Rong Cloud connect successful");
+          timer.cancel();
+          return;
+        }
+      });
+    });
+
   }
 
   /// 获取动态圈数据
@@ -127,10 +153,17 @@ class ApiMethodUtil {
     });
   }
 
-  static Future<dynamic> getUserInfo({@required String token}) {
-    return DioFactory.getDioClient().get(
-        ApiProperties.HOST_BASE_URL + "/user/info",
-        options: Options(headers: {"Authorization": token}));
+  static Future<ResponseBean> getUserInfo({@required String token}) async {
+    Response response;
+    try {
+      response = await DioFactory.getDioClient().get(
+          ApiProperties.HOST_BASE_URL + "/user/info",
+          options: Options(headers: {"Authorization": token}));
+    } catch (ex) {
+      LoggerUtil.logger.e('Error! getUserInfo request failed!', ex);
+      return null;
+    }
+    return ResponseBean.fromJson(response.data);
   }
 
   static Future<dynamic> getUserInfoById(
@@ -339,21 +372,20 @@ class ApiMethodUtil {
     );
   }
 
-  static Future<dynamic> editUserInfo({
-    @required String token,
-    String userName,
-    String location,
-    String school,
-    String major,
-    String industry,
-    int emotionState,
-    int birthday,
-    String constellation,
-    String signature,
-    String avatar,
-    String cover,
-    int gender
-  }) {
+  static Future<dynamic> editUserInfo(
+      {@required String token,
+      String userName,
+      String location,
+      String school,
+      String major,
+      String industry,
+      int emotionState,
+      int birthday,
+      String constellation,
+      String signature,
+      String avatar,
+      String cover,
+      int gender}) {
     UserInfoEditBean userInfoEditBean = UserInfoEditBean();
     userInfoEditBean.userName = userName;
     userInfoEditBean.signature = signature;
@@ -369,17 +401,17 @@ class ApiMethodUtil {
     userInfoEditBean.gender = gender;
 
     return DioFactory.getDioClient().post(
-        ApiProperties.HOST_BASE_URL + "/user/info/edit_info",
-        options: Options(headers: {"Authorization": token}),
-        data: userInfoEditBean.toJson(),
+      ApiProperties.HOST_BASE_URL + "/user/info/edit_info",
+      options: Options(headers: {"Authorization": token}),
+      data: userInfoEditBean.toJson(),
     );
   }
 
-  static Future<dynamic> searchSchool({@required String token, @required String keyword}) {
+  static Future<dynamic> searchSchool(
+      {@required String token, @required String keyword}) {
     return DioFactory.getDioClient().get(
       ApiProperties.HOST_BASE_URL + "/school/search/$keyword",
       options: Options(headers: {"Authorization": token}),
     );
   }
-
 }

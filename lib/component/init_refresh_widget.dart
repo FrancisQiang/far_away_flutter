@@ -12,7 +12,7 @@ class InitRefreshWidget extends StatelessWidget {
   InitRefreshWidget(
       {this.height = 200.0,
       this.width = 300.0,
-      this.color = Colors.blueAccent});
+      this.color = Colors.orangeAccent});
 
   @override
   Widget build(BuildContext context) {

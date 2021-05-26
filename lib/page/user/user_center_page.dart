@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
@@ -90,9 +89,8 @@ class _UserCenterPageState extends State<UserCenterPage>
   /// 获取用户信息并更新
   _getUserInfo(GlobalInfoProvider globalInfoProvider) async {
     // 更新用户信息
-    Response<dynamic> userInfoResponse =
+    ResponseBean response =
         await ApiMethodUtil.getUserInfo(token: globalInfoProvider.jwt);
-    ResponseBean response = ResponseBean.fromJson(userInfoResponse.data);
     globalInfoProvider.userInfoBean = UserInfoBean.fromJson(response.data);
     UserInfoBean userInfoBean = globalInfoProvider.userInfoBean;
     globalInfoProvider.refresh();

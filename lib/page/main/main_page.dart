@@ -1,12 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
+import 'package:far_away_flutter/component/init_refresh_widget.dart';
 import 'package:far_away_flutter/page/chat/chat_page.dart';
 import 'package:far_away_flutter/page/home/home_page.dart';
 import 'package:far_away_flutter/page/post/post_choose_widget.dart';
 import 'package:far_away_flutter/page/user/user_center_page.dart';
 import 'package:far_away_flutter/properties/shared_preferences_keys.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
+import 'package:far_away_flutter/util/logger_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/sp_util.dart';
@@ -21,11 +23,16 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class MainPage extends StatefulWidget {
+  final bool isLogin;
+
+  MainPage({this.isLogin = false});
+
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+  bool isLogin;
 
   int _currentIndex = 0;
 
@@ -35,48 +42,50 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    bool occurException = false;
-    SharedPreferenceUtil.instance.getString(SharedPreferencesKeys.userToken).then((value) async {
+    this._pageController = PageController(initialPage: this._currentIndex);
+    isLogin = widget.isLogin;
+    // 如果此时是从登录页面进入的则直接通行
+    if (isLogin) {
+      return;
+    }
+    // 否则是打开应用进入的，那么此时会对应两种情况
+    // 1. sharedPreference中存在jwt，那么登录态允许
+    // 2. sharedPreference中不存在jwt，那么跳转到登录页面
+    SharedPreferenceUtil.instance
+        .getString(SharedPreferencesKeys.userToken)
+        .then((value) async {
       // 通过token获取用户信息
-      if(!StringUtil.isEmpty(value)) {
+      if (!StringUtil.isEmpty(value)) {
         try {
           // token暂存在内存中
           ProviderUtil.globalInfoProvider.jwt = value;
           // 获取关注列表
           await ProviderUtil.globalInfoProvider.refreshFollowList();
           print(ProviderUtil.globalInfoProvider.jwt);
-          Response<dynamic> userInfoResponse = await ApiMethodUtil.getUserInfo(token: value);
-          ResponseBean response = ResponseBean.fromJson(userInfoResponse.data);
-          // 存放在全局变量中
-          ProviderUtil.globalInfoProvider.userInfoBean = UserInfoBean.fromJson(response.data);
-          RongIMClient.init("cpj2xarlcmi6n");
-          RongIMClient.connect(ProviderUtil.globalInfoProvider.userInfoBean.IMToken, (int code, String userId) {
-            if (code == 31004 || code == 12) {
-              ToastUtil.showErrorToast("消息系统登录失败");
-            } else if (code == 0) {
-              // 登录成功
-            }
-          });
+          // 更新用户信息
+          ResponseBean response = await ApiMethodUtil.getUserInfo(token: value);
+          ProviderUtil.globalInfoProvider.userInfoBean =
+              UserInfoBean.fromJson(response.data);
+          // IM系统登录
+          ApiMethodUtil.rongCloudConnect(
+              imToken: ProviderUtil.globalInfoProvider.userInfoBean.IMToken);
         } catch (ex) {
-          print(ex);
-          occurException = true;
+          LoggerUtil.logger.e("Error! login session error!", ex);
           NavigatorUtil.toLoginChoosePage(context);
         }
+        setState(() {
+          isLogin = true;
+        });
       } else {
-        occurException = true;
         NavigatorUtil.toLoginChoosePage(context);
       }
     });
-    if(occurException) {
-      return;
-    }
-    this._pageController = PageController(initialPage: this._currentIndex);
   }
 
   @override
   Widget build(BuildContext context) {
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
-      statusBarColor:Colors.transparent,
+      statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
@@ -87,13 +96,27 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         physics: NeverScrollableScrollPhysics(),
         controller: this._pageController,
         children: [
-          HomePage(),
-          ChatPage(),
+          isLogin
+              ? HomePage()
+              : InitRefreshWidget(
+                  color: Theme.of(context).primaryColor,
+                ),
+          isLogin
+              ? ChatPage()
+              : InitRefreshWidget(
+                  color: Theme.of(context).primaryColor,
+                ),
           Container(),
-          Container(
-            child: Text('3'),
-          ),
-          UserCenterPage()
+          isLogin
+              ? Container()
+              : InitRefreshWidget(
+                  color: Theme.of(context).primaryColor,
+                ),
+          isLogin
+              ? UserCenterPage()
+              : InitRefreshWidget(
+                  color: Theme.of(context).primaryColor,
+                ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -110,8 +133,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 context: context,
                 builder: (context) {
                   return PostChooseWidget();
-                }
-            );
+                });
             return;
           }
           setState(() {
@@ -192,4 +214,3 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 }
-

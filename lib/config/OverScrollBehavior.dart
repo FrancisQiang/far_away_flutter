@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class OverScrollBehavior extends ScrollBehavior{
 
+  static OverScrollBehavior instance = OverScrollBehavior();
+
   @override
   Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
     switch (getPlatform(context)) {

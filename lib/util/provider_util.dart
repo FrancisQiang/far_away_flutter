@@ -240,11 +240,14 @@ class ProviderUtil {
   }
 
   static MultiProvider getDynamicsPage() {
-    return MultiProvider(providers: [
-      ChangeNotifierProvider<GlobalInfoProvider>.value(
-          value: globalInfoProvider),
-      ChangeNotifierProvider<DynamicsProvider>.value(value: dynamicsProvider),
-    ], child: DynamicsPage());
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider),
+        ChangeNotifierProvider<DynamicsProvider>.value(value: dynamicsProvider),
+      ],
+      child: DynamicsPage(),
+    );
   }
 
   static MultiProvider getTogetherPage() {
@@ -372,7 +375,6 @@ class ProviderUtil {
     );
   }
 
-
   static Widget getMajorEditPage({@required String major}) {
     return MultiProvider(
       providers: [
@@ -396,9 +398,4 @@ class ProviderUtil {
       ),
     );
   }
-
-
-
 }
-
-
