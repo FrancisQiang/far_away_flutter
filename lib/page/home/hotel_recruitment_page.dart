@@ -63,8 +63,8 @@ class _RecruitInfoPageState extends State<RecruitInfoPage>
     return Consumer<GlobalInfoProvider>(
       builder: (context, globalInfoProvider, child) {
         return EasyRefresh(
-          header: EasyRefreshWidget.refreshHeader,
-          footer: EasyRefreshWidget.refreshFooter,
+          header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
+          footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
           firstRefresh: true,
           onRefresh: () async {
             recruitInfoList = [];

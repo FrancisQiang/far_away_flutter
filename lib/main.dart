@@ -1,3 +1,4 @@
+import 'package:far_away_flutter/constant/my_color.dart';
 import 'package:far_away_flutter/router/application.dart';
 import 'package:far_away_flutter/router/routes.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
@@ -26,7 +27,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          brightness: Brightness.light,
           primaryColor: Colors.orangeAccent,
+          primaryColorDark: Colors.orangeAccent[700],
+          primaryColorLight: Colors.orange[200],
+          primarySwatch: MyColor.orangeThemeColor,
+          backgroundColor: MyColor.backgroundColor
         ),
         home: ProviderUtil.getMainPage()
     );

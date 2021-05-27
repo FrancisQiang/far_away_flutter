@@ -30,18 +30,15 @@ import 'package:far_away_flutter/page/profile/username_edit_page.dart';
 import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
 import 'package:far_away_flutter/page/user/user_info_page.dart';
 import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
-import 'package:far_away_flutter/provider/dynamics_provider.dart';
+import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';
-import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/provider/post_recruit_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 class ProviderUtil {
   static GlobalInfoProvider globalInfoProvider = GlobalInfoProvider();
-
-  static DynamicsProvider dynamicsProvider = DynamicsProvider();
 
   static PostProvider postProvider = PostProvider();
 
@@ -115,9 +112,6 @@ class ProviderUtil {
       providers: [
         ChangeNotifierProvider<CommentChosenProvider>.value(
             value: dynamicCommentChosenProvider),
-        ChangeNotifierProvider<DynamicsProvider>.value(
-          value: dynamicsProvider,
-        ),
         ChangeNotifierProvider<GlobalInfoProvider>.value(
           value: globalInfoProvider,
         ),
@@ -244,7 +238,6 @@ class ProviderUtil {
       providers: [
         ChangeNotifierProvider<GlobalInfoProvider>.value(
             value: globalInfoProvider),
-        ChangeNotifierProvider<DynamicsProvider>.value(value: dynamicsProvider),
       ],
       child: DynamicsPage(),
     );

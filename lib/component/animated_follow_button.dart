@@ -84,22 +84,23 @@ class FollowedButton extends StatelessWidget {
       height: height,
       width: width,
       child: FlatButton(
-        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+        padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           side: BorderSide(
-            width: 0.1,
-            color: Colors.black54,
+            width: 0.5,
+            color: Colors.grey,
           ),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(15),
         ),
         onPressed: onPressed,
         color: backColor == null ? Colors.transparent : backColor,
         child: child == null
             ? Text(
-                '已 关 注',
+                '已关注',
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 10,
+                  color: Colors.grey,
+                  fontSize: 11,
+                  letterSpacing: 0.5,
                   fontWeight: FontWeight.bold,
                 ),
               )
@@ -131,16 +132,16 @@ class FollowButton extends StatelessWidget {
       child: FlatButton(
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(15),
         ),
         onPressed: onPressed,
-        color: backColor == null ? Colors.orangeAccent : backColor,
+        color: backColor == null ? Theme.of(context).primaryColor : backColor,
         child: child == null
             ? Text(
-                '关 注',
+                '关注',
                 style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 10,
+                  fontSize: 11,
+                  letterSpacing: 0.5,
                   fontWeight: FontWeight.bold,
                 ),
               )

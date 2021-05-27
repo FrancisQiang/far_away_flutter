@@ -18,7 +18,7 @@ class TimeLocationBar extends StatelessWidget {
       {@required this.time,
       this.location,
       this.width = double.infinity,
-      this.margin = const EdgeInsets.all(10),
+      this.margin = const EdgeInsets.all(0),
       this.padding = const EdgeInsets.all(0)});
 
   @override
@@ -40,16 +40,17 @@ class TimeLocationBar extends StatelessWidget {
                     Icons.location_on,
                     color: Colors.orangeAccent,
                     size: ScreenUtil().setSp(30),
-                  )
+                  ),
           ),
           StringUtil.isEmpty(location)
               ? SizedBox()
-              : Container(
-                  width: width * 0.6,
-                  child: Text(
-                    location,
-                    style: TextStyleTheme.subH5,
-                    overflow: TextOverflow.ellipsis,
+              : Expanded(
+                  child: Container(
+                    child: Text(
+                      location,
+                      style: TextStyleTheme.subH5,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
         ],

@@ -28,7 +28,9 @@ class LinkWidget extends StatelessWidget {
       child: Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20), color: Colors.grey[100]),
+            borderRadius: BorderRadius.circular(20),
+            color: Theme.of(context).backgroundColor,
+          ),
           child: Row(
             children: [
               Container(

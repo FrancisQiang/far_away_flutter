@@ -93,7 +93,8 @@ class _RecruitCommentDrawWidgetState extends State<RecruitCommentDrawWidget> {
             topBouncing: false,
             firstRefresh: true,
             firstRefreshWidget: Container(),
-            footer: EasyRefreshWidget.refreshFooter,
+            header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
+            footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
             onRefresh: _firstRefresh,
             onLoad: () async {
               await _loadChildrenCommentListData();

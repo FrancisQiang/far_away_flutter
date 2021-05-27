@@ -1,5 +1,6 @@
 
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
+import 'package:far_away_flutter/constant/my_color.dart';
 import 'package:far_away_flutter/page/home/search_text_field.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage>
       text: '结伴广场',
     ),
     Tab(
-      text: '旅舍招聘',
+      text: '义工招聘',
     ),
   ];
 
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -66,8 +68,8 @@ class _HomePageState extends State<HomePage>
             height: 30,
             child: TabBar(
               isScrollable: true,
-              labelColor: Colors.deepOrangeAccent,
-              indicatorColor: Colors.deepOrangeAccent,
+              labelColor: Theme.of(context).primaryColorDark,
+              indicatorColor: Theme.of(context).primaryColorDark,
               labelStyle: TextStyle(
                   fontSize: ScreenUtil().setSp(28),
                   letterSpacing: 1,
@@ -85,16 +87,13 @@ class _HomePageState extends State<HomePage>
       ),
       body: ScrollConfiguration(
         behavior: OverScrollBehavior.instance,
-        child: Padding(
-          padding: EdgeInsets.only(top: 5),
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              ProviderUtil.getDynamicsPage(),
-              ProviderUtil.getTogetherPage(),
-              RecruitInfoPage(),
-            ],
-          ),
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            ProviderUtil.getDynamicsPage(),
+            ProviderUtil.getTogetherPage(),
+            RecruitInfoPage(),
+          ],
         ),
       )
     );

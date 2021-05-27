@@ -96,7 +96,7 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
               topBouncing: false,
               firstRefresh: true,
               firstRefreshWidget: Container(),
-              footer: EasyRefreshWidget.refreshFooter,
+              footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
               onRefresh: _firstRefresh,
               onLoad: () async {
                 await _loadChildrenCommentListData();

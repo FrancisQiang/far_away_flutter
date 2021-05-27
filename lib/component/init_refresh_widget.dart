@@ -9,10 +9,13 @@ class InitRefreshWidget extends StatelessWidget {
 
   final Color color;
 
+  static final InitRefreshWidget instance = InitRefreshWidget();
+
   InitRefreshWidget(
       {this.height = 200.0,
       this.width = 300.0,
-      this.color = Colors.orangeAccent});
+      this.color});
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class InitRefreshWidget extends StatelessWidget {
                 width: 50.0,
                 height: 50.0,
                 child: SpinKitFadingCube(
-                  color: color,
+                  color: color == null ? Theme.of(context).primaryColor : color,
                   size: 25.0,
                 ),
               ),

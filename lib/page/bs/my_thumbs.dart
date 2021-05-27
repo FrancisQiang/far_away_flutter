@@ -4,6 +4,7 @@ import 'package:far_away_flutter/bean/mixing_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
+import 'package:far_away_flutter/component/dynamic_preview_widget.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
 import 'package:far_away_flutter/page/user/user_info_page.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
@@ -111,8 +112,10 @@ class _MyThumbsPageState extends State<MyThumbsPage> with TickerProviderStateMix
                           dynamicDetailBean: dynamicList[index],
                         ),
                       ),
-                  child: DynamicPreviewCard(
+                  child: DynamicPreviewWidget(
                     dynamicDetailBean: dynamicList[index],
+                    avatarAction: AvatarAction.toUserInfoPage,
+                    showFollowButton: false,
                   ),
                 );
               },

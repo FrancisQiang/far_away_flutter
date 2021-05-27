@@ -121,8 +121,8 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                     topBouncing: false,
                     useEasyRefresh: true,
                     scrollController: _controller,
-                    header: EasyRefreshWidget.refreshHeader,
-                    footer: EasyRefreshWidget.refreshFooter,
+                    header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
+                    footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
                     focusNode: FocusNode(),
                     onRefresh: () async {
                       _getRecruitDetail();

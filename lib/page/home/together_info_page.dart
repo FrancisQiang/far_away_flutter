@@ -84,8 +84,8 @@ class _TogetherInfoPageState extends State<TogetherInfoPage>
     return Consumer<GlobalInfoProvider>(
         builder: (context, globalInfoProvider, child) {
       return EasyRefresh(
-          header: EasyRefreshWidget.refreshHeader,
-          footer: EasyRefreshWidget.refreshFooter,
+          header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
+          footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
           firstRefresh: true,
           firstRefreshWidget: InitRefreshWidget(
             color: Theme.of(context).primaryColor,

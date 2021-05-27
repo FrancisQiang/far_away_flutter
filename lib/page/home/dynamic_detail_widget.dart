@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/follow_status.dart';
 import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
@@ -10,12 +9,10 @@ import 'package:far_away_flutter/component/image_error_widget.dart';
 import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/link_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
-import 'package:far_away_flutter/provider/dynamics_provider.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
-import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
@@ -34,8 +31,8 @@ class DynamicDetailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<DynamicsProvider, GlobalInfoProvider>(
-      builder: (context, dynamicsProvider, globalInfoProvider, child) {
+    return Consumer<GlobalInfoProvider>(
+      builder: (context, globalInfoProvider, child) {
         return Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10), color: Colors.white),

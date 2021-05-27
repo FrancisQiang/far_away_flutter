@@ -1,10 +1,12 @@
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/init_refresh_widget.dart';
+import 'package:far_away_flutter/constant/my_color.dart';
 import 'package:far_away_flutter/page/chat/chat_page.dart';
 import 'package:far_away_flutter/page/home/home_page.dart';
 import 'package:far_away_flutter/page/post/post_choose_widget.dart';
 import 'package:far_away_flutter/page/user/user_center_page.dart';
+import 'package:far_away_flutter/properties/asset_properties.dart';
 import 'package:far_away_flutter/properties/shared_preferences_keys.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/dio_factory.dart';
@@ -29,6 +31,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+
   bool isLogin;
 
   int _currentIndex = 0;
@@ -95,30 +98,21 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         children: [
           isLogin
               ? HomePage()
-              : InitRefreshWidget(
-                  color: Theme.of(context).primaryColor,
-                ),
+              : InitRefreshWidget.instance,
           isLogin
               ? ChatPage()
-              : InitRefreshWidget(
-                  color: Theme.of(context).primaryColor,
-                ),
+              : InitRefreshWidget.instance,
           Container(),
           isLogin
               ? Container()
-              : InitRefreshWidget(
-                  color: Theme.of(context).primaryColor,
-                ),
+              : InitRefreshWidget.instance,
           isLogin
               ? UserCenterPage()
-              : InitRefreshWidget(
-                  color: Theme.of(context).primaryColor,
-                ),
+              : InitRefreshWidget.instance,
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
-        fixedColor: Colors.deepOrangeAccent,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
@@ -141,26 +135,26 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         items: [
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/png/home_inactive.png',
+              AssetProperties.HOME_INACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),
             label: '首页',
             activeIcon: Image.asset(
-              'assets/png/home_active.png',
+              AssetProperties.HOME_ACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/png/message_inactive.png',
+              AssetProperties.MESSAGE_INACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),
             label: '',
             activeIcon: Image.asset(
-              'assets/png/message_active.png',
+              AssetProperties.MESSAGE_ACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),
@@ -171,7 +165,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               height: ScreenUtil().setWidth(55),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.orange),
+                  color: Theme.of(context).primaryColor
+              ),
               child: Icon(
                 FontAwesomeIcons.plus,
                 color: Colors.black,
@@ -182,26 +177,26 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/png/message_inactive.png',
+              AssetProperties.MESSAGE_INACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),
             label: '',
             activeIcon: Image.asset(
-              'assets/png/message_active.png',
+              AssetProperties.MESSAGE_ACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/png/profile_inactive.png',
+              AssetProperties.PROFILE_INACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),
             label: '',
             activeIcon: Image.asset(
-              'assets/png/profile_active.png',
+              AssetProperties.PROFILE_ACTIVE,
               width: ScreenUtil().setWidth(40),
               height: ScreenUtil().setWidth(40),
             ),

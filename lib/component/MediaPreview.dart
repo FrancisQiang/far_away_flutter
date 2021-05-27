@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import 'image_error_widget.dart';
+import 'image_holder.dart';
+
 /// 动态 九宫格媒体组建 适配图片和视频类型
 class MediaPreview extends StatelessWidget {
 
@@ -17,7 +20,8 @@ class MediaPreview extends StatelessWidget {
 
   final double runSpacing;
 
-  /// 展现模式 0为九宫格 1为自定义
+  // flex 为 true则根据数量进行整理宽度
+  // 否则根据rowCount数量
   final bool flex;
 
   final int rowCount;
@@ -35,7 +39,7 @@ class MediaPreview extends StatelessWidget {
     return Container(
         child: LayoutBuilder(
           builder: (context, constrains) {
-            double sideLength = (constrains.maxWidth - (rowCount - 1) * spacing - 5) / rowCount;
+            double sideLength = (constrains.maxWidth - (rowCount - 1) * spacing - 4) / rowCount;
             return Wrap(
                 alignment: WrapAlignment.start,
                 spacing: spacing,
@@ -46,6 +50,7 @@ class MediaPreview extends StatelessWidget {
                       height: sideLength,
                       child: GestureDetector(
                         onTap: () {
+                          // TODO 添加hero动画
                           NavigatorUtil.toMediaViewPage(context,
                               param: MediaViewPageParam(
                                   mediaList: mediaList,
@@ -58,19 +63,11 @@ class MediaPreview extends StatelessWidget {
                                 ? CachedNetworkImage(
                               imageUrl: mediaList[mediaIndex].url,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                alignment: Alignment.center,
-                                width: sideLength,
-                                height: sideLength,
-                                child: SpinKitPumpingHeart(
-                                  color: Theme.of(context).primaryColor,
-                                  size: ScreenUtil().setSp(40),
-                                  duration: Duration(milliseconds: 2000),
-                                ),
+                              placeholder: (context, url) => ImageHolder(
+                                size: ScreenUtil().setSp(40),
                               ),
-                              errorWidget: (context, url, error) => Icon(
-                                Icons.error,
-                                color: Colors.redAccent,
+                              errorWidget: (context, url, error) => ImageErrorWidget(
+                                size: ScreenUtil().setSp(40),
                               ),
                             )
                                 : VideoPreview(

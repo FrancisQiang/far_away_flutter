@@ -158,7 +158,7 @@ class _UserCenterPageState extends State<UserCenterPage>
                 return true;
               },
               child: EasyRefresh(
-                header: EasyRefreshWidget.refreshHeader,
+                header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
                 onRefresh: () async {
                   _getUserInfo(globalInfoProvider);
                 },

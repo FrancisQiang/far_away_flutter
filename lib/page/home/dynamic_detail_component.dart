@@ -136,8 +136,8 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
         scrollController: _controller,
         firstRefresh: true,
         firstRefreshWidget: Container(),
-        header: EasyRefreshWidget.refreshHeader,
-        footer: EasyRefreshWidget.refreshFooter,
+        header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
+        footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
         onRefresh: _dataRefresh,
         onLoad: () async {
           await _loadCommentListData();
