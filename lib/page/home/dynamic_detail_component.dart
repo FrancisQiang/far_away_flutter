@@ -7,6 +7,7 @@ import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/comment_empty.dart';
+import 'package:far_away_flutter/component/dynamic_preview_widget.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
@@ -18,7 +19,6 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
 import 'dynamic_comment_widget.dart';
-import 'dynamic_detail_widget.dart';
 
 class DynamicDetailComponent extends StatefulWidget {
   // 是否滚动到评论页
@@ -87,9 +87,9 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
 
   _loadCommentListData() async {
     if (hasLoadData) {
-      ResponseBean responseBean =
-          await ApiMethodUtil.getDynamicDetail(
-              id: widget.dynamicDetailBean.id,);
+      ResponseBean responseBean = await ApiMethodUtil.getDynamicDetail(
+        id: widget.dynamicDetailBean.id,
+      );
       DynamicDetailBean dynamicDetailBean =
           DynamicDetailBean.fromJson(responseBean.data);
       setState(() {
@@ -136,17 +136,20 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
         scrollController: _controller,
         firstRefresh: true,
         firstRefreshWidget: Container(),
-        header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
-        footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
+        header: EasyRefreshWidget.getRefreshHeader(
+            Colors.white, Theme.of(context).primaryColor),
+        footer: EasyRefreshWidget.getRefreshFooter(
+            Colors.white, Theme.of(context).primaryColor),
         onRefresh: _dataRefresh,
         onLoad: () async {
           await _loadCommentListData();
         },
         child: Column(
           children: [
-            DynamicDetailWidget(
+            DynamicPreviewWidget(
               dynamicDetailBean: widget.dynamicDetailBean,
-              avatarHeroTag: widget.avatarHeroTag,
+              avatarAction: AvatarAction.preview,
+              showFollowButton: true,
             ),
             Container(
               color: Colors.grey[100],
