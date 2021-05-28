@@ -286,7 +286,7 @@ class ApiMethodUtil {
       @required String toUserId,
       @required String content,
       String pid,
-      String bizType,
+      int bizType,
       String pictureList}) async {
     Response response;
     try {

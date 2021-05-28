@@ -10,7 +10,7 @@ class ChildrenCommentWidget extends StatelessWidget {
 
   final String bizId;
 
-  final String bizType;
+  final int bizType;
 
   final CommentListBean parentComment;
 

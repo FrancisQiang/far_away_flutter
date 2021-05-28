@@ -20,7 +20,7 @@ import 'file:///I:/flutter/new_travel/far_away_flutter/lib/page/comment/comment_
 import 'comment_input_bottom_page.dart';
 
 class CommentDrawPage extends StatefulWidget {
-  final String bizType;
+  final int bizType;
 
   final String bizId;
 

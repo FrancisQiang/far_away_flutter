@@ -13,7 +13,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 
 class CommentBottom extends StatefulWidget {
   /// 当前底部评论栏需要评论的信息
-  final String bizType;
+  final int bizType;
 
   final String bizId;
 
@@ -120,7 +120,7 @@ class _CommentBottomState extends State<CommentBottom> {
 
 class EditBottom extends StatefulWidget {
   /// 当前底部评论栏需要评论的信息
-  final String bizType;
+  final int bizType;
 
   final String bizId;
 

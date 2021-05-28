@@ -30,7 +30,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
-import 'dynamic_empty_widget.dart';
+import 'list_empty_widget.dart';
 
 class TogetherInfoPage extends StatefulWidget {
   @override

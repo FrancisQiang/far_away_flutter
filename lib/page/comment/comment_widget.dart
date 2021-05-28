@@ -12,7 +12,7 @@ import 'comment_detail_widget.dart';
 import 'comment_input_bottom_page.dart';
 
 class CommentWidget extends StatelessWidget {
-  final String bizType;
+  final int bizType;
 
   final String bizId;
 

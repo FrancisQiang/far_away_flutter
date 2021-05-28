@@ -7,7 +7,6 @@ import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/page/bs/my_thumbs.dart';
 import 'package:far_away_flutter/page/chat/private_chat_page.dart';
 import 'package:far_away_flutter/page/comment/comment_darw_page.dart';
-import 'package:far_away_flutter/page/home/comment_draw_widget.dart';
 import 'package:far_away_flutter/page/home/dynamic_detail_page.dart';
 import 'package:far_away_flutter/page/home/dynamics_page.dart';
 import 'package:far_away_flutter/page/home/recruit_detail_page.dart';
@@ -28,7 +27,6 @@ import 'package:far_away_flutter/page/profile/profile_edit_page.dart';
 import 'package:far_away_flutter/page/profile/school_search_page.dart';
 import 'package:far_away_flutter/page/profile/signature_edit_page.dart';
 import 'package:far_away_flutter/page/profile/username_edit_page.dart';
-import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
 import 'package:far_away_flutter/page/user/user_info_page.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
@@ -152,22 +150,6 @@ class ProviderUtil {
     );
   }
 
-  static Widget getCommentDrawWidget(CommentListBean commentListBean) {
-    return CommentDrawWidget(
-      comment: commentListBean,
-    );
-  }
-
-  static Widget getRecruitCommentDrawWidget(
-      CommentListBean commentListBean,
-      String bizId,
-      TextEditingController controller) {
-    return RecruitCommentDrawWidget(
-      comment: commentListBean,
-      bizId: bizId,
-      commentEditController: controller,
-    );
-  }
 
   static Widget getPrivateChatPage({
     String username,
@@ -352,7 +334,7 @@ class ProviderUtil {
 
 
   static Widget getCommentDrawPage(
-      {@required CommentListBean commentListBean, @required String bizType, @required String bizId, bool containsImage}) {
+      {@required CommentListBean commentListBean, @required int bizType, @required String bizId, bool containsImage}) {
     return CommentDrawPage(
       comment: commentListBean,
       bizId: bizId,

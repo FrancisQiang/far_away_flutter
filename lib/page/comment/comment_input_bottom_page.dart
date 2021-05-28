@@ -12,7 +12,7 @@ import 'image_choose_button.dart';
 class CommentInputBottomPage extends StatefulWidget {
 
   /// 评论业务类型
-  final String bizType;
+  final int bizType;
 
   /// 回复用户的头像
   final String avatar;
