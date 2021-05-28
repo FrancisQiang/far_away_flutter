@@ -1,5 +1,7 @@
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
-import 'package:far_away_flutter/component/text_comment_bottom.dart';
+import 'package:far_away_flutter/component/measure_size.dart';
+import 'package:far_away_flutter/constant/biz_type.dart';
+import 'package:far_away_flutter/page/comment/comment_bottom.dart';
 import 'package:far_away_flutter/page/home/together_detail_component.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,8 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class TogetherDetailPage extends StatelessWidget {
+class TogetherDetailPage extends StatefulWidget {
+
   // 是否滚动到评论页
   final bool scrollToComment;
 
@@ -21,9 +24,23 @@ class TogetherDetailPage extends StatelessWidget {
       {this.scrollToComment, this.avatarHeroTag, this.togetherInfoBean});
 
   @override
+  _TogetherDetailPageState createState() => _TogetherDetailPageState();
+}
+
+class _TogetherDetailPageState extends State<TogetherDetailPage> {
+
+  final TextEditingController commentEditController = TextEditingController();
+
+  double bottomMargin = ScreenUtil().setHeight(100);
+
+  _refreshCallback() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 1.0,
@@ -54,26 +71,40 @@ class TogetherDetailPage extends StatelessWidget {
             )
           ],
         ),
-        body: KeyboardDismissOnTap(
-          child: Stack(
-            children: [
-              Container(
-                  margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(100)),
-                  child: TogetherDetailComponent(
-                    scrollToComment: scrollToComment,
-                    avatarHeroTag: avatarHeroTag,
-                    togetherInfoBean: togetherInfoBean,
-                  ),
+        body: Stack(
+          children: [
+            Container(
+              margin: EdgeInsets.only(
+                bottom: bottomMargin,
               ),
-              Positioned(
-                  left: 0,
-                  bottom: 0,
-                  child: TextCommentBottom(
-                    bizType: 10,
-                  ),
-              )
-            ],
-          ),
-        ));
+              child: TogetherDetailComponent(
+                scrollToComment: widget.scrollToComment,
+                avatarHeroTag: widget.avatarHeroTag,
+                togetherInfoBean: widget.togetherInfoBean,
+                refreshCallback: _refreshCallback,
+                commentEditController: commentEditController,
+              ),
+            ),
+            Positioned(
+              left: 0,
+              bottom: 0,
+              child: MeasureSize(
+                child: CommentBottom(
+                  bizType: BizType.TOGETHER_COMMENT,
+                  bizId: widget.togetherInfoBean.id,
+                  toUserId: widget.togetherInfoBean.userId,
+                  commentEditController: commentEditController,
+                  refreshCallback: _refreshCallback,
+                ),
+                onChange: (size) {
+                  setState(() {
+                    bottomMargin = size.height;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),);
   }
 }
+

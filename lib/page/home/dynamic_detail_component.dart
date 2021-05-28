@@ -18,8 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
-import 'dynamic_comment_widget.dart';
-
 class DynamicDetailComponent extends StatefulWidget {
   // 是否滚动到评论页
   final bool scrollToComment;

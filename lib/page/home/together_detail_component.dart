@@ -7,6 +7,8 @@ import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/component/comment_empty.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
+import 'package:far_away_flutter/constant/biz_type.dart';
+import 'package:far_away_flutter/page/comment/comment_widget.dart';
 import 'package:far_away_flutter/page/home/together_detail_widget.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
@@ -18,7 +20,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
-import 'dynamic_comment_widget.dart';
 
 class TogetherDetailComponent extends StatefulWidget {
   // 是否滚动到评论页
@@ -30,8 +31,12 @@ class TogetherDetailComponent extends StatefulWidget {
   // 动态详情
   final TogetherInfoBean togetherInfoBean;
 
+  final TextEditingController commentEditController;
+
+  final Function refreshCallback;
+
   TogetherDetailComponent(
-      {this.scrollToComment, this.avatarHeroTag, this.togetherInfoBean});
+      {this.scrollToComment, this.avatarHeroTag, this.togetherInfoBean, this.commentEditController, this.refreshCallback});
 
   @override
   _TogetherDetailComponentState createState() =>
@@ -84,6 +89,9 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
         offset.dy -
         MediaQueryData.fromWindow(window).padding.top -
         56.0;
+    if(animateHeight > _controller.position.maxScrollExtent) {
+      animateHeight = _controller.position.maxScrollExtent;
+    }
     _controller.animateTo(animateHeight,
         duration: Duration(milliseconds: 400), curve: Curves.ease);
   }
@@ -148,45 +156,52 @@ class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
               togetherInfoBean: widget.togetherInfoBean,
               avatarHeroTag: widget.avatarHeroTag,
             ),
-            Container(
-              color: Colors.grey[100],
+            Divider(
+              color: Colors.transparent,
               height: 5,
             ),
             Container(
-              decoration: BoxDecoration(color: Colors.white),
-              padding:
-                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22)),
               child: Column(
                 children: [
                   Container(
                     key: _globalKey,
                     decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 0.05)),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.black, width: 0.05),
+                        ),
+                        color: Colors.white
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: ScreenUtil().setWidth(22)),
                     width: double.infinity,
                     child: Text(
                       '评论',
-                      style: TextStyleTheme.subH3,
+                      style: TextStyleTheme.h4,
                     ),
                   ),
                   Container(
                     child: commentList.isEmpty && emptyData
                         ? Container(
-                            child: CommentEmpty(
-                              iconHeight: ScreenUtil().setHeight(500),
-                              iconWidth: ScreenUtil().setWidth(750),
-                            ),
-                          )
+                      child: CommentEmpty(
+                        iconHeight: ScreenUtil().setHeight(350),
+                        iconWidth: ScreenUtil().setWidth(750),
+                      ),
+                    )
                         : Column(
-                            children: List.generate(commentList.length,
-                                (commentIndex) {
-                              return TogetherCommentWidget(
-                                commentListBean: commentList[commentIndex],
-                              );
-                            }),
-                          ),
+                      children: List.generate(commentList.length,
+                              (commentIndex) {
+                            return CommentWidget(
+                              bizType: BizType.TOGETHER_COMMENT,
+                              bizId: widget.togetherInfoBean.id,
+                              commentListBean: commentList[commentIndex],
+                              commentEditController: widget.commentEditController,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtil().setWidth(22),
+                                  vertical: 2
+                              ),
+                              refreshCallback: widget.refreshCallback,
+                            );
+                          }),
+                    ),
                   ),
                 ],
               ),

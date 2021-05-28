@@ -30,7 +30,6 @@ import 'package:far_away_flutter/page/profile/signature_edit_page.dart';
 import 'package:far_away_flutter/page/profile/username_edit_page.dart';
 import 'package:far_away_flutter/page/recurit/recruit_comment_draw_widget.dart';
 import 'package:far_away_flutter/page/user/user_info_page.dart';
-import 'package:far_away_flutter/provider/comment_chosen_provider.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';
@@ -44,15 +43,6 @@ class ProviderUtil {
   static PostProvider postProvider = PostProvider();
 
   static PostRecruitProvider postRecruitProvider = PostRecruitProvider();
-
-  static CommentChosenProvider dynamicCommentChosenProvider =
-  CommentChosenProvider();
-
-  static CommentChosenProvider togetherCommentChosenProvider =
-  CommentChosenProvider();
-
-  static CommentChosenProvider recruitCommentChosenProvider =
-  CommentChosenProvider();
 
   static ImProvider imProvider = ImProvider();
 
@@ -103,15 +93,8 @@ class ProviderUtil {
   static MultiProvider getDynamicDetailPage({bool scrollToComment,
     String avatarHeroTag,
     DynamicDetailBean dynamicDetailBean}) {
-    dynamicCommentChosenProvider.targetBizId = dynamicDetailBean.id;
-    dynamicCommentChosenProvider.targetUserId = dynamicDetailBean.userId;
-    dynamicCommentChosenProvider.targetUsername = dynamicDetailBean.username;
-    dynamicCommentChosenProvider.pid = null;
-    dynamicCommentChosenProvider.refresh();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<CommentChosenProvider>.value(
-            value: dynamicCommentChosenProvider),
         ChangeNotifierProvider<GlobalInfoProvider>.value(
           value: globalInfoProvider,
         ),
@@ -127,15 +110,9 @@ class ProviderUtil {
   static MultiProvider getTogetherDetailPage({bool scrollToComment,
     String avatarHeroTag,
     TogetherInfoBean togetherInfoBean}) {
-    togetherCommentChosenProvider.targetBizId = togetherInfoBean.id;
-    togetherCommentChosenProvider.targetUserId = togetherInfoBean.userId;
-    togetherCommentChosenProvider.targetUsername = togetherInfoBean.username;
-    togetherCommentChosenProvider.pid = null;
-    togetherCommentChosenProvider.refresh();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<CommentChosenProvider>.value(
-            value: togetherCommentChosenProvider),
+
         ChangeNotifierProvider<GlobalInfoProvider>.value(
             value: globalInfoProvider),
       ],
@@ -149,16 +126,10 @@ class ProviderUtil {
 
   static MultiProvider getRecruitDetailPage(
       {RecruitDetailInfoBean recruitDetailInfoBean}) {
-    recruitCommentChosenProvider.targetBizId = recruitDetailInfoBean.id;
-    recruitCommentChosenProvider.targetUserId = recruitDetailInfoBean.userId;
-    recruitCommentChosenProvider.targetUsername =
-        recruitDetailInfoBean.username;
-    recruitCommentChosenProvider.pid = null;
-    recruitCommentChosenProvider.refresh();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<CommentChosenProvider>.value(
-            value: recruitCommentChosenProvider),
+        ChangeNotifierProvider<GlobalInfoProvider>.value(
+            value: globalInfoProvider),
       ],
       child: RecruitDetailPage(
         recruitDetailInfoBean: recruitDetailInfoBean,
@@ -181,31 +152,21 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getCommentDrawWidget(CommentListBean commentListBean) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<CommentChosenProvider>.value(
-              value: dynamicCommentChosenProvider),
-        ],
-        child: CommentDrawWidget(
-          comment: commentListBean,
-        ));
+  static Widget getCommentDrawWidget(CommentListBean commentListBean) {
+    return CommentDrawWidget(
+      comment: commentListBean,
+    );
   }
 
-  static MultiProvider getRecruitCommentDrawWidget(
+  static Widget getRecruitCommentDrawWidget(
       CommentListBean commentListBean,
       String bizId,
       TextEditingController controller) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<CommentChosenProvider>.value(
-              value: dynamicCommentChosenProvider),
-        ],
-        child: RecruitCommentDrawWidget(
-          comment: commentListBean,
-          bizId: bizId,
-          commentEditController: controller,
-        ));
+    return RecruitCommentDrawWidget(
+      comment: commentListBean,
+      bizId: bizId,
+      commentEditController: controller,
+    );
   }
 
   static Widget getPrivateChatPage({
@@ -391,11 +352,12 @@ class ProviderUtil {
 
 
   static Widget getCommentDrawPage(
-      {@required CommentListBean commentListBean, @required String bizType, @required String bizId}) {
+      {@required CommentListBean commentListBean, @required String bizType, @required String bizId, bool containsImage}) {
     return CommentDrawPage(
       comment: commentListBean,
       bizId: bizId,
       bizType: bizType,
+      containsImage: containsImage,
     );
   }
 }

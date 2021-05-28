@@ -208,12 +208,12 @@ class _CommentInputBottomPageState extends State<CommentInputBottomPage> {
                         maxLines: 5,
                       ),
                     ),
-                    Expanded(
+                    widget.imageFileList != null ? Expanded(
                       child: ImageChooseButton(loadPictures: ()async {
                         await widget.loadPictures();
                         setState(() {});
                       }),
-                    ),
+                    ) : SizedBox(),
                     Expanded(
                       child: Container(
                         alignment: Alignment.center,

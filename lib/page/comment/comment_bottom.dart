@@ -47,8 +47,9 @@ class CommentBottom extends StatefulWidget {
 }
 
 class _CommentBottomState extends State<CommentBottom> {
+
   _generateCommentImageList() {
-    return widget.imageFileList.isNotEmpty
+    return widget.imageFileList != null && widget.imageFileList.isNotEmpty
         ? Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -152,7 +153,7 @@ class EditBottom extends StatefulWidget {
 class _EditBottomState extends State<EditBottom> {
   Widget _generateCommentEdit() {
     return Container(
-      width: ScreenUtil().setWidth(500),
+      width: widget.imageFileList == null ? ScreenUtil().setWidth(560): ScreenUtil().setWidth(500),
       child: TextField(
         controller: widget.commentEditController,
         focusNode: AlwaysDisabledFocusNode(),
@@ -224,13 +225,11 @@ class _EditBottomState extends State<EditBottom> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _generateCommentEdit(),
-          Expanded(
-            child: ImageChooseButton(loadPictures: widget.loadPictures),
-          ),
+          ImageChooseButton(loadPictures: widget.loadPictures),
           Expanded(
             child: Container(
               alignment: Alignment.center,
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () async {
                   String pictureList =
                       await ApiMethodUtil.uploadPictureGetString(

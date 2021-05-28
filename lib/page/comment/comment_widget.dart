@@ -106,7 +106,9 @@ class CommentWidget extends StatelessWidget {
                                     ProviderUtil.getCommentDrawPage(
                                         commentListBean: commentListBean,
                                         bizType: bizType,
-                                        bizId: bizId));
+                                        bizId: bizId,
+                                      containsImage: imageFileList != null,
+                                    ));
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 5),

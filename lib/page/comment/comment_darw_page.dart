@@ -6,9 +6,7 @@ import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/measure_size.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
-import 'package:far_away_flutter/constant/biz_type.dart';
 import 'package:far_away_flutter/page/comment/parent_comment_detail_widget.dart';
-import 'file:///I:/flutter/new_travel/far_away_flutter/lib/page/comment/comment_bottom.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
 import 'package:far_away_flutter/util/asset_picker_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
@@ -16,6 +14,8 @@ import 'package:far_away_flutter/util/string_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+
+import 'file:///I:/flutter/new_travel/far_away_flutter/lib/page/comment/comment_bottom.dart';
 
 import 'comment_input_bottom_page.dart';
 
@@ -26,10 +26,13 @@ class CommentDrawPage extends StatefulWidget {
 
   final CommentListBean comment;
 
+  final bool containsImage;
+
   CommentDrawPage({
     @required this.comment,
     @required this.bizId,
     @required this.bizType,
+    this.containsImage = true
   });
 
   @override
@@ -37,6 +40,7 @@ class CommentDrawPage extends StatefulWidget {
 }
 
 class _CommentDrawPageState extends State<CommentDrawPage> {
+
   TextEditingController _commentEditController = TextEditingController();
 
   List<File> imageFileList = [];
@@ -116,8 +120,8 @@ class _CommentDrawPageState extends State<CommentDrawPage> {
                                     toUserId: widget.comment.fromUserId,
                                     pid: widget.comment.id,
                                     commentEditController: _commentEditController,
-                                    imageFileList: imageFileList,
-                                    loadPictures: _loadPictures,
+                                    imageFileList: widget.containsImage ? imageFileList : null,
+                                    loadPictures: widget.containsImage ? _loadPictures : null,
                                     refreshCallback: _refreshCallback,
                                   );
                                 },
@@ -169,8 +173,8 @@ class _CommentDrawPageState extends State<CommentDrawPage> {
                                           commentEditController:
                                               _commentEditController,
                                           refreshCallback: _refreshCallback,
-                                          loadPictures: _loadPictures,
-                                          imageFileList: imageFileList,
+                                          imageFileList: widget.containsImage ? imageFileList : null,
+                                          loadPictures: widget.containsImage ? _loadPictures : null,
                                         );
                                       },
                                     ),
@@ -362,10 +366,10 @@ class _CommentDrawPageState extends State<CommentDrawPage> {
               bizType: widget.bizType,
               bizId: widget.bizId,
               toUserId: widget.comment.fromUserId,
-              imageFileList: imageFileList,
+              imageFileList: widget.containsImage ? imageFileList : null,
               commentEditController: _commentEditController,
               pid: widget.comment.id,
-              loadPictures: _loadPictures,
+              loadPictures: widget.containsImage ? _loadPictures :null,
               refreshCallback: _refreshCallback,
             ),
             onChange: (size) {
