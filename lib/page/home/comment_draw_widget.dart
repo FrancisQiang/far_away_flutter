@@ -1,25 +1,16 @@
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
-import 'package:far_away_flutter/bean/page_bean.dart';
-import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/MediaPreview.dart';
-import 'package:far_away_flutter/component/easy_refresh_widget.dart';
-import 'package:far_away_flutter/param/children_comment_query_param.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
-import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'comment_bottom.dart';
+import '../comment/comment_bottom.dart';
 
 class CommentDrawWidget extends StatefulWidget {
   final CommentListBean comment;
@@ -31,37 +22,6 @@ class CommentDrawWidget extends StatefulWidget {
 }
 
 class _CommentDrawWidgetState extends State<CommentDrawWidget> {
-  Function _firstRefresh;
-
-  int currentPage = 1;
-
-  List<CommentListBean> childrenCommentList = [];
-
-  _loadChildrenCommentListData() async {
-    ResponseBean responseBean = await ApiMethodUtil.getChildrenCommentList(
-        childrenCommentQueryParam: ChildrenCommentQueryParam(
-            parentId: widget.comment.id, currentPage: currentPage));
-    PageBean pageBean = PageBean.fromJson(responseBean.data);
-    if (pageBean.list.isEmpty) {
-      Fluttertoast.showToast(
-          msg: "没有数据啦",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.orangeAccent,
-          textColor: Colors.white,
-          fontSize: ScreenUtil().setSp(25));
-      return;
-    }
-    currentPage++;
-    setState(() {
-      for (int i = 0; i < pageBean.list.length; i++) {
-        CommentListBean bean = CommentListBean.fromJson(pageBean.list[i]);
-        childrenCommentList.add(bean);
-      }
-      _firstRefresh = null;
-    });
-  }
 
   List<String> _getPictureList(String pictureList) {
     if (!StringUtil.isEmpty(pictureList)) {
@@ -73,11 +33,6 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
   @override
   void initState() {
     super.initState();
-    _firstRefresh = () async {
-      childrenCommentList = [];
-      currentPage = 1;
-      await _loadChildrenCommentListData();
-    };
   }
 
   @override
@@ -92,15 +47,7 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
         Container(
             margin: EdgeInsets.only(top: ScreenUtil().setHeight(80)),
             height: ScreenUtil().setHeight(1150),
-            child: EasyRefresh(
-              topBouncing: false,
-              firstRefresh: true,
-              firstRefreshWidget: Container(),
-              footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
-              onRefresh: _firstRefresh,
-              onLoad: () async {
-                await _loadChildrenCommentListData();
-              },
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   Container(
@@ -297,7 +244,7 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                     margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(30)),
                     child: Column(
                         children:
-                            List.generate(childrenCommentList.length, (index) {
+                            List.generate(widget.comment.children.length, (index) {
                       return Container(
                         padding: EdgeInsets.symmetric(
                             horizontal: ScreenUtil().setWidth(20)),
@@ -310,7 +257,7 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                               width: ScreenUtil().setWidth(80),
                               child: ClipOval(
                                 child: Image.network(
-                                  childrenCommentList[index].fromUserAvatar,
+                                  widget.comment.children[index].fromUserAvatar,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -330,7 +277,7 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                                     children: [
                                       Container(
                                         child: Text(
-                                          childrenCommentList[index]
+                                          widget.comment.children[index]
                                               .fromUsername,
                                           style: TextStyle(
                                               color: Colors.black54,
@@ -338,39 +285,13 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                                               letterSpacing: 0.4),
                                         ),
                                       ),
-                                      Container(
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.baseline,
-                                          children: [
-                                            Container(
-                                              child: Text(
-                                                CalculateUtil.simplifyCount(
-                                                    childrenCommentList[index]
-                                                        .thumbCount),
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontSize:
-                                                        ScreenUtil().setSp(22)),
-                                              ),
-                                            ),
-                                            Container(
-                                              child: Icon(
-                                                FontAwesomeIcons.thumbsUp,
-                                                color: Colors.black54,
-                                                size: ScreenUtil().setSp(30),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
                                     ],
                                   )),
                                   Container(
                                     child: Text(
                                       DateUtil.getTimeString(
                                           DateTime.fromMillisecondsSinceEpoch(
-                                              childrenCommentList[index]
+                                              widget.comment.children[index]
                                                   .publishTime)),
                                       style: TextStyle(
                                           color: Colors.black38,
@@ -383,7 +304,7 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                                     child: RichText(
                                       text: TextSpan(children: [
                                         TextSpan(
-                                            text: childrenCommentList[index]
+                                            text: widget.comment.children[index]
                                                         .toUserId ==
                                                     widget.comment.fromUserId
                                                 ? ''
@@ -391,15 +312,15 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                                             style:
                                                 TextStyle(color: Colors.black)),
                                         TextSpan(
-                                            text: childrenCommentList[index]
+                                            text: widget.comment.children[index]
                                                         .toUserId ==
                                                     widget.comment.fromUserId
                                                 ? ''
-                                                : '${childrenCommentList[index].toUsername}: ',
+                                                : '${widget.comment.children[index].toUsername}: ',
                                             style: TextStyle(
                                                 color: Colors.blueAccent)),
                                         TextSpan(
-                                            text: childrenCommentList[index]
+                                            text: widget.comment.children[index]
                                                 .content,
                                             style:
                                                 TextStyle(color: Colors.black))
@@ -413,7 +334,7 @@ class _CommentDrawWidgetState extends State<CommentDrawWidget> {
                                     child: Builder(builder: (context) {
                                       List<String> pictureList =
                                           _getPictureList(
-                                              childrenCommentList[index]
+                                              widget.comment.children[index]
                                                   .pictureUrlList);
                                       return MediaPreview(
                                           mediaList: List.generate(

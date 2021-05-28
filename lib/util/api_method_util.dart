@@ -7,6 +7,7 @@ import 'package:far_away_flutter/bean/recruit_post_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/together_post_bean.dart';
 import 'package:far_away_flutter/bean/upload_response_bean.dart';
+import 'package:far_away_flutter/bean/upload_token_bean.dart';
 import 'package:far_away_flutter/bean/user_id_list_bean.dart';
 import 'package:far_away_flutter/bean/user_info_edit_bean.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
@@ -17,6 +18,7 @@ import 'package:far_away_flutter/util/dio_factory.dart';
 import 'package:far_away_flutter/util/logger_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:uuid/uuid.dart';
 
 import 'dio_util.dart';
 
@@ -105,8 +107,7 @@ class ApiMethodUtil {
 
   /// 获取动态圈数据
   static Future<ResponseBean> getDynamicList(
-      {@required int timestamp,
-      @required int currentPage}) async {
+      {@required int timestamp, @required int currentPage}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -120,8 +121,7 @@ class ApiMethodUtil {
   }
 
   /// 获取动态详情
-  static Future<ResponseBean> getDynamicDetail(
-      {@required String id}) async {
+  static Future<ResponseBean> getDynamicDetail({@required String id}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -181,8 +181,7 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getUserInfoById(
-      { @required String userId}) async {
+  static Future<ResponseBean> getUserInfoById({@required String userId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient()
@@ -226,8 +225,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postDynamic(
-      {
-      @required DynamicPostBean dynamicPostBean}) async {
+      {@required DynamicPostBean dynamicPostBean}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -240,8 +238,7 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getAround(
-      { @required String location}) async {
+  static Future<ResponseBean> getAround({@required String location}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -255,9 +252,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> dynamicThumbChange(
-      {
-      @required bool thumb,
-      @required String dynamicId}) async {
+      {@required bool thumb, @required String dynamicId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -272,9 +267,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> recruitThumbChange(
-      {
-      @required bool thumb,
-      @required String recruitId}) async {
+      {@required bool thumb, @required String recruitId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -289,8 +282,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postComment(
-      {
-      @required String bizId,
+      {@required String bizId,
       @required String toUserId,
       @required String content,
       String pid,
@@ -316,10 +308,10 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getTogetherInfoList(
-      {@required int timestamp,
-      @required int currentPage,
-      }) async {
+  static Future<ResponseBean> getTogetherInfoList({
+    @required int timestamp,
+    @required int currentPage,
+  }) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -333,8 +325,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postTogether(
-      {
-      @required TogetherPostBean togetherPostBean}) async {
+      {@required TogetherPostBean togetherPostBean}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -347,8 +338,9 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getTogetherDetail(
-      {@required String id,}) async {
+  static Future<ResponseBean> getTogetherDetail({
+    @required String id,
+  }) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -361,8 +353,7 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> togetherSignUp(
-      { @required String id}) async {
+  static Future<ResponseBean> togetherSignUp({@required String id}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -375,8 +366,7 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> recruitSignUp(
-      { @required String id}) async {
+  static Future<ResponseBean> recruitSignUp({@required String id}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -404,8 +394,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> postRecruit(
-      {
-      @required RecruitPostBean recruitPostBean}) async {
+      {@required RecruitPostBean recruitPostBean}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -418,10 +407,10 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getRecruitInfoList(
-      {@required int timestamp,
-      @required int currentPage,
-      }) async {
+  static Future<ResponseBean> getRecruitInfoList({
+    @required int timestamp,
+    @required int currentPage,
+  }) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -434,8 +423,9 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> getRecruitDetail(
-      {@required String id,}) async {
+  static Future<ResponseBean> getRecruitDetail({
+    @required String id,
+  }) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -449,7 +439,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> followChange(
-      { @required String targetUserId}) async {
+      {@required String targetUserId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().post(
@@ -476,7 +466,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getDynamicsByUserId(
-      { @required String userId}) async {
+      {@required String userId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -490,7 +480,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getTogetherInfoByUserId(
-      { @required String userId}) async {
+      {@required String userId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -504,7 +494,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> getRecruitInfoListByUserId(
-      { @required String userId}) async {
+      {@required String userId}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -531,8 +521,7 @@ class ApiMethodUtil {
   }
 
   static Future<ResponseBean> editUserInfo(
-      {
-      String userName,
+      {String userName,
       String location,
       String school,
       String major,
@@ -570,8 +559,7 @@ class ApiMethodUtil {
     return ResponseBean.fromJson(response.data);
   }
 
-  static Future<ResponseBean> searchSchool(
-      { @required String keyword}) async {
+  static Future<ResponseBean> searchSchool({@required String keyword}) async {
     Response response;
     try {
       response = await DioFactory.getDioClient().get(
@@ -582,5 +570,21 @@ class ApiMethodUtil {
       return null;
     }
     return ResponseBean.fromJson(response.data);
+  }
+
+  static Future<String> uploadPictureGetString(List<File> assets) async {
+    ResponseBean responseBean = await ApiMethodUtil.getUploadToken();
+    UploadTokenBean uploadTokenBean =
+        UploadTokenBean.fromJson(responseBean.data);
+    List<String> pictureURLList = [];
+    for (int i = 0; i < assets.length; i++) {
+      UploadResponseBean uploadResponseBean = await ApiMethodUtil.uploadPicture(
+          token: uploadTokenBean.token,
+          file: assets[i],
+          filename: '${Uuid().v4()}');
+      pictureURLList
+          .add(ApiProperties.ASSET_PREFIX_URL + uploadResponseBean.key);
+    }
+    return pictureURLList.join(",");
   }
 }

@@ -6,6 +6,7 @@ import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/page/bs/my_thumbs.dart';
 import 'package:far_away_flutter/page/chat/private_chat_page.dart';
+import 'package:far_away_flutter/page/comment/comment_darw_page.dart';
 import 'package:far_away_flutter/page/home/comment_draw_widget.dart';
 import 'package:far_away_flutter/page/home/dynamic_detail_page.dart';
 import 'package:far_away_flutter/page/home/dynamics_page.dart';
@@ -45,13 +46,13 @@ class ProviderUtil {
   static PostRecruitProvider postRecruitProvider = PostRecruitProvider();
 
   static CommentChosenProvider dynamicCommentChosenProvider =
-      CommentChosenProvider();
+  CommentChosenProvider();
 
   static CommentChosenProvider togetherCommentChosenProvider =
-      CommentChosenProvider();
+  CommentChosenProvider();
 
   static CommentChosenProvider recruitCommentChosenProvider =
-      CommentChosenProvider();
+  CommentChosenProvider();
 
   static ImProvider imProvider = ImProvider();
 
@@ -99,10 +100,9 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getDynamicDetailPage(
-      {bool scrollToComment,
-      String avatarHeroTag,
-      DynamicDetailBean dynamicDetailBean}) {
+  static MultiProvider getDynamicDetailPage({bool scrollToComment,
+    String avatarHeroTag,
+    DynamicDetailBean dynamicDetailBean}) {
     dynamicCommentChosenProvider.targetBizId = dynamicDetailBean.id;
     dynamicCommentChosenProvider.targetUserId = dynamicDetailBean.userId;
     dynamicCommentChosenProvider.targetUsername = dynamicDetailBean.username;
@@ -124,10 +124,9 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getTogetherDetailPage(
-      {bool scrollToComment,
-      String avatarHeroTag,
-      TogetherInfoBean togetherInfoBean}) {
+  static MultiProvider getTogetherDetailPage({bool scrollToComment,
+    String avatarHeroTag,
+    TogetherInfoBean togetherInfoBean}) {
     togetherCommentChosenProvider.targetBizId = togetherInfoBean.id;
     togetherCommentChosenProvider.targetUserId = togetherInfoBean.userId;
     togetherCommentChosenProvider.targetUsername = togetherInfoBean.username;
@@ -167,10 +166,9 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getLocationChoosePage(
-      {@required String longitude,
-      @required String latitude,
-      @required String type}) {
+  static MultiProvider getLocationChoosePage({@required String longitude,
+    @required String latitude,
+    @required String type}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PostProvider>.value(value: postProvider),
@@ -344,10 +342,9 @@ class ProviderUtil {
     );
   }
 
-  static Widget getImageCropPage(
-      {@required String url,
-      @required Function(File file) confirmCallback,
-      double aspectRatio}) {
+  static Widget getImageCropPage({@required String url,
+    @required Function(File file) confirmCallback,
+    double aspectRatio}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<GlobalInfoProvider>.value(
@@ -389,6 +386,16 @@ class ProviderUtil {
       child: IndustryEditPage(
         industry: industry,
       ),
+    );
+  }
+
+
+  static Widget getCommentDrawPage(
+      {@required CommentListBean commentListBean, @required String bizType, @required String bizId}) {
+    return CommentDrawPage(
+      comment: commentListBean,
+      bizId: bizId,
+      bizType: bizType,
     );
   }
 }

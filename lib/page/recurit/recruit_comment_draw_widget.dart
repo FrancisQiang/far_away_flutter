@@ -3,7 +3,7 @@ import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
-import 'package:far_away_flutter/page/home/comment_bottom.dart';
+import 'file:///I:/flutter/new_travel/far_away_flutter/lib/page/comment/comment_bottom.dart';
 import 'package:far_away_flutter/param/children_comment_query_param.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';

@@ -1,7 +1,6 @@
+import 'dart:io';
 import 'dart:ui';
 
-import 'package:date_format/date_format.dart';
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
@@ -9,9 +8,10 @@ import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/comment_empty.dart';
 import 'package:far_away_flutter/component/dynamic_preview_widget.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
+import 'package:far_away_flutter/constant/biz_type.dart';
+import 'package:far_away_flutter/page/comment/comment_widget.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
-import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
 import 'package:flutter/material.dart';
@@ -30,14 +30,23 @@ class DynamicDetailComponent extends StatefulWidget {
   // 动态详情
   final DynamicDetailBean dynamicDetailBean;
 
+  final TextEditingController commentEditController;
+
+  final List<File> imageFileList;
+
+  final Function loadPictures;
+
+  final Function refreshCallback;
+
   DynamicDetailComponent(
-      {this.scrollToComment, this.avatarHeroTag, this.dynamicDetailBean});
+      {this.scrollToComment, this.refreshCallback, this.avatarHeroTag, this.dynamicDetailBean, @required this.commentEditController, this.imageFileList, this.loadPictures});
 
   @override
   _DynamicDetailComponentState createState() => _DynamicDetailComponentState();
 }
 
 class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
+
   final GlobalKey _globalKey = GlobalKey();
 
   final ScrollController _controller = ScrollController();
@@ -81,6 +90,9 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
         offset.dy -
         MediaQueryData.fromWindow(window).padding.top -
         56.0;
+    if(animateHeight > _controller.position.maxScrollExtent) {
+      animateHeight = _controller.position.maxScrollExtent;
+    }
     _controller.animateTo(animateHeight,
         duration: Duration(milliseconds: 500), curve: Curves.linear);
   }
@@ -90,16 +102,14 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
       ResponseBean responseBean = await ApiMethodUtil.getDynamicDetail(
         id: widget.dynamicDetailBean.id,
       );
-      DynamicDetailBean dynamicDetailBean =
-          DynamicDetailBean.fromJson(responseBean.data);
+      DynamicDetailBean dynamicDetailBean = DynamicDetailBean.fromJson(responseBean.data);
       setState(() {
         widget.dynamicDetailBean.username = dynamicDetailBean.username;
         widget.dynamicDetailBean.userAvatar = dynamicDetailBean.userAvatar;
         widget.dynamicDetailBean.signature = dynamicDetailBean.signature;
         widget.dynamicDetailBean.thumbed = dynamicDetailBean.thumbed;
         widget.dynamicDetailBean.thumbCount = dynamicDetailBean.thumbCount;
-        widget.dynamicDetailBean.commentsCount =
-            dynamicDetailBean.commentsCount;
+        widget.dynamicDetailBean.commentsCount = dynamicDetailBean.commentsCount;
         widget.dynamicDetailBean.collected = dynamicDetailBean.collected;
       });
     }
@@ -146,32 +156,34 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
         },
         child: Column(
           children: [
-            DynamicPreviewWidget(
-              dynamicDetailBean: widget.dynamicDetailBean,
-              avatarAction: AvatarAction.preview,
-              showFollowButton: true,
-            ),
             Container(
-              color: Colors.grey[100],
+              color: Colors.white,
+              child: DynamicPreviewWidget(
+                dynamicDetailBean: widget.dynamicDetailBean,
+                avatarAction: AvatarAction.preview,
+                showFollowButton: true,
+              ),
+            ),
+            Divider(
+              color: Colors.transparent,
               height: 5,
             ),
             Container(
-              decoration: BoxDecoration(color: Colors.white),
-              padding:
-                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(22)),
               child: Column(
                 children: [
                   Container(
                     key: _globalKey,
                     decoration: BoxDecoration(
                       border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 0.05)),
+                          bottom: BorderSide(color: Colors.black, width: 0.05),
+                      ),
+                      color: Colors.white
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: ScreenUtil().setWidth(22)),
                     width: double.infinity,
                     child: Text(
                       '评论',
-                      style: TextStyleTheme.subH3,
+                      style: TextStyleTheme.h4,
                     ),
                   ),
                   Container(
@@ -185,8 +197,18 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                         : Column(
                             children: List.generate(commentList.length,
                                 (commentIndex) {
-                              return DynamicCommentWidget(
+                              return CommentWidget(
+                                bizType: BizType.DYNAMIC_COMMENT,
+                                bizId: widget.dynamicDetailBean.id,
                                 commentListBean: commentList[commentIndex],
+                                commentEditController: widget.commentEditController,
+                                imageFileList: widget.imageFileList,
+                                loadPictures: widget.loadPictures,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtil().setWidth(22),
+                                  vertical: 2
+                                ),
+                                refreshCallback: widget.refreshCallback,
                               );
                             }),
                           ),
@@ -195,6 +217,7 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
               ),
             )
           ],
-        ));
+        ),
+    );
   }
 }

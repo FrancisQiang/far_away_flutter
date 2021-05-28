@@ -13,5 +13,6 @@ class AssetProperties {
   static const String PROFILE_ACTIVE = 'assets/png/profile_active.png';
   static const String SHARE_RECT = 'assets/png/share_rect.png';
   static const String COMMENT = 'assets/png/comment.png';
+  static const String ALBUM = 'assets/png/album.png';
 
 }
