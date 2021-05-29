@@ -1,15 +1,15 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:far_away_flutter/bean/comment_list_bean.dart';
-import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
+import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/component/comment_empty.dart';
-import 'package:far_away_flutter/component/dynamic_preview_widget.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
+import 'package:far_away_flutter/constant/avatar_action.dart';
 import 'package:far_away_flutter/constant/biz_type.dart';
 import 'package:far_away_flutter/page/comment/comment_widget.dart';
+import 'package:far_away_flutter/page/together/together_info_preview_widget.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
@@ -18,7 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
-class DynamicDetailComponent extends StatefulWidget {
+
+class TogetherDetailComponent extends StatefulWidget {
   // 是否滚动到评论页
   final bool scrollToComment;
 
@@ -26,25 +27,21 @@ class DynamicDetailComponent extends StatefulWidget {
   final String avatarHeroTag;
 
   // 动态详情
-  final DynamicDetailBean dynamicDetailBean;
+  final TogetherInfoBean togetherInfoBean;
 
   final TextEditingController commentEditController;
 
-  final List<File> imageFileList;
-
-  final Function loadPictures;
-
   final Function refreshCallback;
 
-  DynamicDetailComponent(
-      {this.scrollToComment, this.refreshCallback, this.avatarHeroTag, this.dynamicDetailBean, @required this.commentEditController, this.imageFileList, this.loadPictures});
+  TogetherDetailComponent(
+      {this.scrollToComment, this.avatarHeroTag, this.togetherInfoBean, this.commentEditController, this.refreshCallback});
 
   @override
-  _DynamicDetailComponentState createState() => _DynamicDetailComponentState();
+  _TogetherDetailComponentState createState() =>
+      _TogetherDetailComponentState();
 }
 
-class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
-
+class _TogetherDetailComponentState extends State<TogetherDetailComponent> {
   final GlobalKey _globalKey = GlobalKey();
 
   final ScrollController _controller = ScrollController();
@@ -63,17 +60,19 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
 
   @override
   void initState() {
-    super.initState();
     scrollToComment = widget.scrollToComment;
     _dataRefresh = () async {
       commentList = [];
       currentPage = 1;
       await _loadCommentListData();
+      // 等待数据刷新之后进行滚动，否则无法滚动
+      // 主要原因是会进行两次刷新，第二次刷新会覆盖掉前面的滚动动作
       if (scrollToComment) {
         WidgetsBinding.instance.addPostFrameCallback(_scrollToCommentList);
         scrollToComment = false;
       }
     };
+    super.initState();
   }
 
   // 跳转到评论列表
@@ -92,30 +91,29 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
       animateHeight = _controller.position.maxScrollExtent;
     }
     _controller.animateTo(animateHeight,
-        duration: Duration(milliseconds: 500), curve: Curves.linear);
+        duration: Duration(milliseconds: 400), curve: Curves.ease);
   }
 
   _loadCommentListData() async {
     if (hasLoadData) {
-      ResponseBean responseBean = await ApiMethodUtil.getDynamicDetail(
-        id: widget.dynamicDetailBean.id,
-      );
-      DynamicDetailBean dynamicDetailBean = DynamicDetailBean.fromJson(responseBean.data);
+      ResponseBean responseBean =
+          await ApiMethodUtil.getTogetherDetail(
+              id: widget.togetherInfoBean.id,);
+      TogetherInfoBean togetherInfoBean =
+          TogetherInfoBean.fromJson(responseBean.data);
       setState(() {
-        widget.dynamicDetailBean.username = dynamicDetailBean.username;
-        widget.dynamicDetailBean.userAvatar = dynamicDetailBean.userAvatar;
-        widget.dynamicDetailBean.signature = dynamicDetailBean.signature;
-        widget.dynamicDetailBean.thumbed = dynamicDetailBean.thumbed;
-        widget.dynamicDetailBean.thumbCount = dynamicDetailBean.thumbCount;
-        widget.dynamicDetailBean.commentsCount = dynamicDetailBean.commentsCount;
-        widget.dynamicDetailBean.collected = dynamicDetailBean.collected;
+        widget.togetherInfoBean.username = togetherInfoBean.username;
+        widget.togetherInfoBean.userAvatar = togetherInfoBean.userAvatar;
+        widget.togetherInfoBean.signature = togetherInfoBean.signature;
+        widget.togetherInfoBean.commentsCount = togetherInfoBean.commentsCount;
+        widget.togetherInfoBean.signUpCount = togetherInfoBean.signUpCount;
       });
     }
     hasLoadData = true;
     ResponseBean responseBean = await ApiMethodUtil.getCommentList(
         commentQueryParam: CommentQueryParam(
-            businessType: 2,
-            businessId: widget.dynamicDetailBean.id,
+            businessType: 10,
+            businessId: widget.togetherInfoBean.id,
             currentPage: currentPage));
     PageBean pageBean = PageBean.fromJson(responseBean.data);
     if (pageBean.list.isEmpty) {
@@ -144,26 +142,22 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
         scrollController: _controller,
         firstRefresh: true,
         firstRefreshWidget: Container(),
-        header: EasyRefreshWidget.getRefreshHeader(
-            Colors.white, Theme.of(context).primaryColor),
-        footer: EasyRefreshWidget.getRefreshFooter(
-            Colors.white, Theme.of(context).primaryColor),
+        header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
+        footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
         onRefresh: _dataRefresh,
         onLoad: () async {
           await _loadCommentListData();
         },
         child: Column(
           children: [
-            Container(
-              color: Colors.white,
-              child: DynamicPreviewWidget(
-                dynamicDetailBean: widget.dynamicDetailBean,
-                avatarAction: AvatarAction.preview,
-                showFollowButton: true,
-              ),
+            TogetherInfoPreviewWidget(
+              togetherInfoBean: widget.togetherInfoBean,
+              showFollowButton: true,
+              avatarHeroTag: 'together[${widget.togetherInfoBean.id}]',
+              avatarAction: AvatarAction.toUserInfoPage,
             ),
-            Divider(
-              color: Colors.transparent,
+            Container(
+              color: Theme.of(context).backgroundColor,
               height: 5,
             ),
             Container(
@@ -172,10 +166,7 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                   Container(
                     key: _globalKey,
                     decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 0.05),
-                      ),
-                      color: Colors.white
+                        color: Colors.white
                     ),
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: ScreenUtil().setWidth(22)),
                     width: double.infinity,
@@ -187,35 +178,32 @@ class _DynamicDetailComponentState extends State<DynamicDetailComponent> {
                   Container(
                     child: commentList.isEmpty && emptyData
                         ? Container(
-                            child: CommentEmpty(
-                              iconHeight: ScreenUtil().setHeight(350),
-                              iconWidth: ScreenUtil().setWidth(750),
-                            ),
-                          )
+                      child: CommentEmpty(
+                        iconHeight: ScreenUtil().setHeight(350),
+                        iconWidth: ScreenUtil().setWidth(750),
+                      ),
+                    )
                         : Column(
-                            children: List.generate(commentList.length,
-                                (commentIndex) {
-                              return CommentWidget(
-                                bizType: BizType.DYNAMIC_COMMENT,
-                                bizId: widget.dynamicDetailBean.id,
-                                commentListBean: commentList[commentIndex],
-                                commentEditController: widget.commentEditController,
-                                imageFileList: widget.imageFileList,
-                                loadPictures: widget.loadPictures,
-                                padding: EdgeInsets.symmetric(
+                      children: List.generate(commentList.length,
+                              (commentIndex) {
+                            return CommentWidget(
+                              bizType: BizType.TOGETHER_COMMENT,
+                              bizId: widget.togetherInfoBean.id,
+                              commentListBean: commentList[commentIndex],
+                              commentEditController: widget.commentEditController,
+                              padding: EdgeInsets.symmetric(
                                   horizontal: ScreenUtil().setWidth(22),
                                   vertical: 2
-                                ),
-                                refreshCallback: widget.refreshCallback,
-                              );
-                            }),
-                          ),
+                              ),
+                              refreshCallback: widget.refreshCallback,
+                            );
+                          }),
+                    ),
                   ),
                 ],
               ),
             )
           ],
-        ),
-    );
+        ));
   }
 }

@@ -1,13 +1,11 @@
 
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
-import 'package:far_away_flutter/constant/my_color.dart';
 import 'package:far_away_flutter/page/home/search_text_field.dart';
+import 'package:far_away_flutter/page/recruit/hotel_recruitment_page.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'hotel_recruitment_page.dart';
 
 class HomePage extends StatefulWidget {
   @override

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';

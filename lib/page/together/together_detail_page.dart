@@ -2,10 +2,9 @@ import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/component/measure_size.dart';
 import 'package:far_away_flutter/constant/biz_type.dart';
 import 'package:far_away_flutter/page/comment/comment_bottom.dart';
-import 'package:far_away_flutter/page/home/together_detail_component.dart';
+import 'package:far_away_flutter/page/together/together_detail_component.dart';
 import 'package:far_away_flutter/properties/asset_properties.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -40,7 +39,7 @@ class _TogetherDetailPageState extends State<TogetherDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 1.0,

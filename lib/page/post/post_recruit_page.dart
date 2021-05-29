@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert' as convert;
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:city_pickers/city_pickers.dart';
 import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/recruit_post_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
@@ -25,9 +27,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:convert' as convert;
-import 'package:city_pickers/city_pickers.dart';
-import 'package:quill_delta/quill_delta.dart';
 
 class PostRecruitPage extends StatelessWidget {
   postRecruitInfo(BuildContext context, PostRecruitProvider provider) async {

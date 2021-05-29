@@ -8,9 +8,7 @@ import 'package:far_away_flutter/properties/asset_properties.dart';
 import 'package:far_away_flutter/util/asset_picker_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 import '../comment/comment_bottom.dart';
@@ -69,7 +67,7 @@ class _DynamicDetailPageState extends State<DynamicDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1.0,

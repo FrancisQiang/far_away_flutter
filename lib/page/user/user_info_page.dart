@@ -1,7 +1,9 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
+    as extended;
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/follow_status.dart';
 import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
@@ -10,18 +12,12 @@ import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
-import 'package:far_away_flutter/component/MediaPreview.dart';
 import 'package:far_away_flutter/component/animated_follow_button.dart';
 import 'package:far_away_flutter/component/circle_moving_bubble.dart';
-import 'package:far_away_flutter/component/dynamic_preview_widget.dart';
-import 'package:far_away_flutter/component/easy_refresh_widget.dart';
-import 'package:far_away_flutter/component/image_error_widget.dart';
-import 'package:far_away_flutter/component/image_holder.dart';
 import 'package:far_away_flutter/component/init_refresh_widget.dart';
-import 'package:far_away_flutter/component/link_widget.dart';
-import 'package:far_away_flutter/component/time_location_bar.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
-import 'package:far_away_flutter/page/home/together_info_page.dart';
+import 'package:far_away_flutter/constant/avatar_action.dart';
+import 'package:far_away_flutter/page/together/together_info_preview_widget.dart';
 import 'package:far_away_flutter/page/user/user_info_widget.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
@@ -29,26 +25,20 @@ import 'package:far_away_flutter/param/recruit_param.dart';
 import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
-import 'package:far_away_flutter/util/calculate_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/string_util.dart';
-import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
-import 'dart:math' as math;
-import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
-    as extended;
+
+import 'file:///I:/flutter/new_travel/far_away_flutter/lib/page/dynamic/dynamic_preview_widget.dart';
 
 class UserInfoPage extends StatefulWidget {
   final String userId;
@@ -731,7 +721,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                                 togetherInfoList[index],
                                           ),
                                         ),
-                                        child: TogetherInfoPreviewCard(
+                                        child: TogetherInfoPreviewWidget(
                                           togetherInfoBean:
                                               togetherInfoList[index],
                                         ),

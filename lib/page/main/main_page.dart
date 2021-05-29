@@ -1,7 +1,6 @@
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/init_refresh_widget.dart';
-import 'package:far_away_flutter/constant/my_color.dart';
 import 'package:far_away_flutter/page/chat/chat_page.dart';
 import 'package:far_away_flutter/page/home/home_page.dart';
 import 'package:far_away_flutter/page/post/post_choose_widget.dart';

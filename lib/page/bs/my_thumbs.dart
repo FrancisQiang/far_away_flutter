@@ -1,18 +1,17 @@
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/mixing_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
-import 'package:far_away_flutter/component/dynamic_preview_widget.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
-import 'package:far_away_flutter/page/user/user_info_page.dart';
+import 'package:far_away_flutter/constant/avatar_action.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
-import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
+
+import 'file:///I:/flutter/new_travel/far_away_flutter/lib/page/dynamic/dynamic_preview_widget.dart';
 
 
 class MyThumbsPage extends StatefulWidget {

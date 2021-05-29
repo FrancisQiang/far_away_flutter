@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/address_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/provider/post_provider.dart';

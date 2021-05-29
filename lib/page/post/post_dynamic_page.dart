@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/dynamic_post_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/upload_response_bean.dart';
@@ -9,8 +8,8 @@ import 'package:far_away_flutter/bean/upload_token_bean.dart';
 import 'package:far_away_flutter/page/post/location_choose_page.dart';
 import 'package:far_away_flutter/page/post/post_asset_wrap_builder.dart';
 import 'package:far_away_flutter/properties/api_properties.dart';
-import 'package:far_away_flutter/provider/post_provider.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
+import 'package:far_away_flutter/provider/post_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/asset_picker_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';

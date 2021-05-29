@@ -1,8 +1,9 @@
 import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
-import 'package:far_away_flutter/component/dynamic_preview_widget.dart';
+import 'file:///I:/flutter/new_travel/far_away_flutter/lib/page/dynamic/dynamic_preview_widget.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
+import 'package:far_away_flutter/constant/avatar_action.dart';
 import 'package:far_away_flutter/param/dynamic_detail_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
@@ -99,9 +100,10 @@ class _DynamicsPageState extends State<DynamicsPage> with AutomaticKeepAliveClie
                   ),
                 ),
                 child: DynamicPreviewWidget(
+                  showFollowButton: false,
                   avatarAction: AvatarAction.toUserInfoPage,
                   dynamicDetailBean: dynamicList[index],
-                  showFollowButton: false,
+                  avatarHeroTag: 'dynamic[${dynamicList[index].id}]',
                 ),
               ),
             );

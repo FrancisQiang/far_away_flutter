@@ -3,12 +3,10 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/circle_moving_bubble.dart';
-import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final double scrollPixels;

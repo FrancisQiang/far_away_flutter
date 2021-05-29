@@ -1,12 +1,11 @@
+import 'dart:async';
 import 'dart:collection';
 
-import 'package:dio/dio.dart';
 import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 class GlobalInfoProvider with ChangeNotifier{
 

@@ -1,19 +1,11 @@
 import 'dart:convert' as convert;
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
-import 'package:far_away_flutter/bean/follow_status.dart';
-import 'package:far_away_flutter/bean/follow_user_info_bean.dart';
 import 'package:far_away_flutter/bean/im_bean.dart';
-import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
-import 'package:far_away_flutter/component/animated_follow_button.dart';
-import 'package:far_away_flutter/component/easy_refresh_widget.dart';
-import 'package:far_away_flutter/component/image_error_widget.dart';
-import 'package:far_away_flutter/component/image_holder.dart';
-import 'package:far_away_flutter/component/init_refresh_widget.dart';
 import 'package:far_away_flutter/component/time_location_bar.dart';
+import 'package:far_away_flutter/component/user_info_header.dart';
+import 'package:far_away_flutter/constant/avatar_action.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
 import 'package:far_away_flutter/param/together_detail_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
@@ -23,194 +15,47 @@ import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:far_away_flutter/util/toast_util.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
-import 'list_empty_widget.dart';
+class TogetherInfoPreviewWidget extends StatelessWidget {
+  /// 点击头像的动作
+  final AvatarAction avatarAction;
 
-class TogetherInfoPage extends StatefulWidget {
-  @override
-  _TogetherInfoPageState createState() => _TogetherInfoPageState();
-}
-
-class _TogetherInfoPageState extends State<TogetherInfoPage>
-    with AutomaticKeepAliveClientMixin {
-  int timestamp;
-
-  @override
-  bool get wantKeepAlive => true;
-
-  List<TogetherInfoBean> togetherList = [];
-
-  int currentPage = 1;
-
-  _loadTogetherData(String jwt) async {
-    ResponseBean responseBean;
-    PageBean pageBean;
-    try {
-      responseBean = await ApiMethodUtil.getTogetherInfoList(
-          timestamp: timestamp, currentPage: currentPage);
-      pageBean = PageBean.fromJson(responseBean.data);
-    } catch (ex) {
-      print('error');
-      return;
-    }
-    if (pageBean.list.isEmpty) {
-      ToastUtil.showNoticeToast("没有数据啦");
-      return;
-    }
-    currentPage++;
-    setState(() {
-      for (int i = 0; i < pageBean.list.length; i++) {
-        TogetherInfoBean bean = TogetherInfoBean.fromJson(pageBean.list[i]);
-        togetherList.add(bean);
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    timestamp = DateTime.now().millisecondsSinceEpoch;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return Consumer<GlobalInfoProvider>(
-        builder: (context, globalInfoProvider, child) {
-      return EasyRefresh(
-          header: EasyRefreshWidget.getRefreshHeader(Colors.white, Theme.of(context).primaryColor),
-          footer: EasyRefreshWidget.getRefreshFooter(Colors.white, Theme.of(context).primaryColor),
-          firstRefresh: true,
-          firstRefreshWidget: InitRefreshWidget(
-            color: Theme.of(context).primaryColor,
-          ),
-          emptyWidget: togetherList.length == 0
-              ? ListEmptyWidget(
-                  width: ScreenUtil().setWidth(380),
-                  height: ScreenUtil().setHeight(300),
-                )
-              : null,
-          onRefresh: () async {
-            togetherList = [];
-            currentPage = 1;
-            timestamp = DateTime.now().millisecondsSinceEpoch;
-            await _loadTogetherData(globalInfoProvider.jwt);
-          },
-          onLoad: () async {
-            await _loadTogetherData(globalInfoProvider.jwt);
-          },
-          child: Column(
-              children: List.generate(togetherList.length, (index) {
-            return GestureDetector(
-              onTap: () => NavigatorUtil.toTogetherDetailPage(context,
-                  param: TogetherDetailParam(
-                      avatarHeroTag: 'together_${togetherList[index].id}',
-                      togetherInfoBean: togetherList[index])),
-              child: TogetherInfoPreviewCard(
-                  togetherInfoBean: togetherList[index]),
-            );
-          })));
-    });
-  }
-}
-
-class TogetherInfoPreviewCard extends StatelessWidget {
   final TogetherInfoBean togetherInfoBean;
 
-  TogetherInfoPreviewCard({@required this.togetherInfoBean});
+  final bool showFollowButton;
+
+  final String avatarHeroTag;
+
+  TogetherInfoPreviewWidget({
+    @required this.togetherInfoBean,
+    @required this.showFollowButton,
+    @required this.avatarAction,
+    @required this.avatarHeroTag,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<GlobalInfoProvider>(
       builder: (context, globalInfoProvider, child) {
         return Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15), color: Colors.white),
-          padding: EdgeInsets.all(ScreenUtil().setWidth(22)),
+          padding: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(22), vertical: 8),
           margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                child: Row(
-                  children: [
-                    // 头像
-                    Container(
-                        width: ScreenUtil().setWidth(90),
-                        child: Hero(
-                          tag: "together_${togetherInfoBean.id}",
-                          child: ClipOval(
-                              child: CachedNetworkImage(
-                                  imageUrl: togetherInfoBean.userAvatar,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => ImageHolder(
-                                        size: ScreenUtil().setSp(40),
-                                      ),
-                                  errorWidget: (context, url, error) =>
-                                      ImageErrorWidget(
-                                        size: ScreenUtil().setSp(40),
-                                      ))),
-                        )),
-                    // 用户名和用户签名
-                    Container(
-                      width: ScreenUtil().setWidth(470),
-                      margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            child: Text(
-                              togetherInfoBean.username,
-                              style: TextStyleTheme.h3,
-                            ),
-                          ),
-                          Container(
-                            child: Text(
-                              togetherInfoBean.signature,
-                              style: TextStyleTheme.subH5,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    AnimatedFollowButton(
-                      height: ScreenUtil().setHeight(40),
-                      width: ScreenUtil().setWidth(110),
-                      onPressed: () async {
-                        ResponseBean responseBean =
-                            await ApiMethodUtil.followChange(
-                          targetUserId: togetherInfoBean.userId,
-                        );
-                        FollowStatusBean followStatusBean =
-                            FollowStatusBean.fromJson(responseBean.data);
-                        if (followStatusBean.follow) {
-                          FollowUserInfo followUserInfo = FollowUserInfo();
-                          followUserInfo.userId = togetherInfoBean.userId;
-                          followUserInfo.username = togetherInfoBean.username;
-                          followUserInfo.userAvatar =
-                              togetherInfoBean.userAvatar;
-                          globalInfoProvider
-                                  .followUserMap[togetherInfoBean.userId] =
-                              followUserInfo;
-                        } else {
-                          globalInfoProvider.followUserMap
-                              .remove(togetherInfoBean.userId);
-                        }
-                        globalInfoProvider.refresh();
-                      },
-                      follow: globalInfoProvider.followUserMap
-                          .containsKey(togetherInfoBean.userId),
-                    ),
-                  ],
-                ),
+              UserInfoHeader(
+                avatarHeroTag: avatarHeroTag,
+                avatarAction: avatarAction,
+                showFollowButton: showFollowButton,
+                userId: togetherInfoBean.userId,
+                userAvatar: togetherInfoBean.userAvatar,
+                username: togetherInfoBean.username,
+                signature: togetherInfoBean.signature,
               ),
               Container(
                 margin: EdgeInsets.only(
@@ -255,10 +100,12 @@ class TogetherInfoPreviewCard extends StatelessWidget {
                     ),
                     FlatButton(
                         onPressed: () {
-                          NavigatorUtil.toTogetherDetailPage(context,
-                              param: TogetherDetailParam(
-                                  scrollToComment: true,
-                                  togetherInfoBean: togetherInfoBean));
+                          NavigatorUtil.toTogetherDetailPage(
+                            context,
+                            param: TogetherDetailParam(
+                                scrollToComment: true,
+                                togetherInfoBean: togetherInfoBean),
+                          );
                         },
                         padding: EdgeInsets.zero,
                         child: Row(
