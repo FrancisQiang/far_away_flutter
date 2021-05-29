@@ -236,17 +236,13 @@ class _UserInfoPageState extends State<UserInfoPage>
   }
 
   Widget generateGenderWidget(UserInfoBean userInfoBean) {
-    if(userInfoBean.gender != GenderConst.secret) {
+    if (userInfoBean.gender != GenderConst.secret) {
       return Container(
-        margin: EdgeInsets.only(
-            left: ScreenUtil()
-                .setWidth(8)),
+        margin: EdgeInsets.only(left: ScreenUtil().setWidth(8)),
         child: Image.asset(
           'assets/png/${userInfoBean.gender == 1 ? 'male' : 'female'}.png',
-          height:
-          ScreenUtil().setWidth(32),
-          width:
-          ScreenUtil().setWidth(32),
+          height: ScreenUtil().setWidth(32),
+          width: ScreenUtil().setWidth(32),
           fit: BoxFit.cover,
         ),
       );
@@ -254,10 +250,78 @@ class _UserInfoPageState extends State<UserInfoPage>
     return SizedBox();
   }
 
+  Widget generateFollowOrEditButton(GlobalInfoProvider globalInfoProvider) {
+    if (globalInfoProvider.userInfoBean.id == userInfoBean.id) {
+      return Container(
+        margin: EdgeInsets.only(
+          top: ScreenUtil().setHeight(12),
+        ),
+        width: ScreenUtil().setWidth(160),
+        height: ScreenUtil().setHeight(40),
+        child: FlatButton(
+          onPressed: () {
+            NavigatorUtil.toProfileEditPage(context);
+          },
+          padding: EdgeInsets.zero,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          color: Colors.yellow.withOpacity(0.6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.edit,
+                color: Colors.black87,
+                size: ScreenUtil().setSp(20),
+              ),
+              Text(
+                ' 编辑资料',
+                style: TextStyle(
+                  color: Colors.black87,
+                  letterSpacing: 0.4,
+                  fontWeight: FontWeight.bold,
+                  fontSize: ScreenUtil().setWidth(20),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return Container(
+      margin: EdgeInsets.only(
+        top: ScreenUtil().setHeight(12),
+      ),
+      child: AnimatedFollowButton(
+        width: ScreenUtil().setWidth(160),
+        height: ScreenUtil().setHeight(40),
+        onPressed: () async {
+          await followOnPressed(globalInfoProvider);
+        },
+        follow: globalInfoProvider.followUserMap.containsKey(userInfoBean.id),
+      ),
+    );
+  }
+
+  Widget generateAppBarFollowButton(GlobalInfoProvider globalInfoProvider) {
+    if (globalInfoProvider.userInfoBean.id == userInfoBean.id) {
+      return SizedBox();
+    }
+    return AnimatedFollowButton(
+      width: ScreenUtil().setWidth(120),
+      height: 26,
+      onPressed: () async {
+        await followOnPressed(globalInfoProvider);
+      },
+      follow: globalInfoProvider.followUserMap.containsKey(userInfoBean.id),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loaded) {
       return Scaffold(
+        backgroundColor: Colors.white,
         body: Stack(
           children: [
             NotificationListener<ScrollUpdateNotification>(
@@ -346,25 +410,9 @@ class _UserInfoPageState extends State<UserInfoPage>
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          width: ScreenUtil().setWidth(120),
-                                          height: 26,
-                                          child: FlatButton(
-                                            onPressed: () {},
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15)),
-                                            color: Colors.yellow,
-                                            child: Text(
-                                              '关注',
-                                              style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 0.5,
-                                                  fontSize: 12),
-                                            ),
-                                          ),
-                                        )
+                                        Consumer<GlobalInfoProvider>(builder: (context, globalInfoProvider, child) {
+                                          return generateAppBarFollowButton(globalInfoProvider);
+                                        })
                                       ],
                                     ),
                                   )
@@ -376,7 +424,8 @@ class _UserInfoPageState extends State<UserInfoPage>
                             child: Container(
                               height: ScreenUtil().setHeight(350),
                               padding: EdgeInsets.only(
-                                  bottom: ScreenUtil().setHeight(5)),
+                                bottom: ScreenUtil().setHeight(5),
+                              ),
                               width: ScreenUtil().setWidth(750),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -407,72 +456,14 @@ class _UserInfoPageState extends State<UserInfoPage>
                                       ),
                                     ),
                                   ),
-                                  ProviderUtil.globalInfoProvider.userInfoBean
-                                              .id ==
-                                          userInfoBean.id
-                                      ? Container(
-                                          margin: EdgeInsets.only(
-                                              top: ScreenUtil().setHeight(15)),
-                                          width: ScreenUtil().setWidth(150),
-                                          height: ScreenUtil().setHeight(40),
-                                          child: FlatButton(
-                                            onPressed: () {},
-                                            padding: EdgeInsets.zero,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            color:
-                                                Colors.yellow.withOpacity(0.6),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.edit,
-                                                  color: Colors.black87,
-                                                  size: ScreenUtil().setSp(20),
-                                                ),
-                                                Text(
-                                                  ' 编辑资料',
-                                                  style: TextStyle(
-                                                    color: Colors.black87,
-                                                    letterSpacing: 0.4,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: ScreenUtil()
-                                                        .setWidth(20),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      : Consumer<GlobalInfoProvider>(
-                                          builder: (context, globalInfoProvider,
-                                              child) {
-                                            return Container(
-                                              margin: EdgeInsets.only(
-                                                top: ScreenUtil().setHeight(12),
-                                              ),
-                                              child: AnimatedFollowButton(
-                                                width:
-                                                    ScreenUtil().setWidth(160),
-                                                height:
-                                                    ScreenUtil().setHeight(40),
-                                                onPressed: () async {
-                                                  await followOnPressed(
-                                                      globalInfoProvider);
-                                                },
-                                                follow: globalInfoProvider
-                                                    .followUserMap
-                                                    .containsKey(
-                                                        userInfoBean.id),
-                                              ),
-                                            );
-                                          },
-                                        ),
+                                  Consumer<GlobalInfoProvider>(builder:
+                                      (context, globalInfoProvider, child) {
+                                    return generateFollowOrEditButton(
+                                        globalInfoProvider);
+                                  }),
                                   Container(
                                     margin: EdgeInsets.only(
-                                        top: ScreenUtil().setHeight(12),
+                                      top: ScreenUtil().setHeight(12),
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
@@ -514,8 +505,10 @@ class _UserInfoPageState extends State<UserInfoPage>
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
-                                    child: UserCounterWidget(userInfoBean: userInfoBean),
+                                    margin: EdgeInsets.only(
+                                        top: ScreenUtil().setHeight(20)),
+                                    child: UserCounterWidget(
+                                        userInfoBean: userInfoBean),
                                   )
                                 ],
                               ),
@@ -535,7 +528,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                       SliverPersistentHeader(
                         pinned: true,
                         delegate: SliverCustomBottomDelegate(
-                          height: 40,
+                          height: ScreenUtil().setHeight(50),
                           tabBar: TabBar(
                             controller: _tabController,
                             labelColor: Theme.of(context).primaryColorDark,
@@ -562,27 +555,34 @@ class _UserInfoPageState extends State<UserInfoPage>
                           Key('Tab0'),
                           ListView.separated(
                             itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () => NavigatorUtil.toDynamicDetailPage(
-                                  context,
-                                  param: DynamicDetailParam(
-                                    avatarHeroTag:
-                                        'dynamic_${dynamics[index].id}',
-                                    dynamicDetailBean: dynamics[index],
+                              return Ink(
+                                color: Colors.white,
+                                child: InkWell(
+                                  splashColor:
+                                      Theme.of(context).backgroundColor,
+                                  highlightColor:
+                                      Theme.of(context).backgroundColor,
+                                  onTap: () =>
+                                      NavigatorUtil.toDynamicDetailPage(
+                                    context,
+                                    param: DynamicDetailParam(
+                                      dynamicDetailBean: dynamics[index],
+                                    ),
                                   ),
-                                ),
-                                child: DynamicPreviewWidget(
-                                  avatarAction: AvatarAction.shake,
-                                  dynamicDetailBean: dynamics[index],
-                                  showFollowButton: false,
-                                  avatarHeroTag: 'dynamic[${dynamics[index].id}]',
+                                  child: DynamicPreviewWidget(
+                                    avatarAction: AvatarAction.shake,
+                                    dynamicDetailBean: dynamics[index],
+                                    showFollowButton: false,
+                                    avatarHeroTag:
+                                        'dynamic[${dynamics[index].id}]',
+                                  ),
                                 ),
                               );
                             },
                             separatorBuilder: (context, index) {
                               return Container(
                                 height: 5,
-                                color: Colors.blueGrey.withOpacity(0.1),
+                                color: Theme.of(context).backgroundColor,
                               );
                             },
                             itemCount: dynamics.length,
@@ -612,7 +612,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                             separatorBuilder: (context, index) {
                               return Container(
                                 height: 5,
-                                color: Colors.blueGrey.withOpacity(0.1),
+                                color: Theme.of(context).backgroundColor,
                               );
                             },
                             itemCount: togetherInfoList.length,
@@ -837,7 +837,6 @@ class SliverCustomBottomDelegate extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: Colors.white,
-      height: this.maxExtent,
       child: tabBar,
     );
   }

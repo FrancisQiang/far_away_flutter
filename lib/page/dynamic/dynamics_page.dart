@@ -95,7 +95,6 @@ class _DynamicsPageState extends State<DynamicsPage> with AutomaticKeepAliveClie
                 onTap: () => NavigatorUtil.toDynamicDetailPage(
                   context,
                   param: DynamicDetailParam(
-                    avatarHeroTag: 'dynamic_${dynamicList[index].id}',
                     dynamicDetailBean: dynamicList[index],
                   ),
                 ),

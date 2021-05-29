@@ -106,8 +106,6 @@ class _MyThumbsPageState extends State<MyThumbsPage> with TickerProviderStateMix
                       NavigatorUtil.toDynamicDetailPage(
                         context,
                         param: DynamicDetailParam(
-                          avatarHeroTag:
-                          'dynamic_${dynamicList[index].id}',
                           dynamicDetailBean: dynamicList[index],
                         ),
                       ),

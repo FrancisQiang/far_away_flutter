@@ -40,7 +40,6 @@ var dynamicDetailHandler = Handler(
       context.settings.arguments as DynamicDetailParam;
   return ProviderUtil.getDynamicDetailPage(
       scrollToComment: arguments.scrollToComment,
-      avatarHeroTag: arguments.avatarHeroTag,
       dynamicDetailBean: arguments.dynamicDetailBean);
 });
 

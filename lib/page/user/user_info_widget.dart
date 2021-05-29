@@ -129,61 +129,40 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                         ),
                       ),
                     ),
-                    ProviderUtil.globalInfoProvider.userInfoBean.id ==
-                            widget.userInfoBean.id
-                        ? Container(
-                            margin: EdgeInsets.only(
-                                top: ScreenUtil().setHeight(15)),
-                            width: ScreenUtil().setWidth(150),
-                            height: ScreenUtil().setHeight(40),
-                            child: FlatButton(
-                              onPressed: () {
-                                NavigatorUtil.toProfileEditPage(context);
-                              },
-                              padding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              color: Colors.yellow.withOpacity(0.6),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.edit,
-                                    color: Colors.black87,
-                                    size: ScreenUtil().setSp(20),
-                                  ),
-                                  Text(
-                                    ' 编辑资料',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      letterSpacing: 0.4,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: ScreenUtil().setWidth(20),
-                                    ),
-                                  ),
-                                ],
+                    Container(
+                      margin: EdgeInsets.only(
+                          top: ScreenUtil().setHeight(15)),
+                      width: ScreenUtil().setWidth(150),
+                      height: ScreenUtil().setHeight(40),
+                      child: FlatButton(
+                        onPressed: () {
+                          NavigatorUtil.toProfileEditPage(context);
+                        },
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        color: Colors.yellow.withOpacity(0.6),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              color: Colors.black87,
+                              size: ScreenUtil().setSp(20),
+                            ),
+                            Text(
+                              ' 编辑资料',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                letterSpacing: 0.4,
+                                fontWeight: FontWeight.bold,
+                                fontSize: ScreenUtil().setWidth(20),
                               ),
                             ),
-                          )
-                        : Container(
-                            margin: EdgeInsets.only(
-                                top: ScreenUtil().setHeight(15)),
-                            width: ScreenUtil().setWidth(150),
-                            height: ScreenUtil().setHeight(40),
-                            child: FlatButton(
-                              onPressed: () {},
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              color: Colors.yellow.withOpacity(0.6),
-                              child: Text(
-                                '关 注',
-                                style: TextStyle(
-                                  fontSize: ScreenUtil().setWidth(25),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
+                          ],
+                        ),
+                      ),
+                    ),
                     Container(
                         margin: EdgeInsets.only(top: ScreenUtil().setHeight(8)),
                         child: Row(
