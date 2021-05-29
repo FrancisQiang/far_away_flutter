@@ -90,7 +90,7 @@ class DateUtil {
     if (dateTime.year == now.year &&
         dateTime.month == now.month &&
         dateTime.day == now.day) {
-      return '${dateTime.hour}:${dateTime.minute}';
+      return '${dateTime.hour}:${dateTime.minute < 10 ? '0' : ''}${dateTime.minute}';
     }
     if (dateTime.year == now.year) {
       return '${dateTime.month}-${dateTime.day}';

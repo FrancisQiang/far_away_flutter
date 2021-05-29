@@ -5,6 +5,7 @@ import 'package:far_away_flutter/bean/dynamic_detail_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/togther_info_bean.dart';
 import 'package:far_away_flutter/page/bs/my_thumbs.dart';
+import 'package:far_away_flutter/page/chat/message_page.dart';
 import 'package:far_away_flutter/page/chat/private_chat_page.dart';
 import 'package:far_away_flutter/page/comment/comment_darw_page.dart';
 import 'package:far_away_flutter/page/dynamic/dynamic_detail_page.dart';
@@ -88,9 +89,10 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getDynamicDetailPage({bool scrollToComment,
-    String avatarHeroTag,
-    DynamicDetailBean dynamicDetailBean}) {
+  static MultiProvider getDynamicDetailPage(
+      {bool scrollToComment,
+      String avatarHeroTag,
+      DynamicDetailBean dynamicDetailBean}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<GlobalInfoProvider>.value(
@@ -105,12 +107,12 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getTogetherDetailPage({bool scrollToComment,
-    String avatarHeroTag,
-    TogetherInfoBean togetherInfoBean}) {
+  static MultiProvider getTogetherDetailPage(
+      {bool scrollToComment,
+      String avatarHeroTag,
+      TogetherInfoBean togetherInfoBean}) {
     return MultiProvider(
       providers: [
-
         ChangeNotifierProvider<GlobalInfoProvider>.value(
             value: globalInfoProvider),
       ],
@@ -135,9 +137,10 @@ class ProviderUtil {
     );
   }
 
-  static MultiProvider getLocationChoosePage({@required String longitude,
-    @required String latitude,
-    @required String type}) {
+  static MultiProvider getLocationChoosePage(
+      {@required String longitude,
+      @required String latitude,
+      @required String type}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PostProvider>.value(value: postProvider),
@@ -149,7 +152,6 @@ class ProviderUtil {
       ),
     );
   }
-
 
   static Widget getPrivateChatPage({
     String username,
@@ -285,9 +287,10 @@ class ProviderUtil {
     );
   }
 
-  static Widget getImageCropPage({@required String url,
-    @required Function(File file) confirmCallback,
-    double aspectRatio}) {
+  static Widget getImageCropPage(
+      {@required String url,
+      @required Function(File file) confirmCallback,
+      double aspectRatio}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<GlobalInfoProvider>.value(
@@ -332,14 +335,25 @@ class ProviderUtil {
     );
   }
 
-
   static Widget getCommentDrawPage(
-      {@required CommentListBean commentListBean, @required int bizType, @required String bizId, bool containsImage}) {
+      {@required CommentListBean commentListBean,
+      @required int bizType,
+      @required String bizId,
+      bool containsImage}) {
     return CommentDrawPage(
       comment: commentListBean,
       bizId: bizId,
       bizType: bizType,
       containsImage: containsImage,
+    );
+  }
+
+  static Widget getMessagePage() {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ImProvider>.value(value: imProvider),
+      ],
+      child: MessagePage(),
     );
   }
 }

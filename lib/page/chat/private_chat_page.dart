@@ -318,20 +318,17 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
     return Consumer<ImProvider>(
       builder: (context, imProvider, child) {
         return Scaffold(
-          backgroundColor: Colors.grey[200],
+          backgroundColor: Theme.of(context).backgroundColor,
           appBar: AppBar(
             backgroundColor: Colors.white,
-            brightness: Brightness.light,
-            elevation: 3,
+            elevation: 1,
             centerTitle: true,
             title: Text(widget.username),
-            leading: FlatButton(
+            leading: IconButton(
               onPressed: () => Navigator.pop(context),
-              child: Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back_ios),
             ),
-            actions: [
-              FlatButton(onPressed: () {}, child: Icon(Icons.settings))
-            ],
+            actions: [IconButton(icon: Icon(Icons.settings), onPressed: () {})],
           ),
           body: KeyboardDismissOnTap(
             child: Stack(

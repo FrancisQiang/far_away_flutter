@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class ImProvider with ChangeNotifier {
+
   ImProvider() {
     refreshConversationList();
     //消息接收回调

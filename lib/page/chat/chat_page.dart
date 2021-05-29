@@ -35,13 +35,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin<ChatP
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        brightness: Brightness.light,
-        elevation: 3,
+        elevation: 1,
         centerTitle: true,
         title: TabBar(
             isScrollable: true,
-            labelColor: Colors.deepOrangeAccent,
-            indicatorColor: Colors.deepOrangeAccent,
+            labelColor: Theme.of(context).primaryColorDark,
+            indicatorColor: Theme.of(context).primaryColorDark,
             labelStyle: TextStyle(
                 fontSize: ScreenUtil().setSp(32),
                 letterSpacing: 1,
@@ -61,15 +60,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin<ChatP
           controller: _tabController,
           physics: BouncingScrollPhysics(),
           children: [
-            MultiProvider(
-              providers: [
-                ChangeNotifierProvider<ImProvider>.value(
-                    value: ProviderUtil.imProvider),
-              ],
-              child: MessagePage(),
-            ),
+            ProviderUtil.getMessagePage(),
             Container(child: Text('与我相关'),),
-          ]),
+          ],
+      ),
     );
   }
 }

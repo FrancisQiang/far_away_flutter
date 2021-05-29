@@ -24,7 +24,7 @@ class MessagePage extends StatelessWidget {
               behavior: OverScrollBehavior(),
               child: ListView.builder(
                 itemBuilder: (context, index) {
-                  return MessageTile(messageBean: imProvider.conversations[index]);
+                  return MessageTile(conversationWrapper: imProvider.conversations[index]);
                 },
                 itemCount: imProvider.conversations.length,
               ),
@@ -37,13 +37,13 @@ class MessagePage extends StatelessWidget {
 
 
 class MessageTile extends StatelessWidget {
-  final ConversationWrapper messageBean;
+  final ConversationWrapper conversationWrapper;
 
-  MessageTile({@required this.messageBean});
+  MessageTile({@required this.conversationWrapper});
 
   @override
   Widget build(BuildContext context) {
-    MessageContentJson messageContentJson = MessageContentJson.fromJson(convert.jsonDecode(messageBean.content));
+    MessageContentJson messageContentJson = MessageContentJson.fromJson(convert.jsonDecode(conversationWrapper.content));
     String content;
     if (messageContentJson.type == MessageType.DEFAULT) {
       content = messageContentJson.content;
@@ -57,7 +57,7 @@ class MessageTile extends StatelessWidget {
     return FlatButton(
       padding: EdgeInsets.zero,
       onPressed: (){
-        NavigatorUtil.toPrivateChatPage(context, param: PrivateChatParam(username: messageBean.username, userId: messageBean.userId, avatar: messageBean.avatar));
+        NavigatorUtil.toPrivateChatPage(context, param: PrivateChatParam(username: conversationWrapper.username, userId: conversationWrapper.userId, avatar: conversationWrapper.avatar));
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -75,7 +75,7 @@ class MessageTile extends StatelessWidget {
           Container(
             child: ClipOval(
                 child: CachedNetworkImage(
-                  imageUrl: messageBean.avatar,
+                  imageUrl: conversationWrapper.avatar,
                   width: ScreenUtil().setWidth(100),
                   height: ScreenUtil().setWidth(100),
                   fit: BoxFit.cover,
@@ -95,7 +95,7 @@ class MessageTile extends StatelessWidget {
                         Container(
                           width: ScreenUtil().setWidth(500),
                           child: Text(
-                            messageBean.username,
+                            conversationWrapper.username,
                             style: TextStyle(
                                 fontSize: ScreenUtil().setSp(35),
                                 letterSpacing: 0.2,
@@ -105,14 +105,15 @@ class MessageTile extends StatelessWidget {
                         ),
                         Container(
                           margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
-                          child: Text('${DateUtil.getSimpleDate(messageBean.sendTime)}',
+                          child: Text('${DateUtil.getSimpleDate(conversationWrapper.sendTime)}',
                               style: TextStyle(
                                   fontSize: ScreenUtil().setSp(26),
                                   color: Colors.black38),
                           ),
                         )
                       ],
-                    )),
+                    ),
+                ),
                 Container(
                   child: Row(
                     children: [
@@ -125,7 +126,7 @@ class MessageTile extends StatelessWidget {
                                 color: Colors.black38),
                         ),
                       ),
-                      messageBean.unReadMessageCount == 0 ? Container() :
+                      conversationWrapper.unReadMessageCount == 0 ? Container() :
                       Container(
                           margin:
                           EdgeInsets.only(left: ScreenUtil().setWidth(15)),
@@ -137,7 +138,7 @@ class MessageTile extends StatelessWidget {
                                 color: Colors.red,
                                 borderRadius: BorderRadius.circular(15)),
                             child: Text(
-                              '${messageBean.unReadMessageCount > 99 ? "99+" : messageBean.unReadMessageCount}',
+                              '${conversationWrapper.unReadMessageCount > 99 ? "99+" : conversationWrapper.unReadMessageCount}',
                               style: TextStyle(
                                   fontSize: ScreenUtil().setSp(25),
                                   color: Colors.white),
