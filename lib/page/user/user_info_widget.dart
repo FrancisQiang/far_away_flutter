@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:far_away_flutter/bean/user_info_bean.dart';
 import 'package:far_away_flutter/component/circle_moving_bubble.dart';
+import 'package:far_away_flutter/page/user/user_counter_widget.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
 import 'package:flutter/material.dart';
@@ -238,29 +239,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                     ),
                     Container(
                       margin: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          UserActiveInfoWidget(
-                            title: "获赞",
-                            value: widget.userInfoBean == null
-                                ? ''
-                                : widget.userInfoBean.thumbCount.toString(),
-                          ),
-                          UserActiveInfoWidget(
-                            title: "关注",
-                            value: widget.userInfoBean == null
-                                ? ''
-                                : widget.userInfoBean.followCount.toString(),
-                          ),
-                          UserActiveInfoWidget(
-                            title: "粉丝",
-                            value: widget.userInfoBean == null
-                                ? ''
-                                : widget.userInfoBean.fansCount.toString(),
-                          ),
-                        ],
-                      ),
+                      child: UserCounterWidget(userInfoBean: widget.userInfoBean,),
                     )
                   ],
                 )),

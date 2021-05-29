@@ -2,6 +2,7 @@ import 'package:far_away_flutter/bean/page_bean.dart';
 import 'package:far_away_flutter/bean/recruit_info_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/component/easy_refresh_widget.dart';
+import 'package:far_away_flutter/page/recruit/recruit_info_preview_card.dart';
 import 'package:far_away_flutter/param/recruit_param.dart';
 import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
@@ -81,125 +82,8 @@ class _RecruitInfoPageState extends State<RecruitInfoPage>
             mainAxisSpacing: ScreenUtil().setHeight(15),
             itemCount: recruitInfoList?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
-              return Card(
-                color: Colors.transparent,
-                elevation: 0,
-                child: PhysicalModel(
-                    color: Colors.transparent,
-                    clipBehavior: Clip.antiAlias,
-                    borderRadius: BorderRadius.circular(5),
-                    child: InkWell(
-                      onTap: () {
-                        NavigatorUtil.toRecruitDetailPage(context,
-                            param: RecruitDetailPageParam(
-                                recruitDetailInfoBean:
-                                recruitInfoList[index]));
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Stack(
-                            children: [
-                              Image.network(recruitInfoList[index].cover),
-                              Positioned(
-                                left: ScreenUtil().setWidth(8),
-                                bottom: ScreenUtil().setHeight(8),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: ScreenUtil().setWidth(5)),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.black38,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        child: Icon(
-                                          Icons.location_on,
-                                          color: Colors.white70,
-                                          size: ScreenUtil().setSp(20),
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          recruitInfoList[index].location,
-                                          style: TextStyle(
-                                              color: Colors.white70,
-                                              fontSize:
-                                              ScreenUtil().setSp(20)),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                right: ScreenUtil().setWidth(8),
-                                bottom: ScreenUtil().setHeight(8),
-                                child: Container(
-                                  child: Row(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Icon(
-                                          FontAwesomeIcons.heart,
-                                          color: Colors.white70,
-                                          size: ScreenUtil().setSp(24),
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          ' ${recruitInfoList[index].thumbCount}',
-                                          style: TextStyle(
-                                              color: Colors.white70,
-                                              fontSize:
-                                              ScreenUtil().setSp(24),
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Container(
-                            padding:
-                            EdgeInsets.all(ScreenUtil().setWidth(15)),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: ScreenUtil().setWidth(38),
-                                  height: ScreenUtil().setWidth(38),
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        recruitInfoList[index].userAvatar),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                        left: ScreenUtil().setWidth(8)),
-                                    child: Text(
-                                      recruitInfoList[index].title,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: ScreenUtil().setSp(25),
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.4,
-                                          color: Colors.black87),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+              return RecruitInfoPreviewCard(
+                recruitDetailInfoBean: recruitInfoList[index],
               );
             },
             staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
