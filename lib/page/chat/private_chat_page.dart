@@ -2,8 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:far_away_flutter/bean/im_bean.dart';
 import 'package:far_away_flutter/component/measure_size.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
+import 'package:far_away_flutter/page/chat/left_message_row.dart';
+import 'package:far_away_flutter/page/chat/recruit_message_card.dart';
+import 'package:far_away_flutter/page/chat/right_message_row.dart';
+import 'package:far_away_flutter/page/chat/text_message_card.dart';
+import 'package:far_away_flutter/page/chat/together_message_card.dart';
 import 'package:far_away_flutter/provider/im_provider.dart';
 import 'package:far_away_flutter/util/provider_util.dart';
+import 'package:far_away_flutter/util/string_util.dart';
 import 'package:far_away_flutter/util/text_style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -49,6 +55,9 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
   @override
   void initState() {
     super.initState();
+    _messageController.addListener(() {
+      setState(() {});
+    });
     onGetHistoryMessages();
   }
 
@@ -88,230 +97,63 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
         ProviderUtil.imProvider.needRefreshConversations = true;
       });
     }
+    Widget messageBody;
+    switch (message.type) {
+      case MessageType.TOGETHER:
+        TogetherMessageJson togetherMessageJson =
+        TogetherMessageJson.fromJson(
+            convert.jsonDecode(message.extraInfo));
+        messageBody = TogetherMessageCard(
+          avatar: togetherMessageJson.avatar,
+          content: togetherMessageJson.togetherInfo,
+          togetherId: togetherMessageJson.togetherId,
+          username: togetherMessageJson.username,
+        );
+        break;
+      case MessageType.RECRUIT_SIGN_UP:
+        RecruitMessageJson recruitMessageJson = RecruitMessageJson.fromJson(
+            convert.jsonDecode(message.extraInfo));
+        messageBody = RecruitMessageCard(
+          cover: recruitMessageJson.cover,
+          title: recruitMessageJson.title,
+          id: recruitMessageJson.recruitId,
+        );
+        break;
+      default:
+        messageBody = TextMessageCard(
+          content: message.content,
+        );
+        break;
+    }
     // 如果是发送方
     if (message.userId == widget.userId) {
-      switch (message.type) {
-        case MessageType.TOGETHER:
-          TogetherMessageJson togetherMessageJson =
-              TogetherMessageJson.fromJson(
-                  convert.jsonDecode(message.extraInfo));
-          return Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(15),
-                vertical: ScreenUtil().setHeight(20)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                    right: ScreenUtil().setWidth(12),
-                    top: 4,
-                    bottom: 4,
-                  ),
-                  child: ClipOval(
-                      child: CachedNetworkImage(
-                    imageUrl: widget.avatar,
-                    width: ScreenUtil().setWidth(85),
-                    height: ScreenUtil().setWidth(85),
-                    fit: BoxFit.cover,
-                  )),
-                ),
-                Container(
-                  width: ScreenUtil().setWidth(550),
-                  child: TogetherSignUpCard(
-                    avatar: togetherMessageJson.avatar,
-                    content: togetherMessageJson.togetherInfo,
-                    togetherId: togetherMessageJson.togetherId,
-                    username: togetherMessageJson.username,
-                  ),
-                ),
-              ],
-            ),
-          );
-        case MessageType.RECRUIT_SIGN_UP:
-          RecruitMessageJson recruitMessageJson = RecruitMessageJson.fromJson(
-              convert.jsonDecode(message.extraInfo));
-          return Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: ScreenUtil().setWidth(15),
-              vertical: ScreenUtil().setHeight(20),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                    right: ScreenUtil().setWidth(12),
-                    top: 4,
-                    bottom: 4,
-                  ),
-                  child: ClipOval(
-                      child: CachedNetworkImage(
-                    imageUrl: widget.avatar,
-                    width: ScreenUtil().setWidth(85),
-                    height: ScreenUtil().setWidth(85),
-                    fit: BoxFit.cover,
-                  )),
-                ),
-                Container(
-                  width: ScreenUtil().setWidth(550),
-                  child: RecruitSignUpCard(
-                    cover: recruitMessageJson.cover,
-                    title: recruitMessageJson.title,
-                    id: recruitMessageJson.recruitId,
-                  ),
-                ),
-              ],
-            ),
-          );
-        default:
-          return Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(15),
-                vertical: ScreenUtil().setHeight(20)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                    right: ScreenUtil().setWidth(12),
-                    top: 4,
-                    bottom: 4,
-                  ),
-                  child: ClipOval(
-                      child: CachedNetworkImage(
-                    imageUrl: widget.avatar,
-                    width: ScreenUtil().setWidth(85),
-                    height: ScreenUtil().setWidth(85),
-                    fit: BoxFit.cover,
-                  )),
-                ),
-                Container(
-                  child: DefaultMessageCard(
-                    content: message.content,
-                  ),
-                ),
-              ],
-            ),
-          );
-      }
+      return LeftMessageRow(messageBody: messageBody, avatar: widget.avatar);
     } else {
-      // 如果是自己发送的
-      switch (message.type) {
-        case MessageType.TOGETHER:
-          TogetherMessageJson togetherMessageJson =
-              TogetherMessageJson.fromJson(
-                  convert.jsonDecode(message.extraInfo));
-          return Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(15),
-                vertical: ScreenUtil().setHeight(20)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: ScreenUtil().setWidth(550),
-                  child: TogetherSignUpCard(
-                    avatar: togetherMessageJson.avatar,
-                    content: togetherMessageJson.togetherInfo,
-                    togetherId: togetherMessageJson.togetherId,
-                    username: togetherMessageJson.username,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(12),
-                    top: 4,
-                    bottom: 4,
-                  ),
-                  child: ClipOval(
-                      child: CachedNetworkImage(
-                    imageUrl:
-                        ProviderUtil.globalInfoProvider.userInfoBean.avatar,
-                    width: ScreenUtil().setWidth(85),
-                    height: ScreenUtil().setWidth(85),
-                    fit: BoxFit.cover,
-                  )),
-                ),
-              ],
-            ),
-          );
-        case MessageType.RECRUIT_SIGN_UP:
-          RecruitMessageJson recruitMessageJson = RecruitMessageJson.fromJson(
-              convert.jsonDecode(message.extraInfo));
-          return Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(15),
-                vertical: ScreenUtil().setHeight(20)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: ScreenUtil().setWidth(550),
-                  child: RecruitSignUpCard(
-                    cover: recruitMessageJson.cover,
-                    title: recruitMessageJson.title,
-                    id: recruitMessageJson.recruitId,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(12),
-                    top: 4,
-                    bottom: 4,
-                  ),
-                  child: ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          ProviderUtil.globalInfoProvider.userInfoBean.avatar,
-                      width: ScreenUtil().setWidth(85),
-                      height: ScreenUtil().setWidth(85),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        default:
-          return Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(15),
-                vertical: ScreenUtil().setHeight(20),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  child: DefaultMessageCard(
-                    content: message.content,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(12),
-                    top: 4,
-                    bottom: 4,
-                  ),
-                  child: ClipOval(
-                      child: CachedNetworkImage(
-                    imageUrl:
-                        ProviderUtil.globalInfoProvider.userInfoBean.avatar,
-                    width: ScreenUtil().setWidth(85),
-                    height: ScreenUtil().setWidth(85),
-                    fit: BoxFit.cover,
-                  )),
-                ),
-              ],
-            ),
-          );
-      }
+      return RightMessageRow(messageBody: messageBody, avatar: ProviderUtil.globalInfoProvider.userInfoBean.avatar);
     }
   }
 
   double bottomMargin = ScreenUtil().setHeight(90);
+
+  sendMessage(ImProvider imProvider) async {
+    TextMessage textMessage = TextMessage();
+    String messageContent = _messageController.text;
+    MessageContentJson contentJson = MessageContentJson(
+        content: messageContent, extraInfo: "", type: MessageType.DEFAULT);
+    textMessage.content = convert.jsonEncode(contentJson);
+    Message msg = await RongIMClient.sendMessage(
+        RCConversationType.Private, widget.userId, textMessage);
+    PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
+    messageWrapper.msgId = msg.messageId;
+    messageWrapper.content = messageContent;
+    messageWrapper.type = 0;
+    messageWrapper.userId = ProviderUtil.globalInfoProvider.userInfoBean.id;
+    messageWrapper.read = true;
+    imProvider.messages[widget.userId].insert(0, messageWrapper);
+    _messageController.clear();
+    imProvider.refreshConversationList();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -344,124 +186,114 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
                       : ScrollConfiguration(
                           behavior: OverScrollBehavior(),
                           child: ListView.builder(
-                              controller: _scrollController,
-                              itemCount:
-                                  imProvider.messages[widget.userId].length,
-                              reverse: true,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return messageItemBuilder(
-                                    imProvider.messages[widget.userId][index]);
-                              }),
+                            controller: _scrollController,
+                            itemCount:
+                                imProvider.messages[widget.userId].length,
+                            reverse: true,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return messageItemBuilder(
+                                  imProvider.messages[widget.userId][index]);
+                            },
+                          ),
                         ),
                 ),
                 Positioned(
-                  left: 0,
-                  bottom: 0,
-                  child: MeasureSize(
-                    onChange: (Size size) {
-                      setState(() {
-                        bottomMargin = size.height;
-                      });
-                    },
-                    child:  Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                          top: BorderSide(color: Colors.black, width: 0.08),
+                    left: 0,
+                    bottom: 0,
+                    child: MeasureSize(
+                      onChange: (Size size) {
+                        setState(() {
+                          bottomMargin = size.height;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                            top: BorderSide(color: Colors.black, width: 0.08),
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: ScreenUtil().setWidth(25),
+                            vertical: ScreenUtil().setHeight(5)),
+                        width: ScreenUtil().setWidth(750),
+                        constraints: BoxConstraints(
+                          minHeight: ScreenUtil().setHeight(90),
+                          maxHeight: ScreenUtil().setHeight(300),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Container(
+                              width: ScreenUtil().setWidth(540),
+                              child: TextField(
+                                controller: _messageController,
+                                cursorColor: Theme.of(context).primaryColorLight,
+                                textAlignVertical: TextAlignVertical.bottom,
+                                minLines: 1,
+                                maxLines: 5,
+                                keyboardType: TextInputType.multiline,
+                                style:
+                                    TextStyle(fontSize: ScreenUtil().setSp(28)),
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  isCollapsed: true,
+                                  filled: true,
+                                  fillColor: Theme.of(context).backgroundColor,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: ScreenUtil().setHeight(12),
+                                    horizontal: ScreenUtil().setWidth(12),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    gapPadding: 0,
+                                    borderSide: BorderSide(
+                                      color: Colors.transparent,
+                                      width: 0,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    gapPadding: 0,
+                                    borderSide: BorderSide(
+                                      color: Colors.transparent,
+                                      width: 0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                                child: Container(
+                              margin: EdgeInsets.only(
+                                  left: ScreenUtil().setWidth(30)),
+                              child: FlatButton(
+                                padding: EdgeInsets.zero,
+                                height: ScreenUtil().setHeight(50),
+                                color: Theme.of(context).primaryColor,
+                                disabledColor:
+                                    Theme.of(context).primaryColorLight,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                onPressed:
+                                    StringUtil.isEmpty(_messageController.text)
+                                        ? null
+                                        : () async {
+                                            await sendMessage(imProvider);
+                                          },
+                                child: Container(
+                                  child: Text(
+                                    '发送',
+                                    style: TextStyleTheme.h3,
+                                  ),
+                                ),
+                              ),
+                            ))
+                          ],
                         ),
                       ),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(25),
-                          vertical: ScreenUtil().setHeight(10)
-                      ),
-                      width: ScreenUtil().setWidth(750),
-                      constraints: BoxConstraints(
-                        minHeight: ScreenUtil().setHeight(90),
-                        maxHeight: ScreenUtil().setHeight(300),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            width: ScreenUtil().setWidth(550),
-                            child: TextField(
-                              controller: _messageController,
-                              cursorColor: Colors.orangeAccent,
-                              textAlignVertical: TextAlignVertical.center,
-                              maxLines: 5,
-                              keyboardType: TextInputType.multiline,
-                              minLines: 1,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                filled: true,
-                                fillColor: Colors.grey.withOpacity(0.15),
-                                contentPadding: EdgeInsets.symmetric(
-                                  vertical: ScreenUtil().setHeight(12),
-                                  horizontal: ScreenUtil().setWidth(10),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  gapPadding: 0,
-                                  borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                    width: 0.01,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  gapPadding: 0,
-                                  borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                    width: 0.01,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: FlatButton(
-                              onPressed: () async {
-                                TextMessage textMessage = TextMessage();
-                                String messageContent = _messageController.text;
-                                MessageContentJson contentJson =
-                                MessageContentJson(
-                                    content: messageContent,
-                                    extraInfo: "",
-                                    type: MessageType.DEFAULT);
-                                textMessage.content =
-                                    convert.jsonEncode(contentJson);
-                                Message msg = await RongIMClient.sendMessage(
-                                    RCConversationType.Private,
-                                    widget.userId,
-                                    textMessage);
-                                PrivateMessageWrapper messageWrapper =
-                                PrivateMessageWrapper();
-                                messageWrapper.msgId = msg.messageId;
-                                messageWrapper.content = messageContent;
-                                messageWrapper.type = 0;
-                                messageWrapper.userId = ProviderUtil
-                                    .globalInfoProvider.userInfoBean.id;
-                                messageWrapper.read = true;
-                                imProvider.messages[widget.userId]
-                                    .insert(0, messageWrapper);
-                                _messageController.clear();
-                                imProvider.refreshConversationList();
-                                setState(() {});
-                              },
-                              child: Container(
-                                child: Text(
-                                  '发送',
-                                  style: TextStyleTheme.h3,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                ),
+                    )),
               ],
             ),
           ),
@@ -471,158 +303,3 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
   }
 }
 
-class TogetherSignUpCard extends StatelessWidget {
-  final String avatar;
-
-  final String username;
-
-  final String togetherId;
-
-  final String content;
-
-  TogetherSignUpCard(
-      {this.avatar, this.username, this.togetherId, this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(20), vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: CachedNetworkImage(
-                        width: ScreenUtil().setWidth(80),
-                        height: ScreenUtil().setWidth(80),
-                        imageUrl: avatar,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
-                    constraints:
-                        BoxConstraints(maxWidth: ScreenUtil().setWidth(380)),
-                    child: Text(
-                      '$username，我想与你结伴同行',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: ScreenUtil().setSp(28)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: ScreenUtil().setHeight(12)),
-              child: Container(
-                child: Text(
-                  '来自: $content',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.black87),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RecruitSignUpCard extends StatelessWidget {
-  final String cover;
-
-  final String title;
-
-  final String id;
-
-  RecruitSignUpCard({this.cover, this.title, this.id});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        children: [
-          Container(
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-              child: CachedNetworkImage(
-                height: ScreenUtil().setHeight(300),
-                width: ScreenUtil().setWidth(550),
-                imageUrl: cover,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(12),
-                vertical: ScreenUtil().setHeight(10)),
-            child: Text(
-              '[义工招聘] $title',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: ScreenUtil().setSp(30),
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(
-                left: ScreenUtil().setWidth(12),
-                right: ScreenUtil().setWidth(12),
-                bottom: ScreenUtil().setHeight(10)),
-            child: Text(
-              '我是来自江苏的刘肥雪，想要报名这次义工。',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: ScreenUtil().setSp(28),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class DefaultMessageCard extends StatelessWidget {
-  final String content;
-
-  DefaultMessageCard({this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Container(
-        constraints: BoxConstraints(
-          minHeight: ScreenUtil().setWidth(80),
-          maxWidth: ScreenUtil().setWidth(550),
-        ),
-        padding: EdgeInsets.symmetric(
-            vertical: ScreenUtil().setHeight(18),
-            horizontal: ScreenUtil().setWidth(20)),
-        child: Text('$content'),
-      ),
-    );
-  }
-}

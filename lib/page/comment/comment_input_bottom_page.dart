@@ -192,7 +192,7 @@ class _CommentInputBottomPageState extends State<CommentInputBottomPage> {
                             gapPadding: 0,
                             borderSide: BorderSide(
                               color: Colors.transparent,
-                              width: 0.01,
+                              width: 0,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
@@ -200,7 +200,7 @@ class _CommentInputBottomPageState extends State<CommentInputBottomPage> {
                             gapPadding: 0,
                             borderSide: BorderSide(
                               color: Colors.transparent,
-                              width: 0.01,
+                              width: 0,
                             ),
                           ),
                         ),
