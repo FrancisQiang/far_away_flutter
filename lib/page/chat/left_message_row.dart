@@ -17,6 +17,7 @@ class LeftMessageRow extends StatelessWidget {
         vertical: ScreenUtil().setHeight(20),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             margin: EdgeInsets.only(

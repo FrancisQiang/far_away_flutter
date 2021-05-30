@@ -1,3 +1,4 @@
+import 'dart:convert' as convert;
 import 'package:far_away_flutter/bean/im_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
 import 'package:far_away_flutter/bean/simple_user_info_bean.dart';
@@ -14,8 +15,11 @@ class ImProvider with ChangeNotifier {
       await refreshConversationList();
       PrivateMessageWrapper messageWrapper = PrivateMessageWrapper();
       TextMessage textMessage = msg.content as TextMessage;
-      messageWrapper.content = textMessage.content;
-      messageWrapper.type = 0;
+      MessageContentJson json =
+      MessageContentJson.fromJson(convert.jsonDecode(textMessage.content));
+      messageWrapper.extraInfo = json.extraInfo;
+      messageWrapper.content = json.content;
+      messageWrapper.type = json.type;
       messageWrapper.userId = msg.senderUserId;
       messageWrapper.read = false;
       messageWrapper.msgId = msg.messageId;
