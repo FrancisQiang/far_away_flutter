@@ -33,10 +33,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin<ChatP
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
+        leading: SizedBox(),
         title: TabBar(
             isScrollable: true,
             labelColor: Theme.of(context).primaryColorDark,

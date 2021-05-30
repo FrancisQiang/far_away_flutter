@@ -92,14 +92,17 @@ class RecruitMessageJson {
   String cover;
   String avatar;
   String recruitId;
+  // 我是来自xxx的xxx，想要报名这次义工
+  String content;
 
-  RecruitMessageJson({this.title, this.cover, this.avatar, this.recruitId});
+  RecruitMessageJson({this.title, this.cover, this.avatar, this.recruitId, this.content});
 
   RecruitMessageJson.fromJson(Map<String, dynamic> json) {
     cover = json['cover'];
     title = json['title'];
     recruitId = json['recruitId'];
     avatar = json['avatar'];
+    content = json['content'];
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +111,7 @@ class RecruitMessageJson {
     data['title'] = this.title;
     data['avatar'] = this.avatar;
     data['recruitId'] = this.recruitId;
+    data['content'] = this.content;
     return data;
   }
 }

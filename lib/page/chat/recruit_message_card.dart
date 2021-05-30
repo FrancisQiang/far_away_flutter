@@ -11,7 +11,9 @@ class RecruitMessageCard extends StatelessWidget {
 
   final String id;
 
-  RecruitMessageCard({this.cover, this.title, this.id});
+  final String content;
+
+  RecruitMessageCard({this.cover, this.title, this.id, this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class RecruitMessageCard extends StatelessWidget {
                 right: ScreenUtil().setWidth(12),
                 bottom: ScreenUtil().setHeight(10)),
             child: Text(
-              '我是来自江苏的刘肥雪，想要报名这次义工。',
+              content,
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: ScreenUtil().setSp(28),

@@ -18,6 +18,7 @@ import 'package:far_away_flutter/page/comment/comment_widget.dart';
 import 'package:far_away_flutter/page/post/post_recruit_page.dart';
 import 'package:far_away_flutter/param/comment_query_param.dart';
 import 'package:far_away_flutter/param/private_chat_param.dart';
+import 'package:far_away_flutter/provider/global_info_provider.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
 import 'package:far_away_flutter/util/date_util.dart';
 import 'package:far_away_flutter/util/navigator_util.dart';
@@ -134,6 +135,11 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
 
   _refreshCallback() {
     setState(() {});
+  }
+
+  String generateRecruitSignUpContent(GlobalInfoProvider globalInfoProvider) {
+    String location = globalInfoProvider.userInfoBean.location.replaceAll('·', '');
+    return '我是来自$location的${globalInfoProvider.userInfoBean.userName}，想要报名这次义工活动。';
   }
 
   @override
@@ -469,9 +475,9 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                                 RecruitMessageJson(
                                   cover: widget.recruitDetailInfoBean.cover,
                                   recruitId: widget.recruitDetailInfoBean.id,
-                                  avatar:
-                                      widget.recruitDetailInfoBean.userAvatar,
+                                  avatar: widget.recruitDetailInfoBean.userAvatar,
                                   title: widget.recruitDetailInfoBean.title,
+                                  content: generateRecruitSignUpContent(ProviderUtil.globalInfoProvider),
                                 ),
                               ),
                             );
@@ -498,6 +504,7 @@ class _RecruitDetailPageState extends State<RecruitDetailPage>
                             ProviderUtil.imProvider
                                 .messages[widget.recruitDetailInfoBean.userId]
                                 .insert(0, messageWrapper);
+                            ProviderUtil.imProvider.refresh();
                             NavigatorUtil.toPrivateChatPage(
                               context,
                               param: PrivateChatParam(

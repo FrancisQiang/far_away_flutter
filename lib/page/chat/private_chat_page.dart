@@ -101,8 +101,7 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
     switch (message.type) {
       case MessageType.TOGETHER:
         TogetherMessageJson togetherMessageJson =
-        TogetherMessageJson.fromJson(
-            convert.jsonDecode(message.extraInfo));
+            TogetherMessageJson.fromJson(convert.jsonDecode(message.extraInfo));
         messageBody = TogetherMessageCard(
           avatar: togetherMessageJson.avatar,
           content: togetherMessageJson.togetherInfo,
@@ -111,12 +110,13 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
         );
         break;
       case MessageType.RECRUIT_SIGN_UP:
-        RecruitMessageJson recruitMessageJson = RecruitMessageJson.fromJson(
-            convert.jsonDecode(message.extraInfo));
+        RecruitMessageJson recruitMessageJson =
+            RecruitMessageJson.fromJson(convert.jsonDecode(message.extraInfo));
         messageBody = RecruitMessageCard(
           cover: recruitMessageJson.cover,
           title: recruitMessageJson.title,
           id: recruitMessageJson.recruitId,
+          content: recruitMessageJson.content,
         );
         break;
       default:
@@ -129,7 +129,9 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
     if (message.userId == widget.userId) {
       return LeftMessageRow(messageBody: messageBody, avatar: widget.avatar);
     } else {
-      return RightMessageRow(messageBody: messageBody, avatar: ProviderUtil.globalInfoProvider.userInfoBean.avatar);
+      return RightMessageRow(
+          messageBody: messageBody,
+          avatar: ProviderUtil.globalInfoProvider.userInfoBean.avatar);
     }
   }
 
@@ -199,75 +201,76 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
                         ),
                 ),
                 Positioned(
-                    left: 0,
-                    bottom: 0,
-                    child: MeasureSize(
-                      onChange: (Size size) {
-                        setState(() {
-                          bottomMargin = size.height;
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border(
-                            top: BorderSide(color: Colors.black, width: 0.08),
-                          ),
+                  left: 0,
+                  bottom: 0,
+                  child: MeasureSize(
+                    onChange: (Size size) {
+                      setState(() {
+                        bottomMargin = size.height;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                          top: BorderSide(color: Colors.black, width: 0.08),
                         ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(25),
-                            vertical: ScreenUtil().setHeight(5)),
-                        width: ScreenUtil().setWidth(750),
-                        constraints: BoxConstraints(
-                          minHeight: ScreenUtil().setHeight(90),
-                          maxHeight: ScreenUtil().setHeight(300),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(
-                              width: ScreenUtil().setWidth(540),
-                              child: TextField(
-                                controller: _messageController,
-                                cursorColor: Theme.of(context).primaryColorLight,
-                                textAlignVertical: TextAlignVertical.bottom,
-                                minLines: 1,
-                                maxLines: 5,
-                                keyboardType: TextInputType.multiline,
-                                style:
-                                    TextStyle(fontSize: ScreenUtil().setSp(28)),
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  isCollapsed: true,
-                                  filled: true,
-                                  fillColor: Theme.of(context).backgroundColor,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: ScreenUtil().setHeight(12),
-                                    horizontal: ScreenUtil().setWidth(12),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(25),
+                          vertical: ScreenUtil().setHeight(5)),
+                      width: ScreenUtil().setWidth(750),
+                      constraints: BoxConstraints(
+                        minHeight: ScreenUtil().setHeight(90),
+                        maxHeight: ScreenUtil().setHeight(300),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            width: ScreenUtil().setWidth(540),
+                            child: TextField(
+                              controller: _messageController,
+                              cursorColor: Theme.of(context).primaryColorLight,
+                              textAlignVertical: TextAlignVertical.bottom,
+                              minLines: 1,
+                              maxLines: 5,
+                              keyboardType: TextInputType.multiline,
+                              style:
+                                  TextStyle(fontSize: ScreenUtil().setSp(28)),
+                              decoration: InputDecoration(
+                                isDense: true,
+                                isCollapsed: true,
+                                filled: true,
+                                fillColor: Theme.of(context).backgroundColor,
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: ScreenUtil().setHeight(12),
+                                  horizontal: ScreenUtil().setWidth(12),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  gapPadding: 0,
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 0,
                                   ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    gapPadding: 0,
-                                    borderSide: BorderSide(
-                                      color: Colors.transparent,
-                                      width: 0,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    gapPadding: 0,
-                                    borderSide: BorderSide(
-                                      color: Colors.transparent,
-                                      width: 0,
-                                    ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  gapPadding: 0,
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 0,
                                   ),
                                 ),
                               ),
                             ),
-                            Expanded(
-                                child: Container(
+                          ),
+                          Expanded(
+                            child: Container(
                               margin: EdgeInsets.only(
-                                  left: ScreenUtil().setWidth(30)),
+                                left: ScreenUtil().setWidth(30),
+                              ),
                               child: FlatButton(
                                 padding: EdgeInsets.zero,
                                 height: ScreenUtil().setHeight(50),
@@ -289,11 +292,13 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
                                   ),
                                 ),
                               ),
-                            ))
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    )),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -302,4 +307,3 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
     );
   }
 }
-

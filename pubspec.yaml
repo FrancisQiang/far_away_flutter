@@ -89,11 +89,16 @@ dependencies:
   flutter_qq_bubble: ^1.0.2
   # 城市选择器
   city_pickers: ^0.2.0
+  # 富文本
   notus: ^0.1.5
+  # nested滑动组件bug修复
   extended_nested_scroll_view: ^1.0.1
   # 头像裁剪
   image_crop: ^0.3.4
+  # 日志
   logger: ^0.9.4
+  # 滑动删除
+  flutter_slidable: ^0.5.7
 
 
   # The following adds the Cupertino Icons font to your application.
