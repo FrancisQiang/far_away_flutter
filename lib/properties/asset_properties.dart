@@ -9,6 +9,8 @@ class AssetProperties {
   static const String HOME_ACTIVE = 'assets/png/home_active.png';
   static const String MESSAGE_INACTIVE = 'assets/png/message_inactive.png';
   static const String MESSAGE_ACTIVE = 'assets/png/message_active.png';
+  static const String ACTIVITY_INACTIVE = 'assets/png/activity_inactive.png';
+  static const String ACTIVITY_ACTIVE = 'assets/png/activity_active.png';
   static const String PROFILE_INACTIVE = 'assets/png/profile_inactive.png';
   static const String PROFILE_ACTIVE = 'assets/png/profile_active.png';
   static const String SHARE_RECT = 'assets/png/share_rect.png';

@@ -587,4 +587,18 @@ class ApiMethodUtil {
     }
     return pictureURLList.join(",");
   }
+
+  static Future<ResponseBean> getRandUserList() async {
+    Response response;
+    try {
+      response = await DioFactory.getDioClient().get(
+        ApiProperties.HOST_BASE_URL + "/user/info/rand_list",
+      );
+    } catch (ex) {
+      LoggerUtil.logger.e('Error! getDynamicList request failed!', ex);
+      return null;
+    }
+    return ResponseBean.fromJson(response.data);
+  }
+
 }
