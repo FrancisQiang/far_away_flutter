@@ -1,3 +1,4 @@
+import 'package:far_away_flutter/bean/activity_preview_bean.dart';
 import 'package:far_away_flutter/bean/find_user_info_bean.dart';
 import 'package:far_away_flutter/bean/list_bean.dart';
 import 'package:far_away_flutter/bean/response_bean.dart';
@@ -5,10 +6,12 @@ import 'package:far_away_flutter/component/init_refresh_widget.dart';
 import 'package:far_away_flutter/config/OverScrollBehavior.dart';
 import 'package:far_away_flutter/page/activity/user_info_card.dart';
 import 'package:far_away_flutter/util/api_method_util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
+import 'activity_preview_widget.dart';
 import 'change_user_list_card.dart';
 
 class ActivityPage extends StatefulWidget {
@@ -94,18 +97,30 @@ class _ActivityPageState extends State<ActivityPage> {
               ),
               Container(
                 margin: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(22),
-                  vertical: ScreenUtil().setHeight(12)
-                ),
+                    horizontal: ScreenUtil().setWidth(22),
+                    vertical: ScreenUtil().setHeight(12)),
                 alignment: Alignment.centerLeft,
                 child: Text(
                   '近期活动',
                   style: TextStyle(
-                    fontSize: ScreenUtil().setSp(30),
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.4
-                  ),
+                      fontSize: ScreenUtil().setSp(30),
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4),
                 ),
+              ),
+              Column(
+                children: List<Widget>.generate(ActivityPreviewBean.data.length,
+                    (index) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: ScreenUtil().setWidth(22),
+                      vertical: ScreenUtil().setHeight(15)
+                    ),
+                    child: ActivityPreviewCard(
+                      activityPreviewBean: ActivityPreviewBean.data[index],
+                    ),
+                  );
+                }),
               )
             ],
           ),
