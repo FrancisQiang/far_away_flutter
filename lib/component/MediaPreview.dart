@@ -47,7 +47,7 @@ class MediaPreview extends StatelessWidget {
                 children: List.generate(mediaList.length, (mediaIndex) {
                   return Container(
                       width: sideLength,
-                      height: sideLength,
+                      height: mediaList.length == 1 ? sideLength * (9 /16) : sideLength,
                       child: GestureDetector(
                         onTap: () {
                           // TODO 添加hero动画
@@ -75,7 +75,7 @@ class MediaPreview extends StatelessWidget {
                               placeHolder: Container(
                                 alignment: Alignment.center,
                                 width: sideLength,
-                                height: sideLength,
+                                height: mediaList.length == 1 ? sideLength * (9 /16) : sideLength,
                                 child: SpinKitPumpingHeart(
                                   color: Theme.of(context).primaryColor,
                                   size: ScreenUtil().setSp(40),

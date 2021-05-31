@@ -11,7 +11,7 @@ class VideoPreview extends StatefulWidget {
 
   final double aspectRatio;
 
-  VideoPreview({@required this.url, this.placeHolder = const SizedBox(), this.aspectRatio = 1});
+  VideoPreview({@required this.url, this.placeHolder = const SizedBox(), this.aspectRatio = 16 / 9});
 
   @override
   _VideoPreviewState createState() => _VideoPreviewState();

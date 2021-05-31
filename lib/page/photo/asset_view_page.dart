@@ -94,7 +94,7 @@ class _NetworkVideoPlayerState extends State<NetworkVideoPlayer> {
     _videoController = VideoPlayerController.network(widget.url);
     await _videoController.initialize();
     _chewieController = ChewieController(
-      aspectRatio: 1,
+      aspectRatio: 16 / 9,
       videoPlayerController: _videoController,
       autoPlay: true,
       looping: true,
